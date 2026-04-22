@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  @apply bg-stone-50 text-neutral-900 antialiased transition-colors duration-300 dark:bg-neutral-950 dark:text-stone-100;
+}
+
+a,
+button {
+  @apply transition-colors duration-200 motion-reduce:transition-none;
+}
+
+.site-container {
+  @apply mx-auto w-full max-w-3xl px-5 py-8 sm:px-8 sm:py-12;
+}
