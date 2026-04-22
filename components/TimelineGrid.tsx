@@ -22,11 +22,6 @@ const timelineItems: TimelineItem[] = [
     range: "JAN 2026 > PRESENT",
     href: "/experience/formula-sae",
   },
-  {
-    title: "Projects",
-    range: "SELECTED WORK",
-    href: "/experience/projects",
-  },
 ];
 
 export function TimelineGrid() {
