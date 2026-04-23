@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const roles = ["student.", "innovator.", "programmer."] as const;
+const roles = ["student.", "builder.", "programmer."] as const;
 const typingDelayMs = 90;
 const deletingDelayMs = 60;
 const pauseDelayMs = 3000;
@@ -56,7 +56,7 @@ export function HeaderSection() {
       </h1>
       <div className="space-y-1 text-sm text-neutral-700 dark:text-neutral-300">
         <p>BSc Engineering</p>
-        <p>University of Alberta (Class of 2029)</p>
+        <p>University of Alberta</p>
       </div>
     </header>
   );
