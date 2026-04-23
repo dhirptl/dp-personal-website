@@ -14,7 +14,7 @@ const timelineItems: TimelineItem[] = [
   },
   {
     title: "Undergraduate Research Assistant, Robotic Navigation",
-    range: "JAN 2026 > APR 2026",
+    range: "JAN 2026 > PRESENT",
     href: "/experience/robotic-navigation",
   },
   {

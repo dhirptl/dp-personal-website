@@ -17,7 +17,6 @@ const navItems: NavItem[] = [
 export function NavLinks() {
   return (
     <nav aria-label="Primary" className="space-y-4">
-      <h2 className="text-xs uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">Navigation</h2>
       <ul className="grid gap-3 text-sm">
         {navItems.map((item) => (
           <li key={item.label}>
