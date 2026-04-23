@@ -16,13 +16,13 @@ const navItems: NavItem[] = [
 
 export function NavLinks() {
   return (
-    <nav aria-label="Primary" className="space-y-4">
-      <ul className="grid gap-3 text-sm">
+    <nav aria-label="Primary" className="space-y-3">
+      <ul className="grid gap-2.5 text-sm">
         {navItems.map((item) => (
           <li key={item.label}>
             <Link
               href={item.href}
-              className="group inline-flex items-center gap-2 tracking-wide text-neutral-900 hover:text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:text-stone-100 dark:hover:text-stone-300 dark:focus-visible:ring-stone-100"
+              className="group inline-flex items-center gap-2 py-0.5 tracking-wide text-neutral-900 hover:text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:text-stone-100 dark:hover:text-stone-300 dark:focus-visible:ring-stone-100"
               target={item.external ? "_blank" : undefined}
               rel={item.external ? "noreferrer" : undefined}
             >

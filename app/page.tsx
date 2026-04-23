@@ -6,7 +6,7 @@ import { TimelineGrid } from "@/components/TimelineGrid";
 export default function HomePage() {
   return (
     <main className="site-container">
-      <div className="space-y-14">
+      <div className="space-y-12 sm:space-y-14">
         <HeaderSection />
         <TimelineGrid />
         <NavLinks />

@@ -26,16 +26,16 @@ const timelineItems: TimelineItem[] = [
 
 export function TimelineGrid() {
   return (
-    <section aria-labelledby="experience-heading" className="space-y-4">
+    <section aria-labelledby="experience-heading" className="space-y-3">
       <h2 id="experience-heading" className="text-xs uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
         Experience & Timeline
       </h2>
-      <ul className="grid gap-3 text-sm">
+      <ul className="grid gap-2.5 text-sm">
         {timelineItems.map((item) => (
           <li key={item.href}>
             <Link
               href={item.href}
-              className="group inline-flex w-full items-center justify-between gap-3 tracking-wide text-neutral-900 hover:text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:text-stone-100 dark:hover:text-stone-300 dark:focus-visible:ring-stone-100"
+              className="group inline-flex w-full items-center justify-between gap-3 py-0.5 tracking-wide text-neutral-900 hover:text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:text-stone-100 dark:hover:text-stone-300 dark:focus-visible:ring-stone-100"
             >
               <span className="min-w-0">
                 <span className="break-words">{item.title}</span>
