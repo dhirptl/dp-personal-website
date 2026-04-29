@@ -33,7 +33,9 @@ export function ExperiencePage({
         <header className="space-y-3 border-b border-neutral-200 pb-8 dark:border-neutral-800">
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
           <p className="text-xs uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">{period}</p>
-          <p className="max-w-2xl text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">{overview}</p>
+          <p className="max-w-2xl text-sm leading-relaxed text-neutral-700 lg:max-w-3xl dark:text-neutral-300">
+            {overview}
+          </p>
         </header>
 
         <section className="space-y-3">

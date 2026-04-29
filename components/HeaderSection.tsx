@@ -50,7 +50,7 @@ export function HeaderSection() {
 
   return (
     <header className="space-y-4 pb-8">
-      <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+      <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl xl:text-6xl xl:leading-[1.1]">
         hi i&apos;m dhir, i&apos;m a{" "}
         <span className="text-emerald-600 dark:text-emerald-400">{visibleText}</span>
       </h1>

@@ -9,9 +9,9 @@ type NavItem = {
 const navItems: NavItem[] = [
   { label: "About Me", href: "/about" },
   { label: "Portfolio", href: "/portfolio" },
-  { label: "LinkedIn", href: "#" },
-  { label: "GitHub", href: "#" },
-  { label: "Email", href: "#" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/dhirptl", external: true },
+  { label: "GitHub", href: "https://github.com/dhirptl", external: true },
+  { label: "Email", href: "mailto:dhirpatel768@gmail.com" },
 ];
 
 export function NavLinks() {

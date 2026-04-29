@@ -13,8 +13,24 @@ body {
   min-height: 100%;
 }
 
+html {
+  @apply overflow-x-hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
 body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   @apply bg-stone-50 text-neutral-900 antialiased transition-colors duration-300 dark:bg-neutral-950 dark:text-stone-100;
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }
 
 body * {
@@ -27,5 +43,5 @@ button {
 }
 
 .site-container {
-  @apply mx-auto w-full max-w-3xl px-5 py-10 sm:px-8 sm:py-14;
+  @apply mx-auto w-full max-w-4xl px-6 py-12 sm:px-10 md:py-16 lg:max-w-6xl xl:px-14 xl:py-20 2xl:max-w-7xl;
 }
