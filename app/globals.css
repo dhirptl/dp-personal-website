@@ -1,20 +1,32 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: light;
-}
-
-html.dark {
   color-scheme: dark;
+  --bg: #0a0a0a;
+  --fg: #f3f3f0;
+  --fg-secondary: #eaeae6;
+  --muted-1: #8c8c87;
+  --muted-2: #7d7d79;
+  --muted-3: #6f6f6b;
+  --accent: #f4f4f5;
+  --border: rgba(255, 255, 255, 0.16);
+  --border-faint: rgba(255, 255, 255, 0.08);
+  /* aurora spectrum (from the reference recording: warm gold left,
+     prismatic streak mid, electric cyan/blue right) */
+  --au-gold: #ffb03a;
+  --au-amber: #ff7a1f;
+  --au-rose: #ff4d8d;
+  --au-violet: #b14dff;
+  --au-cyan: #45e8ff;
+  --au-blue: #2f7bff;
 }
 
-html,
-body {
-  min-height: 100%;
+* {
+  box-sizing: border-box;
 }
 
 html {
-  @apply overflow-x-hidden;
+  overflow-x: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -23,25 +35,301 @@ html::-webkit-scrollbar {
   display: none;
 }
 
+html,
 body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  @apply bg-stone-50 text-neutral-900 antialiased transition-colors duration-300 dark:bg-neutral-950 dark:text-stone-100;
 }
 
 body::-webkit-scrollbar {
   display: none;
 }
 
-body * {
-  text-transform: lowercase !important;
+/* ---- atmosphere: blueprint grid + vignette + grain ---- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(120% 90% at 50% 40%, black 0%, transparent 78%);
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 40%, black 0%, transparent 78%);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E")
+      repeat,
+    radial-gradient(140% 100% at 50% 0%, transparent 50%, rgba(0, 0, 0, 0.55) 100%);
+  background-blend-mode: overlay, normal;
+  opacity: 0.55;
+}
+
+main,
+#__next {
+  position: relative;
+  z-index: 1;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
 }
 
 a,
 button {
-  @apply transition-colors duration-200 motion-reduce:transition-none;
+  color: inherit;
 }
 
-.site-container {
-  @apply mx-auto w-full max-w-4xl px-6 py-12 sm:px-10 md:py-16 lg:max-w-6xl xl:px-14 xl:py-20 2xl:max-w-7xl;
+a {
+  text-decoration: none;
+}
+
+/* page fade-in */
+main {
+  animation: pageIn 0.55s ease both;
+}
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* staggered reveal utility — set --d for delay */
+.rv {
+  animation: rise 0.9s cubic-bezier(0.19, 0.7, 0.22, 1) both;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main,
+  .rv {
+    animation: none;
+  }
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 56px 32px 96px;
+}
+
+@media (max-width: 760px) {
+  .container {
+    padding: 28px 20px 64px;
+  }
+}
+
+.gradient-title {
+  font-weight: 700;
+  line-height: 0.84;
+  letter-spacing: -0.04em;
+  margin: 0;
+  background: linear-gradient(to bottom, #fafafa 30%, #9a9a95);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.back-link {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted-1);
+  letter-spacing: 0.06em;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: #fff;
+}
+
+.arrow-link {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: #bdbdb8;
+  transition: color 0.2s ease;
+}
+
+.arrow-link::after {
+  content: "→";
+  margin-left: 8px;
+  opacity: 0;
+  transition: opacity 0.15s ease, margin-left 0.15s ease;
+}
+
+.arrow-link:hover {
+  color: #fff;
+}
+
+.arrow-link:hover::after {
+  opacity: 1;
+  margin-left: 10px;
+}
+
+/* ---- signature "aurora" button ----------------------------------------
+   Dark glass pill. On hover (or .on), an aurora ribbon flows through the
+   interior — warm gold hugging the lower-left, electric cyan/blue sweeping
+   the right, a prismatic streak weaving between — while a soft bloom
+   glows past the edges. Modeled on the reference recording. */
+.eng-btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: lowercase;
+  cursor: pointer;
+  appearance: none;
+  color: #eaeae6;
+  background: rgba(12, 12, 12, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 7px 16px;
+  transition: color 0.4s ease, border-color 0.5s ease, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.eng-btn:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.32);
+  transform: translateY(-1px);
+}
+
+.eng-btn:active {
+  transform: translateY(0) scale(0.985);
+}
+
+/* interior aurora — clipped by the pill's own radius */
+.eng-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      86% 130% at 50% 32%,
+      rgba(8, 8, 8, 0.96),
+      rgba(8, 8, 8, 0.62) 46%,
+      rgba(8, 8, 8, 0.16) 68%,
+      transparent 86%
+    ),
+    radial-gradient(48% 82% at 6% 98%, rgba(255, 176, 58, 0.95), rgba(255, 122, 31, 0.42) 44%, transparent 66%),
+    radial-gradient(36% 62% at 28% 122%, rgba(255, 77, 141, 0.5), transparent 64%),
+    radial-gradient(50% 92% at 97% 84%, rgba(69, 232, 255, 0.88), rgba(47, 123, 255, 0.4) 48%, transparent 68%),
+    radial-gradient(40% 70% at 80% -8%, rgba(47, 123, 255, 0.45), transparent 62%),
+    linear-gradient(104deg, transparent 34%, rgba(177, 77, 255, 0.42) 47%, rgba(69, 232, 255, 0.38) 55%, transparent 68%),
+    rgba(8, 8, 8, 0.2);
+  background-size: 100% 100%, 190% 210%, 200% 230%, 190% 210%, 210% 230%, 300% 200%, 100% 100%;
+  background-position: 50% 50%, 0% 100%, 20% 100%, 100% 60%, 90% 0%, 0% 50%;
+  filter: blur(5px) saturate(1.35);
+  opacity: 0;
+  transition: opacity 0.55s ease;
+}
+
+/* exterior bloom — glows past the edges */
+.eng-btn::after {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  z-index: -2;
+  border-radius: 999px;
+  background:
+    radial-gradient(46% 78% at 12% 92%, rgba(255, 156, 40, 0.55), transparent 66%),
+    radial-gradient(52% 86% at 90% 70%, rgba(69, 210, 255, 0.5), transparent 68%),
+    radial-gradient(36% 60% at 55% 108%, rgba(150, 120, 255, 0.35), transparent 70%);
+  filter: blur(16px) saturate(1.3);
+  opacity: 0;
+  transition: opacity 0.55s ease;
+  pointer-events: none;
+}
+
+.eng-btn:hover::before,
+.eng-btn.on::before,
+.eng-btn[aria-pressed="true"]::before,
+.eng-btn:hover::after,
+.eng-btn.on::after,
+.eng-btn[aria-pressed="true"]::after {
+  opacity: 1;
+  animation: aurora-drift 5.5s ease-in-out infinite alternate;
+}
+
+.eng-btn.on {
+  border-color: rgba(255, 255, 255, 0.38);
+  color: #fff;
+}
+
+@keyframes aurora-drift {
+  0% {
+    background-position: 50% 50%, 0% 100%, 20% 100%, 100% 60%, 90% 0%, 0% 50%;
+  }
+  50% {
+    background-position: 50% 50%, 12% 78%, 6% 88%, 86% 84%, 96% 18%, 60% 46%;
+  }
+  100% {
+    background-position: 50% 50%, 4% 96%, 26% 92%, 94% 48%, 82% 8%, 120% 54%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-btn::before,
+  .eng-btn::after {
+    animation: none !important;
+  }
+}
+
+/* larger call-to-action variant */
+.eng-btn.lg {
+  padding: 13px 28px;
+  font-size: 14px;
+}
+
+.focus-ring:focus-visible,
+.eng-btn:focus-visible,
+a:focus-visible {
+  outline: 1.5px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.eng-btn:focus-visible {
+  border-radius: 999px;
 }

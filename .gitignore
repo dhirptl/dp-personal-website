@@ -9,5 +9,9 @@
 .DS_Store
 *.log
 
+# local design references
+/design_handoff_portfolio_site
+/portfolio.zip
+
 # local env
 .env*.local
