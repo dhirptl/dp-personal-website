@@ -6,7 +6,7 @@ import styles from "./about.module.css";
 
 export default function AboutPage() {
   return (
-    <main className="container">
+    <main id="main" className="container">
       <Link className="back-link rv" href="/">
         <span>[&lt;]</span> back
       </Link>

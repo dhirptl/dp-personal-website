@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SITE } from "@/lib/site-data";
+import { Reveal } from "@/components/Reveal";
 import styles from "./experience.module.css";
 
 export function generateStaticParams() {
@@ -18,7 +19,7 @@ export default async function ExperienceDetailPage({ params }: { params: Promise
     .filter((p): p is (typeof SITE.projects)[number] => Boolean(p));
 
   return (
-    <main className="container">
+    <main id="main" className="container">
       <Link className="back-link rv" href="/">
         <span>[&lt;]</span> back to home
       </Link>
@@ -46,46 +47,46 @@ export default async function ExperienceDetailPage({ params }: { params: Promise
       <div className={styles.body}>
         <div>
           {e.responsibilities && e.responsibilities.length > 0 && (
-            <div className={styles.sec}>
+            <Reveal className={styles.sec}>
               <div className={styles.seclabel}>responsibilities</div>
               <ul>
                 {e.responsibilities.map((it, j) => (
                   <li key={j}>{it}</li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
           )}
           {e.accomplishments && e.accomplishments.length > 0 && (
-            <div className={styles.sec}>
+            <Reveal className={styles.sec}>
               <div className={styles.seclabel}>what i accomplished</div>
               <ul>
                 {e.accomplishments.map((it, j) => (
                   <li key={j}>{it}</li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
           )}
           {e.focus && e.focus.length > 0 && (
-            <div className={styles.sec}>
+            <Reveal className={styles.sec}>
               <div className={styles.seclabel}>what i&apos;m focused on</div>
               <ul>
                 {e.focus.map((it, j) => (
                   <li key={j}>{it}</li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
           )}
           {e.growth && (
-            <div className={styles.sec}>
+            <Reveal className={styles.sec}>
               <div className={styles.seclabel}>professional growth</div>
               <p>{e.growth}</p>
-            </div>
+            </Reveal>
           )}
           {e.teamwork && (
-            <div className={styles.sec}>
+            <Reveal className={styles.sec}>
               <div className={styles.seclabel}>teamwork & responsibility</div>
               <p>{e.teamwork}</p>
-            </div>
+            </Reveal>
           )}
         </div>
 

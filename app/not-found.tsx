@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="container">
+    <main id="main" className="container">
       <Link className="back-link" href="/">
         <span>[&lt;]</span> back
       </Link>

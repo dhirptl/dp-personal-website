@@ -93,6 +93,7 @@
   transition: background 0.3s ease;
 }
 
-.locpill:hover .arr {
-  background: rgba(0, 0, 0, 0.14);
+.locpill:hover .arr,
+.locpill:focus-visible .arr {
+  background: rgba(0, 0, 0, 0.4);
 }

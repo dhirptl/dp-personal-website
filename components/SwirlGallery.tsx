@@ -22,7 +22,7 @@ export function SwirlGallery({ list }: { list: Project[] }) {
   const step = 360 / Math.max(n, 1);
 
   const stageRef = useRef<HTMLDivElement | null>(null);
-  const cardRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rot = useRef(-step * 1.6); // start offset so the ring swirls in and settles
   const vel = useRef(2.4);
   const radius = useRef(480);
@@ -165,7 +165,10 @@ export function SwirlGallery({ list }: { list: Project[] }) {
                 <p className={styles.hubDesc}>{p.overview}</p>
                 <div className={styles.hubGo}>
                   <Link href={`/portfolio/${p.slug}`} className="eng-btn lg" draggable={false}>
-                    view case study →
+                    view case study
+                    <span className="eng-arrow" aria-hidden="true">
+                      →
+                    </span>
                   </Link>
                 </div>
               </div>
@@ -175,11 +178,9 @@ export function SwirlGallery({ list }: { list: Project[] }) {
           {list.map((proj, i) => {
             const [t1, t2] = TINTS[i % TINTS.length];
             return (
-              <Link
+              <div
                 key={proj.slug}
-                href={`/portfolio/${proj.slug}`}
                 className={styles.card}
-                draggable={false}
                 ref={(el) => {
                   cardRefs.current[i] = el;
                 }}
@@ -193,22 +194,28 @@ export function SwirlGallery({ list }: { list: Project[] }) {
                   } as React.CSSProperties
                 }
               >
-                <span className={styles.cardInner}>
-                  <span className={styles.cardTop}>
-                    <span className={styles.cardIdx}>{String(i + 1).padStart(2, "0")}</span>
-                    {proj.xp ? <span className={styles.cardXp}>↳ {proj.xp.label}</span> : <span>{proj.categories[0]}</span>}
+                <Link href={`/portfolio/${proj.slug}`} className={styles.cardCore} draggable={false}>
+                  <span className={styles.cardInner}>
+                    <span className={styles.cardTop}>
+                      <span className={styles.cardIdx}>{String(i + 1).padStart(2, "0")}</span>
+                      {proj.xp ? (
+                        <span className={styles.cardXp}>↳ {proj.xp.label}</span>
+                      ) : (
+                        <span>{proj.categories[0]}</span>
+                      )}
+                    </span>
+                    <span className={styles.cardName}>{proj.name}</span>
+                    <span className={styles.cardMeta}>
+                      {proj.categories.join(" · ")} — {proj.date}
+                    </span>
+                    <span className={styles.cardChips}>
+                      {proj.tech.slice(0, 4).map((t) => (
+                        <span key={t}>{t}</span>
+                      ))}
+                    </span>
                   </span>
-                  <span className={styles.cardName}>{proj.name}</span>
-                  <span className={styles.cardMeta}>
-                    {proj.categories.join(" · ")} — {proj.date}
-                  </span>
-                  <span className={styles.cardChips}>
-                    {proj.tech.slice(0, 4).map((t) => (
-                      <span key={t}>{t}</span>
-                    ))}
-                  </span>
-                </span>
-              </Link>
+                </Link>
+              </div>
             );
           })}
         </div>

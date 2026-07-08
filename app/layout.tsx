@@ -28,7 +28,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${bricolageGrotesque.variable} ${ibmPlexMono.variable}`}>
-      <body style={{ fontFamily: "var(--font-display), sans-serif" }}>{children}</body>
+      <body style={{ fontFamily: "var(--font-display), sans-serif" }}>
+        <a href="#main" className="skip-link">
+          skip to content
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

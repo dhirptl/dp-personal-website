@@ -22,7 +22,7 @@ export default function PortfolioPage() {
   const showSwirl = !narrow && view === "swirl";
 
   return (
-    <main className={styles.wrap}>
+    <main id="main" className={styles.wrap}>
       <div className={styles.inner}>
         <div className={`${styles.topbar} rv`}>
           <Link className="back-link" href="/">

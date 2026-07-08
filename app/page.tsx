@@ -27,14 +27,15 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main className="container">
+    <main id="main" className="container">
       <Script
         type="module"
         src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"
         strategy="afterInteractive"
       />
 
-      <div className={`${styles.card} rv`}>
+      <div className={`${styles.cardShell} rv`}>
+      <div className={styles.card}>
         <svg className={styles.spotlight} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3787 2842" fill="none">
           <g filter="url(#spotH)">
             <ellipse
@@ -91,6 +92,7 @@ export default function HomePage() {
 
         <div className={styles.cardGlow} aria-hidden="true"></div>
       </div>
+      </div>
 
       <div className={styles.below}>
         <div className={`${styles.explist} rv`} style={{ "--d": ".18s" } as React.CSSProperties}>
@@ -134,7 +136,10 @@ export default function HomePage() {
         <h2 className={styles.contactTitle}>let&apos;s make it real.</h2>
         <div className={styles.contactRow}>
           <a className="eng-btn lg" href="mailto:dhirpatel768@gmail.com">
-            dhirpatel768@gmail.com →
+            dhirpatel768@gmail.com
+            <span className="eng-arrow" aria-hidden="true">
+              →
+            </span>
           </a>
           <div className={styles.contactSocials}>
             <a href="https://www.linkedin.com/in/dhirptl" target="_blank" rel="noreferrer">

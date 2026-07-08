@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SITE } from "@/lib/site-data";
 import { ImageSlot } from "@/components/ImageSlot";
+import { Reveal } from "@/components/Reveal";
 import styles from "./project.module.css";
 
 export function generateStaticParams() {
@@ -18,7 +19,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const next = SITE.projects[(idx + 1) % SITE.projects.length];
 
   return (
-    <main className="container">
+    <main id="main" className="container">
       <Link className="back-link rv" href="/portfolio">
         <span>[&lt;]</span> all projects
       </Link>
@@ -56,7 +57,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       <div className={styles.body}>
         <div>
           {p.sections.map((s, i) => (
-            <div className={styles.sec} key={i}>
+            <Reveal key={i} className={styles.sec}>
               <div className={styles.seclabel}>{s.title}</div>
               {s.body && <p>{s.body}</p>}
               {s.items && (
@@ -66,7 +67,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                   ))}
                 </ul>
               )}
-            </div>
+            </Reveal>
           ))}
         </div>
 
