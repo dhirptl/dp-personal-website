@@ -6,6 +6,7 @@ import { SITE } from "@/lib/site-data";
 import { useIsNarrow } from "@/lib/useIsNarrow";
 import { SwirlGallery } from "@/components/SwirlGallery";
 import { ProjectListFallback } from "@/components/ProjectListFallback";
+import { WithLiquidMetal } from "@/components/WithLiquidMetal";
 import styles from "./portfolio.module.css";
 
 export default function PortfolioPage() {
@@ -30,21 +31,23 @@ export default function PortfolioPage() {
           </Link>
           {!narrow && (
             <div className={styles.switch} role="tablist" aria-label="gallery view">
-              <button
+              <WithLiquidMetal
+                as="button"
                 className={`${styles.switchBtn}${view === "swirl" ? ` ${styles.switchOn}` : ""}`}
                 onClick={() => setView("swirl")}
                 aria-pressed={view === "swirl"}
               >
                 spiral
-              </button>
+              </WithLiquidMetal>
               <span className={styles.switchDot} aria-hidden="true"></span>
-              <button
+              <WithLiquidMetal
+                as="button"
                 className={`${styles.switchBtn}${view === "list" ? ` ${styles.switchOn}` : ""}`}
                 onClick={() => setView("list")}
                 aria-pressed={view === "list"}
               >
                 list
-              </button>
+              </WithLiquidMetal>
             </div>
           )}
         </div>
@@ -56,14 +59,15 @@ export default function PortfolioPage() {
 
         <div className={`${styles.filters} rv`} style={{ "--d": ".12s" } as React.CSSProperties}>
           {filters.map((f) => (
-            <button
+            <WithLiquidMetal
               key={f}
+              as="button"
               className={`eng-btn ${styles.filt}${cat === f ? " on" : ""}`}
               onClick={() => setCat(f)}
             >
               {f}
               <span className={styles.filtCount}>{count(f)}</span>
-            </button>
+            </WithLiquidMetal>
           ))}
         </div>
       </div>

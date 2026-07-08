@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { GalleryItem } from "@/lib/site-data";
 import { ImageSlot } from "@/components/ImageSlot";
+import { WithLiquidMetal } from "@/components/WithLiquidMetal";
 import styles from "./GalleryTile.module.css";
 
 export function GalleryTile({ item }: { item: GalleryItem }) {
@@ -48,10 +49,15 @@ export function GalleryTile({ item }: { item: GalleryItem }) {
         ))}
       </div>
       {captioned && (
-        <button className={`${styles.locpill} eng-btn`} onClick={next} aria-label="next photo">
+        <WithLiquidMetal
+          as="button"
+          className={`${styles.locpill} eng-btn`}
+          onClick={next}
+          aria-label="next photo"
+        >
           <span>{cur.location}</span>
           <span className={styles.arr}>→</span>
-        </button>
+        </WithLiquidMetal>
       )}
     </div>
   );

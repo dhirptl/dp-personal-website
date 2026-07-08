@@ -5,6 +5,7 @@ import Link from "next/link";
 import Script from "next/script";
 import { SITE } from "@/lib/site-data";
 import { useTyping } from "@/lib/useTyping";
+import { WithLiquidMetal } from "@/components/WithLiquidMetal";
 import styles from "./page.module.css";
 
 const SPLINE_SCENE_URL = "https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode";
@@ -98,12 +99,17 @@ export default function HomePage() {
         <div className={`${styles.explist} rv`} style={{ "--d": ".18s" } as React.CSSProperties}>
           <div className={styles.exphead}>experience</div>
           {SITE.experience.map((e) => (
-            <Link key={e.slug} className={styles.exp} href={`/experience/${e.slug}`}>
+            <WithLiquidMetal
+              key={e.slug}
+              as={Link}
+              className={styles.exp}
+              href={`/experience/${e.slug}`}
+            >
               <span className={styles.expTitle}>{e.title}</span>
               <span className={styles.expOrg}>{e.org}</span>
               {e.now && <span className={styles.expNow}>now</span>}
               <span className={styles.expRange}>{e.range}</span>
-            </Link>
+            </WithLiquidMetal>
           ))}
         </div>
         <nav className={`${styles.navcol} rv`} style={{ "--d": ".28s" } as React.CSSProperties}>
@@ -129,30 +135,6 @@ export default function HomePage() {
             );
           })}
         </nav>
-      </div>
-
-      <div className={`${styles.contact} rv`} style={{ "--d": ".36s" } as React.CSSProperties}>
-        <p className={styles.contactKicker}>have an idea worth building?</p>
-        <h2 className={styles.contactTitle}>let&apos;s make it real.</h2>
-        <div className={styles.contactRow}>
-          <a className="eng-btn lg" href="mailto:dhirpatel768@gmail.com">
-            dhirpatel768@gmail.com
-            <span className="eng-arrow" aria-hidden="true">
-              →
-            </span>
-          </a>
-          <div className={styles.contactSocials}>
-            <a href="https://www.linkedin.com/in/dhirptl" target="_blank" rel="noreferrer">
-              linkedin
-            </a>
-            <a href="https://github.com/dhirptl" target="_blank" rel="noreferrer">
-              github
-            </a>
-            <a href="https://x.com/dhirpatell" target="_blank" rel="noreferrer">
-              x
-            </a>
-          </div>
-        </div>
       </div>
     </main>
   );

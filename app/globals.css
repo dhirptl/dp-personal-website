@@ -22,26 +22,35 @@
   /* cool-tinted black for shadows — never pure #000 */
   --shadow-tint: 8, 11, 20;
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
-  /* iridescent button sweep palette */
-  --ir-blue: #2f8bff;
-  --ir-white: #f5f8ff;
-  --ir-gold: #ffcf3d;
-  --ir-magenta: #ff2764;
-  /* a concentrated color cluster surrounded by wide dark bands (matching
-     the resting #060606), not a solid rainbow fill — reused by both
-     ::before and ::after so the interior beam and exterior glow move in
-     lockstep. Px stops, not %: see ::before for why. First/last stop is
-     #060606 at a 240px period; the keyframe travels that same 240px. */
-  --iri-beam: repeating-linear-gradient(
+  /* fixed L→R perimeter river — matches reference recording */
+  --iri-spectrum: linear-gradient(
+    90deg,
+    #ff2764 0%,
+    #ff3b1f 6%,
+    #ff7a12 14%,
+    #ffb020 22%,
+    #ffcf3d 30%,
+    #fff8e8 38%,
+    #3dffab 48%,
+    #45e8ff 58%,
+    #2f8bff 72%,
+    #5a52ff 84%,
+    #b14dff 94%,
+    #ff2764 100%
+  );
+  --iri-strand-a: repeating-linear-gradient(
     102deg,
-    #060606 0px,
-    #060606 55px,
-    var(--ir-blue) 100px,
-    var(--ir-white) 118px,
-    var(--ir-gold) 134px,
-    var(--ir-magenta) 150px,
-    #060606 195px,
-    #060606 240px
+    transparent 0px,
+    rgba(255, 255, 255, 0.42) 0.6px,
+    transparent 1.4px,
+    transparent 5px
+  );
+  --iri-strand-b: repeating-linear-gradient(
+    78deg,
+    transparent 0px,
+    rgba(255, 255, 255, 0.22) 0.5px,
+    transparent 1.2px,
+    transparent 6px
   );
 }
 
@@ -252,14 +261,14 @@ main {
 }
 
 /* ---- signature "iridescent" button ------------------------------------
-   Stark black pill at rest. On hover (or .on / focus-visible), the
-   background is replaced by a continuous horizontal sweep of holographic
-   light — blue, white, gold, magenta — like foil or moving light beams,
-   while a soft recolored bloom glows past the edges. Snaps back to black
-   on mouse-leave. Modeled on the reference recording. */
+   Reference: crisp perimeter ribbon with fiber-optic strands flowing
+   along the inner pill edge. Conic sweep + SVG displacement for the
+   wavy S-curve river; dark top preserved; cap-tip bloom only. */
 .eng-btn {
   position: relative;
   isolation: isolate;
+  overflow: hidden;
+  z-index: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -273,95 +282,131 @@ main {
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 999px;
   padding: 7px 16px;
-  transition: color 0.4s ease, border-color 0.5s ease, transform 0.4s var(--ease-premium),
-    text-shadow 0.3s ease;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.2s ease,
+    transform 0.4s var(--ease-premium),
+    text-shadow 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.eng-btn > * {
+  position: relative;
+  z-index: 1;
 }
 
 .eng-btn:hover,
+.eng-btn[aria-pressed="true"],
 .eng-btn:focus-visible {
   color: #ffffff;
+  background: #060606;
   border-color: rgba(255, 255, 255, 0.32);
   transform: translateY(-1px);
-  /* layered, not a single soft shadow: the sweep passes a near-white band
-     directly behind this text on every loop, and one soft shadow alone
-     washes out against white. The tight contact shadow does the real work;
-     the two wider layers are insurance for that exact worst-case moment. */
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65), 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75), 0 0 8px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    -7px 4px 20px -10px rgba(255, 95, 40, 0.62),
+    7px 4px 20px -10px rgba(55, 210, 255, 0.55);
 }
 
 .eng-btn:active {
   transform: translateY(0) scale(0.985);
 }
 
-/* interior beam — clipped by the pill's own radius. Stops are in px, not
-   %, on purpose: a gradient's default background-size fills the box
-   exactly, so percentage background-position has zero slack to animate
-   (it'd be visually inert). Px stops give the pattern a real, box-size-
-   independent tile width, so background-position-x actually has room to
-   move — and keeps beam width consistent across the small filter pills
-   and the large CTAs alike. blur() melts the hard color-stop edges into
-   a soft, liquid wash; it bleeds a few px past the pill's own rounded
-   silhouette, which blends into (rather than clashing with) the ::after
-   bloom below, so no overflow:hidden is needed on the parent — that would
-   also clip ::after's own intentional outside-the-box glow. */
+/* wavy perimeter river — fixed spectrum, bottom arc, fiber strands */
 .eng-btn::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   border-radius: inherit;
-  background-image: var(--iri-beam);
-  filter: blur(6px) saturate(1.4) brightness(1.05);
+  background-image:
+    linear-gradient(to top, rgba(255, 248, 220, 0.55) 0%, rgba(255, 248, 220, 0.08) 5%, transparent 14%),
+    var(--iri-strand-b),
+    var(--iri-strand-a),
+    var(--iri-spectrum);
+  background-size:
+    100% 100%,
+    7px 7px,
+    5px 5px,
+    100% 100%;
+  background-position:
+    center bottom,
+    0px 0px,
+    3px 2px,
+    center bottom;
+  background-repeat: no-repeat, repeat, repeat, no-repeat;
+  -webkit-mask-image: url(#eng-river-mask);
+  mask-image: url(#eng-river-mask);
+  filter: url(#eng-iri-strands) saturate(1.6) brightness(1.14) contrast(1.1);
   opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-/* exterior bloom — the same beam pattern, so it tracks the interior sweep
-   in lockstep, just heavily blurred and dimmer so it reads as a halo the
-   beam casts, not a second competing pattern. */
-.eng-btn::after {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  z-index: -2;
-  border-radius: 999px;
-  background-image: var(--iri-beam);
-  opacity: 0;
-  filter: blur(20px) saturate(1.3) brightness(1.1);
-  transition: opacity 0.2s ease;
+  visibility: hidden;
   pointer-events: none;
 }
 
 .eng-btn:hover::before,
-.eng-btn.on::before,
 .eng-btn[aria-pressed="true"]::before,
-.eng-btn:focus-visible::before,
-.eng-btn:hover::after,
-.eng-btn.on::after,
-.eng-btn[aria-pressed="true"]::after,
-.eng-btn:focus-visible::after {
+.eng-btn:focus-visible::before {
   opacity: 1;
-  animation: iridescent-sweep 3s linear infinite;
+  visibility: visible;
+  animation: iri-river-flow 2.6s linear infinite;
+}
+
+.eng-btn.liquid-metal-host::before {
+  display: none;
+}
+
+/* Liquid metal buttons — match experience row hover */
+.eng-btn.liquid-metal-host:hover,
+.eng-btn.liquid-metal-host:focus-visible {
+  color: #0b0b0b;
+  background: #f4f4f5;
+  border-color: transparent;
+  transform: none;
+  text-shadow: none;
+  box-shadow: none;
+}
+
+.eng-btn.liquid-metal-host.on {
+  color: #0b0b0b;
+  background: #f4f4f5;
+  border-color: rgba(11, 11, 11, 0.12);
+}
+
+.eng-btn.liquid-metal-host.on:hover,
+.eng-btn.liquid-metal-host.on:focus-visible {
+  border-color: transparent;
+}
+
+.eng-btn.liquid-metal-host:hover .filtCount,
+.eng-btn.liquid-metal-host.on .filtCount {
+  color: #3a3a38;
+}
+
+.eng-btn.liquid-metal-host:hover .eng-arrow,
+.eng-btn.liquid-metal-host:focus-visible .eng-arrow,
+.eng-btn.liquid-metal-host.on .eng-arrow {
+  transform: translate(2px, 0);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+@keyframes iri-river-flow {
+  to {
+    background-position:
+      28px 0px,
+      31px 2px,
+      center bottom;
+  }
 }
 
 .eng-btn.on {
   border-color: rgba(255, 255, 255, 0.38);
   color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65), 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 0, 0, 0.3);
-}
-
-@keyframes iridescent-sweep {
-  from {
-    background-position-x: 0px;
-  }
-  to {
-    background-position-x: 240px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .eng-btn::before,
-  .eng-btn::after {
+  .eng-btn {
     animation: none !important;
   }
 }
@@ -428,4 +473,39 @@ a:focus-visible {
 .eng-btn[aria-pressed="true"] .eng-arrow {
   transform: translate(2px, -1px) scale(1.06);
   background: rgba(0, 0, 0, 0.4);
+}
+
+/* ---- liquid metal hover fill ------------------------------------------ */
+.liquid-metal-host {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.liquid-metal-host > *:not(.liquid-metal-layer) {
+  position: relative;
+  z-index: 1;
+}
+
+.liquid-metal-host .liquid-metal-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  animation: liquid-metal-in 0.18s ease forwards;
+  overflow: hidden;
+}
+
+@keyframes liquid-metal-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquid-metal-layer {
+    display: none;
+  }
 }

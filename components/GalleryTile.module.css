@@ -81,6 +81,21 @@
   font-size: 11.5px;
 }
 
+.locpill:hover,
+.locpill:focus-visible {
+  background: transparent;
+  backdrop-filter: none;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.locpill.liquid-metal-host:hover,
+.locpill.liquid-metal-host:focus-visible {
+  color: #0b0b0b;
+  background: #f4f4f5;
+  border-color: transparent;
+  backdrop-filter: none;
+}
+
 .locpill .arr {
   display: inline-flex;
   align-items: center;
@@ -96,4 +111,9 @@
 .locpill:hover .arr,
 .locpill:focus-visible .arr {
   background: rgba(0, 0, 0, 0.4);
+}
+
+.locpill.liquid-metal-host:hover .arr,
+.locpill.liquid-metal-host:focus-visible .arr {
+  background: rgba(0, 0, 0, 0.1);
 }

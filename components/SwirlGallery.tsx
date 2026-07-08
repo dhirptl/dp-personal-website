@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Project } from "@/lib/site-data";
+import { WithLiquidMetal } from "@/components/WithLiquidMetal";
 import styles from "./SwirlGallery.module.css";
 
 // duotone aurora tints cycled across cards
@@ -164,12 +165,17 @@ export function SwirlGallery({ list }: { list: Project[] }) {
                 <h2 className={styles.hubName}>{p.name}</h2>
                 <p className={styles.hubDesc}>{p.overview}</p>
                 <div className={styles.hubGo}>
-                  <Link href={`/portfolio/${p.slug}`} className="eng-btn lg" draggable={false}>
+                  <WithLiquidMetal
+                    as={Link}
+                    href={`/portfolio/${p.slug}`}
+                    className="eng-btn lg"
+                    draggable={false}
+                  >
                     view case study
                     <span className="eng-arrow" aria-hidden="true">
                       →
                     </span>
-                  </Link>
+                  </WithLiquidMetal>
                 </div>
               </div>
             )}
