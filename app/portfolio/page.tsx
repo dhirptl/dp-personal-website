@@ -3,24 +3,18 @@
 import { useState } from "react";
 import Link from "next/link";
 import { SITE } from "@/lib/site-data";
-import { useIsNarrow } from "@/lib/useIsNarrow";
-import { SwirlGallery } from "@/components/SwirlGallery";
-import { ProjectListFallback } from "@/components/ProjectListFallback";
+import { ProjectsCarousel } from "@/components/ProjectsCarousel";
 import { WithLiquidMetal } from "@/components/WithLiquidMetal";
 import styles from "./portfolio.module.css";
 
 export default function PortfolioPage() {
   const [cat, setCat] = useState("all");
-  const [view, setView] = useState<"swirl" | "list">("swirl");
-  const narrow = useIsNarrow(900);
 
   const filters = ["all", ...SITE.projectCategories];
   const list = cat === "all" ? SITE.projects : SITE.projects.filter((p) => p.categories.includes(cat));
 
   const count = (c: string) =>
     c === "all" ? SITE.projects.length : SITE.projects.filter((p) => p.categories.includes(c)).length;
-
-  const showSwirl = !narrow && view === "swirl";
 
   return (
     <main id="main" className={styles.wrap}>
@@ -29,27 +23,6 @@ export default function PortfolioPage() {
           <Link className="back-link" href="/">
             <span>[&lt;]</span> back
           </Link>
-          {!narrow && (
-            <div className={styles.switch} role="tablist" aria-label="gallery view">
-              <WithLiquidMetal
-                as="button"
-                className={`${styles.switchBtn}${view === "swirl" ? ` ${styles.switchOn}` : ""}`}
-                onClick={() => setView("swirl")}
-                aria-pressed={view === "swirl"}
-              >
-                spiral
-              </WithLiquidMetal>
-              <span className={styles.switchDot} aria-hidden="true"></span>
-              <WithLiquidMetal
-                as="button"
-                className={`${styles.switchBtn}${view === "list" ? ` ${styles.switchOn}` : ""}`}
-                onClick={() => setView("list")}
-                aria-pressed={view === "list"}
-              >
-                list
-              </WithLiquidMetal>
-            </div>
-          )}
         </div>
 
         <div className={`${styles.head} rv`} style={{ "--d": ".06s" } as React.CSSProperties}>
@@ -72,13 +45,7 @@ export default function PortfolioPage() {
         </div>
       </div>
 
-      {showSwirl ? (
-        <SwirlGallery key={cat} list={list} />
-      ) : (
-        <div className={`${styles.listWrap} rv`} style={{ "--d": ".18s" } as React.CSSProperties}>
-          <ProjectListFallback list={list} />
-        </div>
-      )}
+      <ProjectsCarousel key={cat} list={list} />
 
       <div className={styles.foot}>
         <Link className="arrow-link" href="/">

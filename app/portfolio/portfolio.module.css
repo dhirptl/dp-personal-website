@@ -22,61 +22,6 @@
   gap: 16px;
 }
 
-/* spiral · list switch */
-.switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.switchBtn {
-  appearance: none;
-  background: none;
-  border: 0;
-  padding: 4px 8px;
-  position: relative;
-  overflow: hidden;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  color: #6f6f6b;
-  transition: color 0.25s ease;
-}
-
-.switchBtn:hover {
-  color: #cfcfca;
-}
-
-.switchBtn.liquid-metal-host:hover,
-.switchBtn.liquid-metal-host:focus-visible {
-  color: #0b0b0b;
-  background: #f4f4f5;
-}
-
-.switchOn {
-  color: #ffffff;
-  text-shadow:
-    0 0 14px rgba(69, 232, 255, 0.55),
-    0 0 26px rgba(255, 176, 58, 0.3);
-}
-
-.switchBtn.liquid-metal-host.switchOn,
-.switchBtn.liquid-metal-host.switchOn:hover,
-.switchBtn.liquid-metal-host.switchOn:focus-visible {
-  color: #0b0b0b;
-  background: #f4f4f5;
-  text-shadow: none;
-}
-
-.switchDot {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: #5f5f5b;
-}
-
 .head {
   display: flex;
   align-items: flex-start;
@@ -117,11 +62,6 @@
 .filt:hover .filtCount,
 .filt.on .filtCount {
   color: #d9d9d4;
-}
-
-.listWrap {
-  flex: 1;
-  margin-top: 18px;
 }
 
 .foot {

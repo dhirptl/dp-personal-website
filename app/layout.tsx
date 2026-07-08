@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, IBM_Plex_Mono } from "next/font/google";
+import { Bricolage_Grotesque, IBM_Plex_Mono, Geist } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -27,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${bricolageGrotesque.variable} ${ibmPlexMono.variable}`}>
+    <html lang="en" className={cn(bricolageGrotesque.variable, ibmPlexMono.variable, "font-sans dark", geist.variable)}>
       <body style={{ fontFamily: "var(--font-display), sans-serif" }}>
         <svg aria-hidden="true" width="0" height="0" style={{ position: "absolute" }}>
           <defs>
