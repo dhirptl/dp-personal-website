@@ -1,13 +1,13 @@
-// Aurora tint pairs — ported from SwirlGallery card palette.
+// Cool silver / graphite tint pairs — chrome-metal placeholders.
 const TINTS: [string, string][] = [
-  ["#ffb03a", "#45e8ff"],
-  ["#45e8ff", "#2f7bff"],
-  ["#ff4d8d", "#b14dff"],
-  ["#ffb03a", "#ff7a1f"],
-  ["#2f7bff", "#b14dff"],
-  ["#45e8ff", "#ff4d8d"],
-  ["#b14dff", "#ffb03a"],
-  ["#ff7a1f", "#45e8ff"],
+  ["#c8c8c4", "#6a6a66"],
+  ["#e8e8e4", "#4a4a48"],
+  ["#b0b0ac", "#2e2e2c"],
+  ["#d4d4d0", "#5c5c58"],
+  ["#a8a8a4", "#3a3a38"],
+  ["#f0f0ec", "#555552"],
+  ["#9e9e9a", "#282826"],
+  ["#dcdcd8", "#484846"],
 ];
 
 function hashSlug(slug: string): number {

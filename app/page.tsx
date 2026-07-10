@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import Script from "next/script";
 import { SITE } from "@/lib/site-data";
 import { useTyping } from "@/lib/useTyping";
-import { WithLiquidMetal } from "@/components/WithLiquidMetal";
+import { ExperienceRow } from "@/components/ExperienceRow";
+import { MacbookProjects } from "@/components/MacbookProjects";
 import styles from "./page.module.css";
 
 const SPLINE_SCENE_URL = "https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode";
@@ -96,46 +96,22 @@ export default function HomePage() {
       </div>
 
       <div className={styles.below}>
-        <div className={`${styles.explist} rv`} style={{ "--d": ".18s" } as React.CSSProperties}>
+        <div className="rv" style={{ "--d": ".18s" } as React.CSSProperties}>
           <div className={styles.exphead}>experience</div>
           {SITE.experience.map((e) => (
-            <WithLiquidMetal
+            <ExperienceRow
               key={e.slug}
-              as={Link}
-              className={styles.exp}
+              title={e.title}
+              org={e.org}
+              range={e.range}
+              now={e.now}
               href={`/experience/${e.slug}`}
-            >
-              <span className={styles.expTitle}>{e.title}</span>
-              <span className={styles.expOrg}>{e.org}</span>
-              {e.now && <span className={styles.expNow}>now</span>}
-              <span className={styles.expRange}>{e.range}</span>
-            </WithLiquidMetal>
+            />
           ))}
         </div>
-        <nav className={`${styles.navcol} rv`} style={{ "--d": ".28s" } as React.CSSProperties}>
-          {SITE.nav.map((n) => {
-            const external = n.href.startsWith("http");
-            if (n.href.startsWith("/")) {
-              return (
-                <Link key={n.label} className="arrow-link" href={n.href}>
-                  {n.label}
-                </Link>
-              );
-            }
-            return (
-              <a
-                key={n.label}
-                className="arrow-link"
-                href={n.href}
-                target={external ? "_blank" : undefined}
-                rel={external ? "noreferrer" : undefined}
-              >
-                {n.label}
-              </a>
-            );
-          })}
-        </nav>
       </div>
+
+      <MacbookProjects />
     </main>
   );
 }

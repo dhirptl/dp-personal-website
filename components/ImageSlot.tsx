@@ -33,6 +33,8 @@ export function ImageSlot({
       style={{ borderRadius, "--zoom": zoom } as CSSProperties}
     >
       {src ? (
+        /* Alt text should describe the actual photo subject/context, not UI captions;
+           strip decorative emoji even if present in visible labels (e.g. "lily 🐶" → "lily") */
         <Image src={src} alt={alt} fill sizes={sizes} className={styles.img} priority={priority} />
       ) : (
         <div className={styles.placeholder}>

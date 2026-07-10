@@ -2,20 +2,49 @@
 import React, {
   useCallback,
   useEffect,
+  useId,
   useRef,
   useState,
+  useSyncExternalStore,
   createContext,
   useContext,
 } from "react";
+import { createPortal } from "react-dom";
 import {
   IconArrowNarrowLeft,
   IconArrowNarrowRight,
   IconX,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { ImgHTMLAttributes } from "react";
 import { useOutsideClick } from "@/hooks/use-outside-click";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { WithLiquidMetal } from "@/components/WithLiquidMetal";
+import styles from "@/components/ProjectsCarousel.module.css";
+
+/* matches --ease-premium in globals.css (CSS custom properties aren't
+   readable inside JS animation configs, so the bezier is inlined) */
+const EASE_PREMIUM: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+/* site convention: 760px primary breakpoint (not Tailwind's 768px md:) */
+const MOBILE_BREAKPOINT = 760;
+
+/* must match .cardFace sizes + .track gap in ProjectsCarousel.module.css */
+const CARD_WIDTH = 384;
+const CARD_WIDTH_MOBILE = 224;
+const CARD_GAP = 16;
+
+/* the modal portals to document.body, which only exists client-side.
+   useSyncExternalStore (server snapshot false, client snapshot true) reports
+   "mounted" without a setState-in-effect render cascade. */
+const noopSubscribe = () => () => {};
+const useMounted = () =>
+  useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  );
 
 interface CarouselProps {
   items: React.ReactElement[];
@@ -32,121 +61,128 @@ type Card = {
 export const CarouselContext = createContext<{
   onCardClose: (index: number) => void;
   currentIndex: number;
+  /* root element of the carousel — inerted while a card's modal is open */
+  rootRef: React.RefObject<HTMLDivElement | null> | null;
 }>({
   onCardClose: () => {},
   currentIndex: 0,
+  rootRef: null,
 });
 
+/* id for the modal's description paragraph — the modal's `content` node
+   should put this on its overview/lede paragraph (see ProjectCardContent) */
+export const ModalDescriptionContext = createContext<string | undefined>(
+  undefined,
+);
+
 export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
+  const rootRef = React.useRef<HTMLDivElement>(null);
   const carouselRef = React.useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
   const [canScrollRight, setCanScrollRight] = React.useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const reduceMotion = useReducedMotion();
+
+  const checkScrollability = useCallback(() => {
+    if (carouselRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
+    }
+  }, []);
 
   useEffect(() => {
     if (carouselRef.current) {
       carouselRef.current.scrollLeft = initialScroll;
       checkScrollability();
     }
-  }, [initialScroll]);
+  }, [initialScroll, checkScrollability]);
 
-  const checkScrollability = () => {
-    if (carouselRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
-    }
-  };
+  const isMobile = () =>
+    typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT;
+
+  const cardStep = () =>
+    (isMobile() ? CARD_WIDTH_MOBILE : CARD_WIDTH) + CARD_GAP;
+
+  const scrollBehavior = (): ScrollBehavior =>
+    reduceMotion ? "auto" : "smooth";
 
   const scrollLeft = () => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: -300, behavior: "smooth" });
-    }
+    carouselRef.current?.scrollBy({
+      left: -cardStep(),
+      behavior: scrollBehavior(),
+    });
   };
 
   const scrollRight = () => {
-    if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: 300, behavior: "smooth" });
-    }
+    carouselRef.current?.scrollBy({
+      left: cardStep(),
+      behavior: scrollBehavior(),
+    });
   };
 
   const handleCardClose = (index: number) => {
     if (carouselRef.current) {
-      const cardWidth = isMobile() ? 230 : 384; // (md:w-96)
-      const gap = isMobile() ? 4 : 8;
-      const scrollPosition = (cardWidth + gap) * (index + 1);
       carouselRef.current.scrollTo({
-        left: scrollPosition,
-        behavior: "smooth",
+        left: cardStep() * (index + 1),
+        behavior: scrollBehavior(),
       });
       setCurrentIndex(index);
     }
   };
 
-  const isMobile = () => {
-    return window && window.innerWidth < 768;
-  };
-
   return (
     <CarouselContext.Provider
-      value={{ onCardClose: handleCardClose, currentIndex }}
+      value={{ onCardClose: handleCardClose, currentIndex, rootRef }}
     >
-      <div className="relative w-full">
+      <div className={styles.carousel} ref={rootRef}>
         <div
-          className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth py-10 [scrollbar-width:none] md:py-20"
+          className={styles.scroller}
           ref={carouselRef}
           onScroll={checkScrollability}
         >
-          <div
-            className={cn(
-              "absolute right-0 z-[1000] h-auto w-[5%] overflow-hidden bg-gradient-to-l",
-            )}
-          ></div>
-
-          <div
-            className={cn(
-              "flex flex-row justify-start gap-4 pl-4",
-              "mx-auto max-w-7xl", // remove max-w-4xl if you want the carousel to span the full width of its container
-            )}
-          >
+          <div className={styles.track}>
             {items.map((item, index) => (
               <motion.div
-                initial={{
-                  opacity: 0,
-                  y: 20,
-                }}
+                key={"card" + index}
+                className={styles.cell}
+                initial={reduceMotion ? false : { opacity: 0, y: 20 }}
                 animate={{
                   opacity: 1,
                   y: 0,
-                  transition: {
-                    duration: 0.5,
-                    delay: 0.2 * index,
-                    ease: "easeOut",
-                  },
+                  transition: reduceMotion
+                    ? { duration: 0 }
+                    : {
+                        duration: 0.5,
+                        delay: Math.min(0.08 * index, 0.4),
+                        ease: EASE_PREMIUM,
+                      },
                 }}
-                key={"card" + index}
-                className="rounded-3xl last:pr-[5%] md:last:pr-[33%]"
               >
                 {item}
               </motion.div>
             ))}
           </div>
         </div>
-        <div className="mr-10 flex justify-end gap-2">
-          <button
-            className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/6 disabled:opacity-50 transition-colors hover:bg-white/12"
+        <div className={styles.controls}>
+          <WithLiquidMetal
+            type="button"
+            className={styles.navBtn}
             onClick={scrollLeft}
             disabled={!canScrollLeft}
+            aria-label="scroll to previous projects"
           >
-            <IconArrowNarrowLeft className="h-6 w-6 text-neutral-300" />
-          </button>
-          <button
-            className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/6 disabled:opacity-50 transition-colors hover:bg-white/12"
+            <IconArrowNarrowLeft aria-hidden="true" />
+          </WithLiquidMetal>
+          <WithLiquidMetal
+            type="button"
+            className={styles.navBtn}
             onClick={scrollRight}
             disabled={!canScrollRight}
+            aria-label="scroll to next projects"
           >
-            <IconArrowNarrowRight className="h-6 w-6 text-neutral-300" />
-          </button>
+            <IconArrowNarrowRight aria-hidden="true" />
+          </WithLiquidMetal>
         </div>
       </div>
     </CarouselContext.Provider>
@@ -163,32 +199,58 @@ export const Card = ({
   layout?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
+  const mounted = useMounted();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { onCardClose, currentIndex } = useContext(CarouselContext);
+  const faceRef = useRef<HTMLButtonElement>(null);
+  const { onCardClose, rootRef } = useContext(CarouselContext);
+  const reduceMotion = useReducedMotion();
+
+  const uid = useId();
+  const titleId = `${uid}-title`;
+  const descriptionId = `${uid}-desc`;
 
   const handleClose = useCallback(() => {
     setOpen(false);
     onCardClose(index);
   }, [index, onCardClose]);
 
+  /* body scroll lock — only while the modal is open */
   useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        handleClose();
-      }
-    }
-
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
+    if (!open) return;
+    document.body.style.overflow = "hidden";
+    return () => {
       document.body.style.overflow = "auto";
-    }
+    };
+  }, [open]);
 
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, handleClose]);
-
+  /* Focus trap owns Tab cycling, Escape -> handleClose, and focus restore.
+     It is only active while `open`, so Escape pressed elsewhere on the page
+     no longer scrolls the carousel (previously the keydown listener was
+     attached unconditionally). Declared BEFORE the inert effect below so it
+     captures the trigger's focus before the carousel is inerted. */
+  useFocusTrap(containerRef, open, handleClose);
   useOutsideClick(containerRef, handleClose, open);
+
+  /* Defense-in-depth: inert the carousel behind the (portaled) modal.
+     Imperative rather than React-rendered so cleanup ordering is exact:
+     the trap's focus-restore runs first (a no-op while the root is still
+     inert), then this cleanup un-inerts and re-asserts focus on the card. */
+  useEffect(() => {
+    if (!open) return;
+    // `inert` is an imperative DOM property, not part of React's render
+    // output, so writing it on a node reached via a context-provided ref
+    // is a safe escape hatch despite the immutability rule below.
+    const root = rootRef?.current ?? null;
+    const face = faceRef.current;
+    if (root) {
+      // eslint-disable-next-line react-hooks/immutability
+      root.inert = true;
+    }
+    return () => {
+      if (root) root.inert = false;
+      face?.focus();
+    };
+  }, [open, rootRef]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -196,71 +258,100 @@ export const Card = ({
 
   return (
     <>
-      <AnimatePresence>
-        {open && (
-          <div className="fixed inset-0 z-50 h-screen overflow-auto">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 h-full w-full bg-black/80 backdrop-blur-lg"
-            />
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              ref={containerRef}
-              layoutId={layout ? `card-${card.title}` : undefined}
-              className="relative z-[60] mx-auto my-10 h-fit max-w-5xl rounded-3xl border border-white/10 bg-neutral-900 p-4 font-sans md:p-10"
-            >
-              <button
-                className="sticky top-4 right-0 ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-black dark:bg-white"
-                onClick={handleClose}
-              >
-                <IconX className="h-6 w-6 text-neutral-100 dark:text-neutral-900" />
-              </button>
-              <motion.p
-                layoutId={layout ? `category-${card.title}` : undefined}
-                className="text-base font-medium text-neutral-400"
-              >
-                {card.category}
-              </motion.p>
-              <motion.p
-                layoutId={layout ? `title-${card.title}` : undefined}
-                className="mt-4 text-2xl font-semibold text-white md:text-5xl"
-              >
-                {card.title}
-              </motion.p>
-              <div className="py-10">{card.content}</div>
-            </motion.div>
-          </div>
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {open && (
+              <div className={styles.modalRoot}>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={
+                    reduceMotion
+                      ? { duration: 0 }
+                      : { duration: 0.3, ease: EASE_PREMIUM }
+                  }
+                  className={styles.modalScrim}
+                />
+                <motion.div
+                  initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
+                  transition={
+                    reduceMotion
+                      ? { duration: 0 }
+                      : { duration: 0.4, ease: EASE_PREMIUM }
+                  }
+                  ref={containerRef}
+                  layoutId={layout ? `card-${card.title}` : undefined}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby={titleId}
+                  aria-describedby={descriptionId}
+                  className={styles.modalPanel}
+                >
+                  <WithLiquidMetal
+                    type="button"
+                    className={styles.modalClose}
+                    onClick={handleClose}
+                    aria-label="close project details"
+                  >
+                    <IconX aria-hidden="true" />
+                  </WithLiquidMetal>
+                  <motion.p
+                    layoutId={layout ? `category-${card.title}` : undefined}
+                    className={styles.modalCategory}
+                  >
+                    {card.category}
+                  </motion.p>
+                  <motion.h2
+                    layoutId={layout ? `title-${card.title}` : undefined}
+                    id={titleId}
+                    className={styles.modalTitle}
+                  >
+                    {card.title}
+                  </motion.h2>
+                  <ModalDescriptionContext.Provider value={descriptionId}>
+                    <div className={styles.modalContent}>{card.content}</div>
+                  </ModalDescriptionContext.Provider>
+                </motion.div>
+              </div>
+            )}
+          </AnimatePresence>,
+          document.body,
         )}
-      </AnimatePresence>
       <motion.button
+        type="button"
+        ref={faceRef}
         layoutId={layout ? `card-${card.title}` : undefined}
         onClick={handleOpen}
-        className="relative z-10 flex h-80 w-56 flex-col items-start justify-start overflow-hidden rounded-3xl bg-neutral-900 md:h-[40rem] md:w-96"
+        className={styles.cardFace}
+        aria-haspopup="dialog"
       >
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
-        <div className="relative z-40 p-8">
-          <motion.p
-            layoutId={layout ? `category-${card.category}` : undefined}
-            className="text-left font-mono text-xs font-medium lowercase tracking-wider text-white md:text-sm"
-          >
-            {card.category}
-          </motion.p>
-          <motion.p
-            layoutId={layout ? `title-${card.title}` : undefined}
-            className="mt-2 max-w-xs text-left font-sans text-xl font-semibold [text-wrap:balance] text-white md:text-3xl"
-          >
-            {card.title}
-          </motion.p>
-        </div>
-        <BlurImage
-          src={card.src}
-          alt={card.title}
-          className="absolute inset-0 z-10 object-cover"
-        />
+        <span className={styles.cardInner}>
+          <BlurImage
+            src={card.src}
+            alt={card.title}
+            className={styles.cardImage}
+          />
+          <span className={styles.cardScrim} aria-hidden="true" />
+          <span className={styles.cardText}>
+            <motion.span
+              layoutId={layout ? `category-${card.category}` : undefined}
+              className={styles.cardCategory}
+            >
+              {card.category}
+            </motion.span>
+            <motion.span
+              layoutId={layout ? `title-${card.title}` : undefined}
+              className={styles.cardTitle}
+            >
+              {card.title}
+            </motion.span>
+          </span>
+          <span className={styles.cardSeam} aria-hidden="true" />
+        </span>
       </motion.button>
     </>
   );
@@ -273,12 +364,13 @@ export const BlurImage = ({
   className,
   alt,
 }: ImgHTMLAttributes<HTMLImageElement> & { src: string }) => {
-  const [isLoading, setLoading] = useState(true);
+  const isDataUri = typeof src === "string" && src.startsWith("data:");
+  const [isLoading, setLoading] = useState(!isDataUri);
   return (
     <img
       className={cn(
-        "h-full w-full transition duration-300",
-        isLoading ? "blur-sm" : "blur-0",
+        styles.blurImage,
+        isLoading && styles.blurImageLoading,
         className,
       )}
       onLoad={() => setLoading(false)}

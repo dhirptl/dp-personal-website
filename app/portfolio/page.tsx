@@ -19,15 +19,10 @@ export default function PortfolioPage() {
   return (
     <main id="main" className={styles.wrap}>
       <div className={styles.inner}>
-        <div className={`${styles.topbar} rv`}>
-          <Link className="back-link" href="/">
-            <span>[&lt;]</span> back
-          </Link>
-        </div>
+        <div className={`${styles.topbar} rv`}></div>
 
         <div className={`${styles.head} rv`} style={{ "--d": ".06s" } as React.CSSProperties}>
           <h1 className={`gradient-title ${styles.title}`}>projects</h1>
-          <span className={styles.count}>({SITE.projects.length})</span>
         </div>
 
         <div className={`${styles.filters} rv`} style={{ "--d": ".12s" } as React.CSSProperties}>

@@ -27,7 +27,7 @@
 }
 
 .title {
-  font-size: clamp(48px, 6.6vw, 86px);
+  font-size: var(--text-h1);
   line-height: 0.86;
 }
 
@@ -40,7 +40,7 @@
 }
 
 .atLab {
-  color: #6f6f6b;
+  color: var(--muted-3);
   font-weight: 400;
 }
 
@@ -88,11 +88,7 @@
 }
 
 .body {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 56px;
-  margin: 64px 0 0;
-  align-items: start;
+  composes: body from "../../../components/detail-layout.module.css";
 }
 
 .sec {
@@ -106,12 +102,7 @@
 }
 
 .seclabel {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: #8c8c87;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin: 0 0 16px;
+  composes: seclabel from "../../../components/detail-layout.module.css";
 }
 
 .sec p {
@@ -149,39 +140,16 @@
 }
 
 .side {
-  position: sticky;
-  top: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 34px;
+  composes: side from "../../../components/detail-layout.module.css";
 }
 
+/* experience-specific addition on top of the shared side/seclabel rule */
 .side .seclabel {
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   margin-bottom: 14px;
 }
 
 .chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.chips span {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: #bdbdb8;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
-  padding: 5px 12px;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-
-.chips span:hover {
-  background: #f4f4f5;
-  color: #0b0b0b;
-  border-color: #f4f4f5;
+  composes: chips from "../../../components/detail-layout.module.css";
 }
 
 .metaList {
@@ -199,7 +167,7 @@
 .metaKey {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: #6f6f6b;
+  color: var(--muted-3);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -267,15 +235,4 @@
   margin: 72px 0 0;
   padding: 30px 0 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-@media (max-width: 820px) {
-  .body {
-    grid-template-columns: 1fr;
-    gap: 36px;
-  }
-
-  .side {
-    position: static;
-  }
 }

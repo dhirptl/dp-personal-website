@@ -18,6 +18,7 @@ export type ExperienceIndexEntry = {
 export type GalleryPhoto = {
   id: string;
   location?: string;
+  src?: string;
 };
 
 export type GalleryItem = {
@@ -25,6 +26,7 @@ export type GalleryItem = {
   label: string;
   photos?: GalleryPhoto[];
   noImage?: boolean;
+  src?: string;
 };
 
 export type Album = {
@@ -32,15 +34,6 @@ export type Album = {
   title: string;
   artist: string;
   cover?: string;
-};
-
-export type ExperienceFullEntry = {
-  slug: string;
-  role: string;
-  org: string;
-  range: string;
-  now: boolean;
-  bullets: string[];
 };
 
 export type ExperienceDetail = {
@@ -84,6 +77,7 @@ export type Project = {
   sections: ProjectSection[];
   links?: ProjectLink[];
   xp?: { label: string; route: string };
+  thumbnail?: string;
 };
 
 export type SkillGroup = {
@@ -185,11 +179,11 @@ export const SITE = {
   name: "dhir patel",
   first: "dhir",
   location: "edmonton, ab",
-  meta: ["bsc engineering", "university of alberta"],
+  meta: ["mechatronics and robotics", "university of alberta"],
   currently: [
     "training computer vision models",
     "shipping vr in unity",
-    "working on a bci wheelchair for kids",
+    "working on a bci wheelchair",
     "building cool projects",
     "enjoying life",
   ],
@@ -251,52 +245,6 @@ export const SITE = {
     range: "sep 2025 — present",
     location: "edmonton, ab",
   },
-
-  experienceFull: [
-    {
-      slug: "clutchvr",
-      role: "unity & ml intern",
-      org: "clutchvr",
-      range: "may 2026 — present",
-      now: true,
-      bullets: ["incoming summer 2026 — joining the team to build with unity and machine learning."],
-    },
-    {
-      slug: "robotic-navigation",
-      role: "undergraduate research assistant",
-      org: "glenrose rehabilitation hospital",
-      range: "jan 2026 — present",
-      now: true,
-      bullets: [
-        "built a real-time bridge between unity and ros 2 humble — bidirectional pub/sub syncing urdf wheelchair models with slam occupancy grids.",
-        "wrote dual-mode control: a virtual joystick for cmd_vel teleop, and a gui for publishing autonomous nav2 goals.",
-        "designed a high-contrast, gamified human-robot interface for pediatric users with visual impairments, with real-time pose feedback.",
-      ],
-    },
-    {
-      slug: "formula-sae",
-      role: "fsae drivetrain subsystem",
-      org: "university of alberta formula racing",
-      range: "nov 2025 — present",
-      now: true,
-      bullets: [
-        "redesigned the jacking bar in solidworks after the original failed inspection — lighter, with targeted reinforcements.",
-        "ran fea to find high-stress regions, then iterated the design to mitigate failure points.",
-        "worked in a 30-person drivetrain subsystem to pass technical inspection and reach race readiness.",
-      ],
-    },
-    {
-      slug: "kumon",
-      role: "calculus tutor",
-      org: "kumon",
-      range: "mar 2025 — jun 2025",
-      now: false,
-      bullets: [
-        "tutored high-school students in math 31 — limits, derivatives, and integrals.",
-        "adapted instruction to each student's learning style, and built custom worksheets to target weak spots.",
-      ],
-    },
-  ] satisfies ExperienceFullEntry[],
 
   expDetail: EXP_DETAIL,
 

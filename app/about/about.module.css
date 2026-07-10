@@ -6,7 +6,7 @@
 }
 
 .title {
-  font-size: clamp(64px, 8vw, 104px);
+  font-size: var(--text-h1);
 }
 
 .lede {
@@ -35,15 +35,15 @@
   color: #8c8c87;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding-bottom: 12px;
-  margin-bottom: 8px;
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .albums {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 1fr;
+  grid-auto-columns: minmax(0, 1fr);
   gap: 18px;
   max-width: 100%;
 }
@@ -56,11 +56,11 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
 }
 
 .acap {
-  margin-top: 12px;
+  margin-top: var(--space-3);
   display: flex;
   flex-direction: column;
   gap: 2px;

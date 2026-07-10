@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SITE } from "@/lib/site-data";
 import { GalleryTile } from "@/components/GalleryTile";
 import { ImageSlot } from "@/components/ImageSlot";
@@ -7,10 +6,6 @@ import styles from "./about.module.css";
 export default function AboutPage() {
   return (
     <main id="main" className="container">
-      <Link className="back-link rv" href="/">
-        <span>[&lt;]</span> back
-      </Link>
-
       <div className={`${styles.head} rv`} style={{ "--d": ".05s" } as React.CSSProperties}>
         <h1 className={`gradient-title ${styles.title}`}>about me</h1>
       </div>

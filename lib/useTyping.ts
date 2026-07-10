@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 type TypingOptions = {
   type?: number;
@@ -10,13 +10,31 @@ type TypingOptions = {
 
 type Phase = "typing" | "pausing" | "deleting";
 
+function subscribeReducedMotion(onStoreChange: () => void) {
+  const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mq.addEventListener("change", onStoreChange);
+  return () => mq.removeEventListener("change", onStoreChange);
+}
+
+function getReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 export function useTyping(phrases: string[], opts: TypingOptions = {}) {
   const { type = 70, del = 38, pause = 1900 } = opts;
+  const first = phrases[0] ?? "";
+  const reducedMotion = useSyncExternalStore(
+    subscribeReducedMotion,
+    getReducedMotion,
+    () => false,
+  );
   const [i, setI] = useState(0);
   const [text, setText] = useState("");
   const [phase, setPhase] = useState<Phase>("typing");
 
   useEffect(() => {
+    if (reducedMotion) return;
+
     const cur = phrases[i % phrases.length];
     let t: ReturnType<typeof setTimeout>;
 
@@ -38,7 +56,8 @@ export function useTyping(phrases: string[], opts: TypingOptions = {}) {
     }
 
     return () => clearTimeout(t);
-  }, [text, phase, i, phrases, type, del, pause]);
+  }, [text, phase, i, phrases, type, del, pause, reducedMotion]);
 
+  if (reducedMotion) return first;
   return text;
 }

@@ -11,81 +11,47 @@
   --fg-secondary: #eaeae6;
   --muted-1: #8c8c87;
   --muted-2: #7d7d79;
-  --muted-3: #6f6f6b;
+  /* darkest muted step — 4.59:1 against --bg, clears WCAG AA (was #6f6f6b, 3.92:1) */
+  --muted-3: #7a7a76;
   --accent: #f4f4f5;
   --border: rgba(255, 255, 255, 0.16);
   --border-faint: rgba(255, 255, 255, 0.08);
-  /* aurora spectrum (from the reference recording: warm gold left,
-     prismatic streak mid, electric cyan/blue right) */
-  --au-gold: #ffb03a;
-  --au-amber: #ff7a1f;
-  --au-rose: #ff4d8d;
-  --au-violet: #b14dff;
-  --au-cyan: #45e8ff;
-  --au-blue: #2f7bff;
   /* cool-tinted black for shadows — never pure #000 */
   --shadow-tint: 8, 11, 20;
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
-  /* fixed L→R perimeter river — matches reference recording */
-  --iri-spectrum: linear-gradient(
-    90deg,
-    #ff2764 0%,
-    #ff3b1f 6%,
-    #ff7a12 14%,
-    #ffb020 22%,
-    #ffcf3d 30%,
-    #fff8e8 38%,
-    #3dffab 48%,
-    #45e8ff 58%,
-    #2f8bff 72%,
-    #5a52ff 84%,
-    #b14dff 94%,
-    #ff2764 100%
-  );
-  --iri-strand-a: repeating-linear-gradient(
-    102deg,
-    transparent 0px,
-    rgba(255, 255, 255, 0.42) 0.6px,
-    transparent 1.4px,
-    transparent 5px
-  );
-  --iri-strand-b: repeating-linear-gradient(
-    78deg,
-    transparent 0px,
-    rgba(255, 255, 255, 0.22) 0.5px,
-    transparent 1.2px,
-    transparent 6px
-  );
+  /* ---- spacing scale (names the values already in use site-wide) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 56px;
+  --space-11: 64px;
+  --space-12: 96px;
+  /* ---- border-radius scale (absorbs the ad-hoc 10/12/16/20/27/999 uses) ---- */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+  /* ---- container & gutters (matches .container; wide is for portfolio/carousel) ---- */
+  --container: 1120px;
+  --container-wide: 1400px;
+  --gutter: 32px;
+  --gutter-mobile: 20px;
+  /* ---- shared type scale (one clamp per semantic role) ---- */
+  --text-display: clamp(72px, 9vw, 108px);
+  --text-h1: clamp(52px, 7vw, 92px);
+  --text-lede: clamp(20px, 2.4vw, 28px);
   --background: var(--bg);
   --foreground: var(--fg);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --input: oklch(0.922 0 0);
+  /* kept: @layer base applies border-border / outline-ring below */
   --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
 }
 
 * {
@@ -294,10 +260,9 @@ main {
   margin-left: 10px;
 }
 
-/* ---- signature "iridescent" button ------------------------------------
-   Reference: crisp perimeter ribbon with fiber-optic strands flowing
-   along the inner pill edge. Conic sweep + SVG displacement for the
-   wavy S-curve river; dark top preserved; cap-tip bloom only. */
+/* ---- chrome-metal button plate ----------------------------------------
+   Dark plate by default; hover/focus flips to light fill so the liquid-metal
+   shader (mounted by WithLiquidMetal) reads as polished chrome. */
 .eng-btn {
   position: relative;
   isolation: isolate;
@@ -321,7 +286,6 @@ main {
     background-color 0.15s ease,
     border-color 0.2s ease,
     transform 0.4s var(--ease-premium),
-    text-shadow 0.15s ease,
     box-shadow 0.15s ease;
 }
 
@@ -333,115 +297,48 @@ main {
 .eng-btn:hover,
 .eng-btn[aria-pressed="true"],
 .eng-btn:focus-visible {
-  color: #ffffff;
-  background: #060606;
-  border-color: rgba(255, 255, 255, 0.32);
-  transform: translateY(-1px);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75), 0 0 8px rgba(0, 0, 0, 0.5);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
-    -7px 4px 20px -10px rgba(255, 95, 40, 0.62),
-    7px 4px 20px -10px rgba(55, 210, 255, 0.55);
-}
-
-.eng-btn:active {
-  transform: translateY(0) scale(0.985);
-}
-
-/* wavy perimeter river — fixed spectrum, bottom arc, fiber strands */
-.eng-btn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  background-image:
-    linear-gradient(to top, rgba(255, 248, 220, 0.55) 0%, rgba(255, 248, 220, 0.08) 5%, transparent 14%),
-    var(--iri-strand-b),
-    var(--iri-strand-a),
-    var(--iri-spectrum);
-  background-size:
-    100% 100%,
-    7px 7px,
-    5px 5px,
-    100% 100%;
-  background-position:
-    center bottom,
-    0px 0px,
-    3px 2px,
-    center bottom;
-  background-repeat: no-repeat, repeat, repeat, no-repeat;
-  -webkit-mask-image: url(#eng-river-mask);
-  mask-image: url(#eng-river-mask);
-  filter: url(#eng-iri-strands) saturate(1.6) brightness(1.14) contrast(1.1);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.eng-btn:hover::before,
-.eng-btn[aria-pressed="true"]::before,
-.eng-btn:focus-visible::before {
-  opacity: 1;
-  visibility: visible;
-  animation: iri-river-flow 2.6s linear infinite;
-}
-
-.eng-btn.liquid-metal-host::before {
-  display: none;
-}
-
-/* Liquid metal buttons — match experience row hover */
-.eng-btn.liquid-metal-host:hover,
-.eng-btn.liquid-metal-host:focus-visible {
   color: #0b0b0b;
   background: #f4f4f5;
   border-color: transparent;
   transform: none;
-  text-shadow: none;
   box-shadow: none;
 }
 
-.eng-btn.liquid-metal-host.on {
+.eng-btn:active {
+  transform: scale(0.985);
+}
+
+.eng-btn.on {
   color: #0b0b0b;
   background: #f4f4f5;
   border-color: rgba(11, 11, 11, 0.12);
 }
 
-.eng-btn.liquid-metal-host.on:hover,
-.eng-btn.liquid-metal-host.on:focus-visible {
+.eng-btn.on:hover,
+.eng-btn.on:focus-visible {
   border-color: transparent;
 }
 
-.eng-btn.liquid-metal-host:hover .filtCount,
-.eng-btn.liquid-metal-host.on .filtCount {
+.eng-btn:hover .filtCount,
+.eng-btn.on .filtCount {
   color: #3a3a38;
 }
 
-.eng-btn.liquid-metal-host:hover .eng-arrow,
-.eng-btn.liquid-metal-host:focus-visible .eng-arrow,
-.eng-btn.liquid-metal-host.on .eng-arrow {
+.eng-btn:hover .eng-arrow,
+.eng-btn:focus-visible .eng-arrow,
+.eng-btn.on .eng-arrow {
   transform: translate(2px, 0);
   background: rgba(0, 0, 0, 0.1);
-}
-
-@keyframes iri-river-flow {
-  to {
-    background-position:
-      28px 0px,
-      31px 2px,
-      center bottom;
-  }
-}
-
-.eng-btn.on {
-  border-color: rgba(255, 255, 255, 0.38);
-  color: #fff;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .eng-btn {
     animation: none !important;
+    transition: none;
+  }
+
+  .eng-btn:active {
+    transform: none;
   }
 }
 
@@ -501,14 +398,6 @@ a:focus-visible {
   transition: transform 0.45s var(--ease-premium), background 0.3s ease;
 }
 
-.eng-btn:hover .eng-arrow,
-.eng-btn:focus-visible .eng-arrow,
-.eng-btn.on .eng-arrow,
-.eng-btn[aria-pressed="true"] .eng-arrow {
-  transform: translate(2px, -1px) scale(1.06);
-  background: rgba(0, 0, 0, 0.4);
-}
-
 /* ---- liquid metal hover fill ------------------------------------------ */
 .liquid-metal-host {
   position: relative;
@@ -547,78 +436,17 @@ a:focus-visible {
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
-  --color-input: var(--input);
   --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* radius utilities driven by the explicit :root scale, not a multiplier */
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
 }
 
 @layer base {

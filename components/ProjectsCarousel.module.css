@@ -1,10 +1,324 @@
 .wrap {
   flex: 1;
   width: 100%;
-  margin-top: 8px;
+  margin-top: var(--space-2);
 }
 
-/* Modal content */
+/* ---- carousel shell -------------------------------------------------- */
+.carousel {
+  position: relative;
+  width: 100%;
+}
+
+.scroller {
+  display: flex;
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: auto;
+  scroll-behavior: smooth;
+  padding: var(--space-10) 0 var(--space-9);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.track {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: var(--space-4);
+  margin: 0 auto;
+  max-width: var(--container-wide);
+  padding-left: var(--gutter);
+}
+
+.cell:last-child {
+  padding-right: 33%;
+}
+
+/* prev/next controls — icon-button cousins of .eng-btn (same plate + chrome hover) */
+.controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  width: 100%;
+  max-width: var(--container-wide);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.navBtn {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  appearance: none;
+  cursor: pointer;
+  color: #bdbdb8;
+  background: #060606;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.4s var(--ease-premium),
+    box-shadow 0.15s ease;
+}
+
+.navBtn svg {
+  position: relative;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+}
+
+.navBtn:hover:not(:disabled),
+.navBtn:focus-visible {
+  color: #0b0b0b;
+  background: #f4f4f5;
+  border-color: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.navBtn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.navBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.navBtn:focus-visible {
+  outline: 1.5px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 3px;
+}
+
+/* ---- card face: double-bezel (echoes home hero .cardShell/.card) ----- */
+.cardFace {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 384px;
+  height: 640px;
+  padding: 6px;
+  appearance: none;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  border-radius: var(--radius-xl);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--border-faint);
+  box-shadow:
+    0 40px 90px -50px rgba(var(--shadow-tint), 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: border-color 0.25s ease, box-shadow 0.3s ease;
+}
+
+.cardFace:hover,
+.cardFace:focus-visible {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.cardFace:focus-visible {
+  outline: 1.5px solid rgba(255, 255, 255, 0.55);
+  outline-offset: 4px;
+}
+
+.cardInner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: rgba(6, 6, 6, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+/* base image treatment (BlurImage) — .cardImage below extends it */
+.blurImage {
+  height: 100%;
+  width: 100%;
+  filter: blur(0);
+  transition: filter 0.4s ease;
+}
+
+.blurImageLoading {
+  filter: blur(8px);
+}
+
+.cardImage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  object-fit: cover;
+  transform: scale(1);
+  transition: transform 0.7s var(--ease-premium), filter 0.5s ease;
+}
+
+.cardFace:hover .cardImage,
+.cardFace:focus-visible .cardImage {
+  transform: scale(1.035);
+  filter: brightness(1.07);
+}
+
+.cardScrim {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 45%);
+}
+
+.cardText {
+  position: relative;
+  z-index: 3;
+  display: block;
+  padding: var(--space-7);
+}
+
+.cardCategory {
+  display: block;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  color: rgba(243, 243, 240, 0.78);
+}
+
+.cardTitle {
+  display: block;
+  margin: var(--space-2) 0 0;
+  max-width: 20ch;
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: #fff;
+  text-wrap: balance;
+}
+
+/* chrome seam along the lower edge on hover */
+.cardSeam {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 0;
+  height: 1px;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(244, 244, 245, 0.55) 30%,
+    rgba(244, 244, 245, 0.75) 50%,
+    rgba(244, 244, 245, 0.55) 70%,
+    transparent
+  );
+}
+
+.cardSeam::after {
+  content: "";
+  position: absolute;
+  inset: -12px 0;
+  background: inherit;
+  filter: blur(14px);
+  opacity: 0.5;
+}
+
+.cardFace:hover .cardSeam,
+.cardFace:focus-visible .cardSeam {
+  opacity: 1;
+}
+
+/* ---- modal ----------------------------------------------------------- */
+.modalRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  overflow-y: auto;
+}
+
+.modalScrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 4, 6, 0.8);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.modalPanel {
+  position: relative;
+  z-index: 1;
+  width: min(1024px, calc(100% - var(--gutter) * 2));
+  margin: var(--space-8) auto var(--space-12);
+  padding: var(--space-8);
+  border-radius: var(--radius-xl);
+  background: #0c0c0c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 60px 120px -50px rgba(var(--shadow-tint), 0.85);
+}
+
+.modalClose {
+  composes: navBtn;
+  position: sticky;
+  top: var(--space-4);
+  margin-left: auto;
+  width: 36px;
+  height: 36px;
+}
+
+.modalClose svg {
+  width: 18px;
+  height: 18px;
+}
+
+.modalCategory {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  color: var(--muted-1);
+}
+
+.modalTitle {
+  margin: var(--space-3) 0 0;
+  font-size: clamp(30px, 4.5vw, 52px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+}
+
+.modalContent {
+  padding: var(--space-8) 0 var(--space-4);
+}
+
+/* ---- modal body content ---------------------------------------------- */
 .modalBody {
   display: flex;
   flex-direction: column;
@@ -19,7 +333,7 @@
   font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 0.04em;
-  color: #8c8c87;
+  color: var(--muted-1);
   text-transform: lowercase;
 }
 
@@ -42,22 +356,136 @@
   font-size: 11px;
   letter-spacing: 0.04em;
   padding: 5px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid rgba(255, 255, 255, 0.14);
   color: #a8a8a3;
   text-transform: lowercase;
 }
 
 .xp {
-  color: #45e8ff;
+  color: var(--muted-1);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .xp:hover {
-  color: #ffb03a;
+  color: var(--accent);
 }
 
 .cta {
   margin-top: 4px;
+}
+
+/* ---- site breakpoint: 760px (not Tailwind's 768) ---------------------- */
+@media (max-width: 760px) {
+  .scroller {
+    padding: var(--space-8) 0;
+  }
+
+  .track {
+    padding-left: var(--gutter-mobile);
+  }
+
+  .cell:last-child {
+    padding-right: 5%;
+  }
+
+  .controls {
+    padding: 0 var(--gutter-mobile);
+  }
+
+  .cardFace {
+    width: 224px;
+    height: 340px;
+    padding: 5px;
+    border-radius: var(--radius-lg);
+  }
+
+  .cardInner {
+    border-radius: var(--radius-md);
+  }
+
+  .cardText {
+    padding: var(--space-5);
+  }
+
+  .modalPanel {
+    width: calc(100% - var(--gutter-mobile) * 2);
+    margin: var(--space-5) auto var(--space-8);
+    padding: var(--space-5);
+  }
+
+  .modalContent {
+    padding: var(--space-7) 0 var(--space-3);
+  }
+}
+
+/* compact variant — inside MacBook screen */
+.wrapCompact {
+  margin-top: 0;
+}
+
+.wrapCompact .scroller {
+  padding: var(--space-2) 0 var(--space-3);
+}
+
+.wrapCompact .track {
+  padding-left: 10px;
+  gap: 10px;
+}
+
+.wrapCompact .cell:last-child {
+  padding-right: 20%;
+}
+
+.wrapCompact .controls {
+  padding: 0 10px;
+}
+
+.wrapCompact .navBtn {
+  width: 28px;
+  height: 28px;
+}
+
+.wrapCompact .cardFace {
+  width: 180px;
+  height: 280px;
+  padding: 4px;
+  border-radius: var(--radius-md);
+}
+
+.wrapCompact .cardInner {
+  border-radius: var(--radius-sm);
+}
+
+.wrapCompact .cardText {
+  padding: var(--space-3);
+}
+
+.wrapCompact .cardCategory {
+  font-size: 8px;
+}
+
+.wrapCompact .cardTitle {
+  font-size: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroller {
+    scroll-behavior: auto;
+  }
+
+  .navBtn,
+  .cardFace,
+  .cardImage,
+  .cardSeam,
+  .blurImage {
+    transition: none;
+  }
+
+  .cardFace:hover .cardImage,
+  .cardFace:focus-visible .cardImage {
+    transform: none;
+    filter: none;
+  }
 }

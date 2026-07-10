@@ -1,12 +1,20 @@
 "use client";
 
+import { useContext } from "react";
 import Link from "next/link";
-import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
+import {
+  Carousel,
+  Card,
+  ModalDescriptionContext,
+} from "@/components/ui/apple-cards-carousel";
 import type { Project } from "@/lib/site-data";
 import { getProjectCardSrc } from "@/lib/project-card-gradient";
+import { WithLiquidMetal } from "@/components/WithLiquidMetal";
 import styles from "./ProjectsCarousel.module.css";
 
 function ProjectCardContent({ project }: { project: Project }) {
+  /* wires the modal's aria-describedby to this overview paragraph */
+  const descriptionId = useContext(ModalDescriptionContext);
   return (
     <div className={styles.modalBody}>
       <div className={styles.meta}>
@@ -17,7 +25,9 @@ function ProjectCardContent({ project }: { project: Project }) {
           </Link>
         )}
       </div>
-      <p className={styles.overview}>{project.overview}</p>
+      <p id={descriptionId} className={styles.overview}>
+        {project.overview}
+      </p>
       <div className={styles.chips}>
         {project.tech.map((t) => (
           <span key={t} className={styles.chip}>
@@ -26,18 +36,24 @@ function ProjectCardContent({ project }: { project: Project }) {
         ))}
       </div>
       <div className={styles.cta}>
-        <Link className="eng-btn lg" href={`/portfolio/${project.slug}`}>
+        <WithLiquidMetal as={Link} className="eng-btn lg" href={`/portfolio/${project.slug}`}>
           view case study
           <span className="eng-arrow" aria-hidden="true">
             →
           </span>
-        </Link>
+        </WithLiquidMetal>
       </div>
     </div>
   );
 }
 
-export function ProjectsCarousel({ list }: { list: Project[] }) {
+export function ProjectsCarousel({
+  list,
+  compact = false,
+}: {
+  list: Project[];
+  compact?: boolean;
+}) {
   const items = list.map((p, i) => (
     <Card
       key={p.slug}
@@ -52,7 +68,11 @@ export function ProjectsCarousel({ list }: { list: Project[] }) {
   ));
 
   return (
-    <div className={styles.wrap} aria-label="projects carousel">
+    <div
+      className={`${styles.wrap}${compact ? ` ${styles.wrapCompact}` : ""}`}
+      role="region"
+      aria-label="projects carousel"
+    >
       <Carousel items={items} />
     </div>
   );
