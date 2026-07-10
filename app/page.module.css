@@ -92,7 +92,7 @@
 }
 
 .name {
-  font-size: clamp(72px, 9vw, 108px);
+  font-size: var(--text-display);
   line-height: 0.86;
   font-weight: 700;
   margin: 0;
@@ -135,7 +135,7 @@
 }
 
 .currentlyRow {
-  font-size: 26px;
+  font-size: var(--text-lede);
   font-weight: 500;
   margin: 26px 0 0;
   letter-spacing: -0.01em;
@@ -155,8 +155,8 @@
 .caret {
   display: inline-block;
   width: 3px;
-  height: 24px;
-  vertical-align: -3px;
+  height: 0.9em;
+  vertical-align: -0.1em;
   background: #f4f4f5;
   margin-left: 4px;
   animation: blinkH 1.05s steps(1) infinite;

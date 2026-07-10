@@ -87,7 +87,9 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
     if (carouselRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
       setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
+      // -1 tolerance: fractional scroll positions on non-integer DPR displays
+      // can otherwise leave the next button enabled at the scroll end
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
     }
   }, []);
 
@@ -124,7 +126,7 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
   const handleCardClose = (index: number) => {
     if (carouselRef.current) {
       carouselRef.current.scrollTo({
-        left: cardStep() * (index + 1),
+        left: cardStep() * index,
         behavior: scrollBehavior(),
       });
       setCurrentIndex(index);

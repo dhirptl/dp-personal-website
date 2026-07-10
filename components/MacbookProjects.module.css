@@ -5,7 +5,7 @@
 }
 
 .scrollZone {
-  min-height: 130vh;
+  height: 200vh;
   width: 100%;
   background: transparent;
 }
@@ -13,6 +13,7 @@
 .stage {
   position: sticky;
   top: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,7 +57,6 @@
 }
 
 .dots span {
-  background: #3a3a38;
   border-radius: 50%;
   width: 7px;
   height: 7px;
@@ -78,7 +78,7 @@
   text-align: center;
   font-family: var(--font-mono), monospace;
   letter-spacing: 0.06em;
-  color: #7a7a76;
+  color: var(--muted-1);
   background: #ffffff0a;
   border-radius: 6px;
   flex: 1;
@@ -110,6 +110,12 @@
 }
 
 .expandedLayer {
+  /* overlap the last 100vh of .scrollZone so the crossfade with the pinned
+     mac stage is spatially coherent — this layer reaches the viewport top
+     exactly when the pin releases (scroll progress 0.5) */
+  position: relative;
+  z-index: 2;
+  margin-top: -100vh;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
@@ -184,7 +190,7 @@
   margin: var(--space-2) 0 0;
   font-family: var(--font-mono), monospace;
   letter-spacing: 0.08em;
-  color: #5c5c58;
+  color: var(--muted-3);
   font-size: 11px;
 }
 

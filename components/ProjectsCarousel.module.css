@@ -418,6 +418,17 @@
   .modalContent {
     padding: var(--space-7) 0 var(--space-3);
   }
+
+  /* inside the laptop screen the carousel renders at 0.35 scale — too small
+     to operate, and its nested scroller hijacks page swipes. treat it as
+     decorative on mobile; the full expanded carousel follows right after. */
+  .wrapCompact {
+    pointer-events: none;
+  }
+
+  .wrapCompact .controls {
+    display: none;
+  }
 }
 
 /* compact variant — inside MacBook screen */

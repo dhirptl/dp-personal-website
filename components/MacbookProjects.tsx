@@ -1,8 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { useRef, useState } from "react";
+import {
+  motion,
+  useMotionValueEvent,
+  useScroll,
+  useTransform,
+} from "motion/react";
 import { MacbookScroll } from "@/components/ui/macbook-scroll";
 import { ProjectsCarousel } from "@/components/ProjectsCarousel";
 import { WithLiquidMetal } from "@/components/WithLiquidMetal";
@@ -39,15 +44,29 @@ export function MacbookProjects() {
     offset: ["start start", "end start"],
   });
 
-  const macOpacity = useTransform(scrollYProgress, [0.3, 0.45], [1, 0]);
-  const expandedOpacity = useTransform(scrollYProgress, [0.3, 0.45], [0, 1]);
-  const expandedScale = useTransform(scrollYProgress, [0.3, 0.45], [0.94, 1]);
+  // function-form transforms on purpose: with array ranges, motion promotes
+  // scroll-linked opacity to a native ViewTimeline animation whose range it
+  // computes incorrectly (cover range, unremapped keyframes), so the
+  // crossfade fires at the wrong scroll positions in Chrome. functions keep
+  // these values JS-driven with the same timing as the pointer handoff.
+  const fadeAt = (v: number) => Math.min(1, Math.max(0, (v - 0.35) / 0.15));
+  const macOpacity = useTransform(scrollYProgress, (v) => 1 - fadeAt(v));
+  const expandedOpacity = useTransform(scrollYProgress, (v) => fadeAt(v));
+  const expandedScale = useTransform(
+    scrollYProgress,
+    (v) => 0.94 + 0.06 * fadeAt(v),
+  );
   const macPointerEvents = useTransform(scrollYProgress, (v) =>
-    v >= 0.4 ? "none" : "auto",
+    v >= 0.425 ? "none" : "auto",
   );
   const expandedPointerEvents = useTransform(scrollYProgress, (v) =>
-    v >= 0.4 ? "auto" : "none",
+    v >= 0.425 ? "auto" : "none",
   );
+
+  const [macHidden, setMacHidden] = useState(false);
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    setMacHidden(v >= 0.425);
+  });
 
   const external = SITE.nav.filter((n) => n.href.startsWith("http"));
   const email = SITE.nav.find((n) => n.href.startsWith("mailto:"));
@@ -58,6 +77,8 @@ export function MacbookProjects() {
         <div className={styles.stage}>
           <motion.div
             className={styles.macLayer}
+            inert={macHidden || undefined}
+            aria-hidden={macHidden || undefined}
             style={{
               opacity: macOpacity,
               pointerEvents: macPointerEvents,
