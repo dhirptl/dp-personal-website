@@ -23,7 +23,7 @@ export default function AboutPage() {
       </div>
 
       <div className={`${styles.sec} rv`} style={{ "--d": ".28s" } as React.CSSProperties}>
-        <div className={styles.seclabel}>greatest albums of all time</div>
+        <div className={styles.seclabel}>🎧 greatest albums of all time</div>
         <div className={styles.albums}>
           {SITE.albums.map((a) => (
             <div className={styles.album} key={a.id}>

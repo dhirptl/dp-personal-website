@@ -54,9 +54,18 @@
 
 .albumThumb {
   width: 100%;
+  height: auto !important;
   aspect-ratio: 1 / 1;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--radius-sm);
+}
+
+.albumThumb img {
+  filter: none;
+}
+
+.albumThumb:hover img {
+  filter: none;
 }
 
 .acap {

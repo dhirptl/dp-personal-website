@@ -27,6 +27,35 @@ import { IconCaretDownFilled } from "@tabler/icons-react";
 
 const OPEN_END = 0.35;
 
+/**
+ * Children-mode scroll phases (option B):
+ * pop → rotate → settle/interact hold → exit (sticky releases, MacBook scrolls away).
+ * With scrollZone ≈ 200vh and stage 100vh, sticky holds until progress ≈ 0.5.
+ */
+export const MACBOOK_PHASE = {
+  popEnd: 0.12,
+  rotateEnd: 0.28,
+  settleEnd: 0.36,
+  exitStart: 0.5,
+} as const;
+
+function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * t;
+}
+
+/** Piecewise-linear map — kept in JS so Chrome doesn't promote to a broken ViewTimeline. */
+function phaseValue(v: number, stops: number[], values: number[]) {
+  if (v <= stops[0]) return values[0];
+  for (let i = 0; i < stops.length - 1; i++) {
+    if (v <= stops[i + 1]) {
+      const span = stops[i + 1] - stops[i];
+      const t = span === 0 ? 1 : (v - stops[i]) / span;
+      return lerp(values[i], values[i + 1], Math.min(1, Math.max(0, t)));
+    }
+  }
+  return values[values.length - 1];
+}
+
 export const MacbookScroll = ({
   scrollYProgress,
   src,
@@ -43,39 +72,95 @@ export const MacbookScroll = ({
   children?: React.ReactNode;
 }) => {
   const [isMobile, setIsMobile] = useState(false);
+  const [viewportW, setViewportW] = useState(1280);
 
   useEffect(() => {
-    if (window && window.innerWidth < 768) {
-      setIsMobile(true);
-    }
+    const sync = () => {
+      const w = window.innerWidth;
+      setIsMobile(w < 768);
+      setViewportW(w);
+    };
+    sync();
+    window.addEventListener("resize", sync);
+    return () => window.removeEventListener("resize", sync);
   }, []);
 
-  const endScale = isMobile ? 1 : children ? 1 : 1.5;
-  const scaleX = useTransform(
-    scrollYProgress,
-    [0, OPEN_END],
-    children ? [1.05, 1] : [1.2, endScale],
+  const endScale = isMobile ? 1 : 1.5;
+  const { popEnd, rotateEnd, settleEnd, exitStart } = MACBOOK_PHASE;
+  const hasChildren = Boolean(children);
+
+  // Match CSS root scale breakpoints in MacbookProjects.module.css
+  const rootScale =
+    viewportW < 640 ? 0.42 : viewportW < 761 ? 0.65 : 1.22;
+  const chassisPx = 512 * rootScale;
+  // Cap lid so popped screen stays ~90% of viewport width (still > keyboard).
+  const popEndScale = Math.min(
+    1.4,
+    Math.max(1.12, (viewportW * 0.9) / chassisPx),
   );
-  const scaleY = useTransform(
-    scrollYProgress,
-    [0, OPEN_END],
-    children ? [0.85, 1] : [0.6, endScale],
+  const popMidScale = Math.min(1.1, 0.85 + popEndScale * 0.15);
+  // Refs so scroll-linked transforms always read the latest viewport cap.
+  const popEndScaleRef = React.useRef(popEndScale);
+  const popMidScaleRef = React.useRef(popMidScale);
+  popEndScaleRef.current = popEndScale;
+  popMidScaleRef.current = popMidScale;
+
+  // Children: Aceternity-like pop, viewport-capped end scale. Function-form
+  // avoids Chrome ViewTimeline bugs.
+  const scaleX = useTransform(scrollYProgress, (v) => {
+    if (!hasChildren) return phaseValue(v, [0, OPEN_END], [1.2, endScale]);
+    const mid = popMidScaleRef.current;
+    const end = popEndScaleRef.current;
+    return phaseValue(
+      v,
+      [0, popEnd, rotateEnd, settleEnd, exitStart, 1],
+      [1.25, mid, end, end, end, end],
+    );
+  });
+  const scaleY = useTransform(scrollYProgress, (v) => {
+    if (!hasChildren) return phaseValue(v, [0, OPEN_END], [0.6, endScale]);
+    const mid = popMidScaleRef.current;
+    const end = popEndScaleRef.current;
+    return phaseValue(
+      v,
+      [0, popEnd, rotateEnd, settleEnd, exitStart, 1],
+      [0.5, mid, end, end, end, end],
+    );
+  });
+  const translate = useTransform(scrollYProgress, (v) =>
+    hasChildren
+      ? phaseValue(
+          v,
+          [0, popEnd, rotateEnd, settleEnd, exitStart, 1],
+          [0, -28, 16, 32, 32, 32],
+        )
+      : phaseValue(v, [0, OPEN_END], [0, 1500]),
   );
-  const translate = useTransform(
-    scrollYProgress,
-    [0, OPEN_END],
-    children ? [0, 0] : [0, 1500],
+  const rotate = useTransform(scrollYProgress, (v) =>
+    hasChildren
+      ? phaseValue(
+          v,
+          [0, popEnd, rotateEnd, settleEnd, exitStart, 1],
+          [-28, -28, 0, 0, 0, 0],
+        )
+      : phaseValue(v, [0.1, 0.12, OPEN_END], [-28, -28, 0]),
   );
-  const rotate = useTransform(
-    scrollYProgress,
-    [0.1, 0.12, OPEN_END],
-    [-28, -28, 0],
+  // Interactive only during the hold window (settle → exit).
+  const screenPointerEvents = useTransform(scrollYProgress, (v) => {
+    if (!hasChildren) return "auto";
+    const inHold =
+      v >= settleEnd - 0.005 && v < exitStart - 0.005;
+    return inHold ? "auto" : "none";
+  });
+  const textTransform = useTransform(scrollYProgress, (v) =>
+    phaseValue(v, [0, OPEN_END], [0, 100]),
   );
-  const textTransform = useTransform(scrollYProgress, [0, OPEN_END], [0, 100]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const textOpacity = useTransform(scrollYProgress, (v) =>
+    phaseValue(v, [0, 0.2], [1, 0]),
+  );
 
   return (
-    <div className="flex shrink-0 scale-[0.35] transform flex-col items-center justify-start py-0 [perspective:800px] sm:scale-50 min-[761px]:scale-100">
+    <div className="macbook-scroll-root flex shrink-0 flex-col items-center justify-start py-0 [perspective:800px]">
       {title ? (
         <motion.h2
           style={{
@@ -95,6 +180,7 @@ export const MacbookScroll = ({
             scaleY={scaleY}
             rotate={rotate}
             translate={translate}
+            pointerEvents={screenPointerEvents}
           >
             {children}
           </Lid>
@@ -131,6 +217,7 @@ export const Lid = ({
   scaleY,
   rotate,
   translate,
+  pointerEvents,
   src,
   children,
 }: {
@@ -138,6 +225,7 @@ export const Lid = ({
   scaleY: MotionValue<number>;
   rotate: MotionValue<number>;
   translate: MotionValue<number>;
+  pointerEvents?: MotionValue<string>;
   src?: string;
   children?: React.ReactNode;
 }) => {
@@ -167,15 +255,18 @@ export const Lid = ({
           rotateX: rotate,
           translateY: translate,
           transformStyle: "preserve-3d",
-          transformOrigin: "top",
+          transformOrigin: "top center",
         }}
         className="absolute inset-0 h-96 w-[32rem] rounded-2xl bg-[#010101] p-2"
       >
         <div className="absolute inset-0 rounded-lg bg-[#272729]" />
         {children ? (
-          <div className="pointer-events-auto absolute inset-0 overflow-hidden rounded-lg">
+          <motion.div
+            className="absolute inset-0 overflow-hidden rounded-lg"
+            style={{ pointerEvents: pointerEvents ?? "auto" }}
+          >
             {children}
-          </div>
+          </motion.div>
         ) : src ? (
           <img
             src={src}

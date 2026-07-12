@@ -208,35 +208,42 @@ export const SITE = {
   ],
 
   gallery: [
-    { id: "lily", label: "lily 🐶" },
+    { id: "lily", label: "lily 🐶", src: "/images/gallery-lily.jpeg" },
     {
       id: "travelling",
       label: "travelling",
       photos: [
-        { id: "1", location: "barcelona, spain" },
-        { id: "2", location: "japan" },
-        { id: "3", location: "yellowstone national park" },
+        { id: "1", location: "barcelona, spain", src: "/images/gallery-travelling-barcelona.jpeg" },
+        { id: "2", location: "japan", src: "/images/gallery-travelling-japan.jpeg" },
+        { id: "3", location: "yellowstone national park", src: "/images/gallery-travelling-yellowstone.jpeg" },
       ],
     },
-    { id: "hiking", label: "hiking" },
-    { id: "bouldering", label: "bouldering" },
-    { id: "keyboards", label: "keyboards" },
-    { id: "slopitch", label: "slo-pitch" },
-    { id: "basketball", label: "basketball" },
+    {
+      id: "hiking",
+      label: "hiking",
+      photos: [
+        { id: "1", src: "/images/gallery-hiking-1.jpeg" },
+        { id: "2", src: "/images/gallery-hiking-2.jpeg" },
+      ],
+    },
+    { id: "keyboards", label: "keyboards", src: "/images/gallery-keyboards.jpeg" },
+    { id: "slopitch", label: "slo-pitch", src: "/images/gallery-slopitch.jpeg" },
     {
       id: "running",
       label: "running",
-      photos: [{ id: "1" }, { id: "2" }],
+      photos: [
+        { id: "1", src: "/images/gallery-running-1.jpeg" },
+        { id: "2", src: "/images/gallery-running-2.jpeg" },
+      ],
     },
-    { id: "drawing", label: "drawing", noImage: true },
   ] satisfies GalleryItem[],
 
   albums: [
-    { id: "astroworld", title: "astroworld", artist: "travis scott" },
+    { id: "astroworld", title: "astroworld", artist: "travis scott", cover: "/images/album-astroworld.jpeg" },
     { id: "take-care", title: "take care", artist: "drake", cover: "/images/album-takecare.jpeg" },
     { id: "second-new", title: "alone at prom", artist: "tory lanez", cover: "/images/album-second.jpeg" },
-    { id: "channel-orange", title: "channel orange", artist: "frank ocean" },
-    { id: "carti", title: "playboi carti", artist: "self-titled" },
+    { id: "channel-orange", title: "channel orange", artist: "frank ocean", cover: "/images/album-channel-orange.jpeg" },
+    { id: "carti", title: "playboi carti", artist: "self-titled", cover: "/images/album-carti.jpeg" },
   ] satisfies Album[],
 
   education: {

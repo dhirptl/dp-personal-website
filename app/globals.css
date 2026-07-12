@@ -44,6 +44,8 @@
   --container-wide: 1400px;
   --gutter: 32px;
   --gutter-mobile: 20px;
+  /* sticky header band — padding + wordmark row + border (measured ~59px) */
+  --header-offset: 60px;
   /* ---- shared type scale (one clamp per semantic role) ---- */
   --text-display: clamp(72px, 9vw, 108px);
   --text-h1: clamp(52px, 7vw, 92px);

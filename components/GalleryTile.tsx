@@ -14,7 +14,13 @@ export function GalleryTile({ item }: { item: GalleryItem }) {
     return (
       <div className={styles.tile}>
         {!item.noImage && (
-          <ImageSlot alt={item.label} placeholder={item.label} shape="rect" zoom={1.04} />
+          <ImageSlot
+            src={item.src}
+            alt={item.label}
+            placeholder={item.label}
+            shape="rect"
+            zoom={1.04}
+          />
         )}
         <span className={styles.cap}>{item.label}</span>
       </div>
@@ -35,6 +41,7 @@ export function GalleryTile({ item }: { item: GalleryItem }) {
       {photos.map((p, i) => (
         <div key={p.id} className={styles.photo} style={{ opacity: i === idx ? 1 : 0, zIndex: i === idx ? 1 : 0 }}>
           <ImageSlot
+            src={p.src}
             alt={item.label + (p.location ? ` · ${p.location}` : "")}
             placeholder={item.label + (p.location ? ` · ${p.location}` : "")}
             shape="rect"

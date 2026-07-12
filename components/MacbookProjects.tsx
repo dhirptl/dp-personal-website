@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useMotionValue, useMotionValueEvent } from "motion/react";
 import {
-  motion,
-  useMotionValueEvent,
-  useScroll,
-  useTransform,
-} from "motion/react";
-import { MacbookScroll } from "@/components/ui/macbook-scroll";
+  MACBOOK_PHASE,
+  MacbookScroll,
+} from "@/components/ui/macbook-scroll";
 import { ProjectsCarousel } from "@/components/ProjectsCarousel";
 import { WithLiquidMetal } from "@/components/WithLiquidMetal";
 import { SITE } from "@/lib/site-data";
@@ -37,35 +35,61 @@ function ProjectsScreen() {
   );
 }
 
+function inHoldWindow(v: number) {
+  return (
+    v >= MACBOOK_PHASE.settleEnd - 0.005 &&
+    v < MACBOOK_PHASE.exitStart - 0.005
+  );
+}
+
 export function MacbookProjects() {
   const pinRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: pinRef,
-    offset: ["start start", "end start"],
-  });
+  const scrollYProgress = useMotionValue(0);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
-  // function-form transforms on purpose: with array ranges, motion promotes
-  // scroll-linked opacity to a native ViewTimeline animation whose range it
-  // computes incorrectly (cover range, unremapped keyframes), so the
-  // crossfade fires at the wrong scroll positions in Chrome. functions keep
-  // these values JS-driven with the same timing as the pointer handoff.
-  const fadeAt = (v: number) => Math.min(1, Math.max(0, (v - 0.35) / 0.15));
-  const macOpacity = useTransform(scrollYProgress, (v) => 1 - fadeAt(v));
-  const expandedOpacity = useTransform(scrollYProgress, (v) => fadeAt(v));
-  const expandedScale = useTransform(
-    scrollYProgress,
-    (v) => 0.94 + 0.06 * fadeAt(v),
-  );
-  const macPointerEvents = useTransform(scrollYProgress, (v) =>
-    v >= 0.425 ? "none" : "auto",
-  );
-  const expandedPointerEvents = useTransform(scrollYProgress, (v) =>
-    v >= 0.425 ? "auto" : "none",
-  );
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const onChange = () => setReducedMotion(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
-  const [macHidden, setMacHidden] = useState(false);
+  // rAF sampling — window "scroll" events are unreliable with sticky pinning.
+  useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      const el = pinRef.current;
+      if (el) {
+        if (reducedMotion) {
+          // Jump to open + interactive hold; skip the long pin choreography.
+          scrollYProgress.set(
+            (MACBOOK_PHASE.settleEnd + MACBOOK_PHASE.exitStart) / 2,
+          );
+        } else {
+          const total = el.offsetHeight || 1;
+          const p = Math.min(
+            1,
+            Math.max(0, -el.getBoundingClientRect().top / total),
+          );
+          scrollYProgress.set(p);
+        }
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [scrollYProgress, reducedMotion]);
+
+  const [interactive, setInteractive] = useState(false);
+
+  useEffect(() => {
+    setInteractive(inHoldWindow(scrollYProgress.get()));
+  }, [scrollYProgress]);
+
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    setMacHidden(v >= 0.425);
+    setInteractive(inHoldWindow(v));
+    if (pinRef.current) pinRef.current.dataset.progress = v.toFixed(3);
   });
 
   const external = SITE.nav.filter((n) => n.href.startsWith("http"));
@@ -73,35 +97,21 @@ export function MacbookProjects() {
 
   return (
     <section className={styles.section} aria-label="projects">
-      <div ref={pinRef} className={styles.scrollZone}>
+      <div
+        ref={pinRef}
+        className={`${styles.scrollZone}${reducedMotion ? ` ${styles.scrollZoneReduced}` : ""}`}
+      >
         <div className={styles.stage}>
-          <motion.div
+          <div
             className={styles.macLayer}
-            inert={macHidden || undefined}
-            aria-hidden={macHidden || undefined}
-            style={{
-              opacity: macOpacity,
-              pointerEvents: macPointerEvents,
-            }}
+            inert={!interactive ? true : undefined}
           >
             <MacbookScroll scrollYProgress={scrollYProgress}>
               <ProjectsScreen />
             </MacbookScroll>
-          </motion.div>
+          </div>
         </div>
       </div>
-
-      <motion.div
-        className={styles.expandedLayer}
-        style={{
-          opacity: expandedOpacity,
-          scale: expandedScale,
-          pointerEvents: expandedPointerEvents,
-        }}
-      >
-        <h2 className={styles.expandedTitle}>things i&apos;ve built</h2>
-        <ProjectsCarousel list={SITE.projects} />
-      </motion.div>
 
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
