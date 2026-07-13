@@ -34,7 +34,7 @@ export default function AboutPage() {
                 placeholder={a.title}
                 shape="rounded"
                 radius={10}
-                zoom={1.02}
+                zoom={1}
               />
               <div className={styles.acap}>
                 <span className={styles.at}>{a.title}</span>

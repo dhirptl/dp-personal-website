@@ -12,7 +12,7 @@ const HOVER_PARAMS = {
   colorBack: "#1a1a1a",
   colorTint: "#f4f4f5",
   shape: "diamond",
-  scale: 1.2,
+  scale: 2.5,
   distortion: 0.1,
 };
 

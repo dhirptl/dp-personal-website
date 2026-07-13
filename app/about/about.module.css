@@ -58,14 +58,13 @@
   aspect-ratio: 1 / 1;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--radius-sm);
+  /* Avoid subpixel hover-scale shimmer on grainy covers */
+  transform: translateZ(0);
 }
 
 .albumThumb img {
-  filter: none;
-}
-
-.albumThumb:hover img {
-  filter: none;
+  filter: none !important;
+  transform: none !important;
 }
 
 .acap {
