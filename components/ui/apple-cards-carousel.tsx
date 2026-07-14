@@ -48,6 +48,28 @@ const useMounted = () =>
     () => false,
   );
 
+/* Body scroll lock with ref-count so overlapping card modals don't leave
+   overflow:hidden (or "auto") stuck on body — that kills position:sticky
+   for the MacBook projects stage. */
+let bodyScrollLockCount = 0;
+let bodyOverflowBeforeLock = "";
+
+function acquireBodyScrollLock() {
+  if (bodyScrollLockCount === 0) {
+    bodyOverflowBeforeLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+  }
+  bodyScrollLockCount += 1;
+}
+
+function releaseBodyScrollLock() {
+  bodyScrollLockCount = Math.max(0, bodyScrollLockCount - 1);
+  if (bodyScrollLockCount === 0) {
+    document.body.style.overflow = bodyOverflowBeforeLock;
+    bodyOverflowBeforeLock = "";
+  }
+}
+
 interface CarouselProps {
   items: React.ReactElement[];
   initialScroll?: number;
@@ -237,12 +259,12 @@ export const Card = ({
     onCardClose(index);
   }, [index, onCardClose]);
 
-  /* body scroll lock — only while the modal is open */
+  /* body scroll lock — only while the modal is open; restore prior inline value */
   useEffect(() => {
     if (!open) return;
-    document.body.style.overflow = "hidden";
+    acquireBodyScrollLock();
     return () => {
-      document.body.style.overflow = "auto";
+      releaseBodyScrollLock();
     };
   }, [open]);
 

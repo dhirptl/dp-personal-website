@@ -247,6 +247,10 @@
   text-transform: uppercase;
 }
 
+:global(main).home {
+  padding-bottom: var(--space-6);
+}
+
 .below {
   margin-top: var(--space-10);
 }
@@ -267,6 +271,10 @@
 }
 
 @media (max-width: 760px) {
+  :global(main).home {
+    padding-bottom: var(--space-5);
+  }
+
   .cardShell {
     padding: 5px;
     border-radius: 22px;

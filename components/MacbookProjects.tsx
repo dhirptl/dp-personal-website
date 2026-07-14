@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useMotionValue, useMotionValueEvent } from "motion/react";
 import {
@@ -115,7 +114,7 @@ export function MacbookProjects() {
 
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
-          <h2 className={styles.footerTitle}>if you want, contact me</h2>
+          <h2 className={styles.footerTitle}>my contacts</h2>
 
           <div className={styles.footerActions}>
             {email && (
@@ -126,9 +125,6 @@ export function MacbookProjects() {
                 </span>
               </WithLiquidMetal>
             )}
-            <Link className="arrow-link" href="/portfolio">
-              all projects
-            </Link>
             <nav className={styles.footerLinks} aria-label="social links">
               {external.map((n) => (
                 <a key={n.label} href={n.href} target="_blank" rel="noreferrer">
@@ -138,8 +134,6 @@ export function MacbookProjects() {
               ))}
             </nav>
           </div>
-
-          <p className={styles.credit}>{SITE.name}</p>
         </div>
       </footer>
     </section>

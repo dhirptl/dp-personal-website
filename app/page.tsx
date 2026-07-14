@@ -28,7 +28,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main id="main" className="container">
+    <main id="main" className={`container ${styles.home}`}>
       <Script
         type="module"
         src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"
