@@ -60,6 +60,49 @@
   transition: color 0.18s ease;
 }
 
-.link:hover .range {
+.link:hover .range,
+.link:focus-visible .range {
   color: #3a3a38;
+}
+
+.link:focus-visible {
+  background: #f4f4f5;
+  color: #0b0b0b;
+  padding-left: 26px;
+  border-bottom-color: transparent;
+  outline: none;
+}
+
+.link:focus-visible .org {
+  color: #3a3a38;
+}
+
+.link:focus-visible .now {
+  background: #0b0b0b;
+  color: #f4f4f5;
+}
+
+@media (max-width: 760px) {
+  .exp {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 6px 12px;
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .title {
+    flex: 1 1 100%;
+    font-size: 16px;
+  }
+
+  .org {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .range {
+    margin-left: 0;
+    flex: 0 0 100%;
+    white-space: normal;
+  }
 }

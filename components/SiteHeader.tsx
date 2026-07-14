@@ -30,6 +30,16 @@ export function SiteHeader() {
   // and the hook restores focus to the hamburger toggle automatically.
   useFocusTrap(panelRef, open, () => setOpen(false));
 
+  // Lock background scroll while the mobile menu is open.
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   // Close the panel whenever the route changes. Adjusted during render
   // (React's documented "adjusting state when a prop changes" pattern,
   // using state rather than a ref since refs can't be read during render)

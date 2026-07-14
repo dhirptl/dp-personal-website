@@ -77,7 +77,7 @@ export const MacbookScroll = ({
   useEffect(() => {
     const sync = () => {
       const w = window.innerWidth;
-      setIsMobile(w < 768);
+      setIsMobile(w < 760);
       setViewportW(w);
     };
     sync();

@@ -208,6 +208,12 @@ main {
 }
 
 @media (max-width: 760px) {
+  :root {
+    --text-display: clamp(48px, 14vw, 72px);
+    --text-h1: clamp(36px, 10vw, 52px);
+    --text-lede: clamp(18px, 4.5vw, 22px);
+  }
+
   .container {
     padding: 28px 20px 64px;
   }
@@ -253,13 +259,22 @@ main {
   transition: opacity 0.15s ease, margin-left 0.15s ease;
 }
 
-.arrow-link:hover {
+.arrow-link:hover,
+.arrow-link:focus-visible {
   color: #fff;
 }
 
-.arrow-link:hover::after {
+.arrow-link:hover::after,
+.arrow-link:focus-visible::after {
   opacity: 1;
   margin-left: 10px;
+}
+
+@media (pointer: coarse) {
+  .arrow-link::after {
+    opacity: 1;
+    margin-left: 10px;
+  }
 }
 
 /* ---- chrome-metal button plate ----------------------------------------

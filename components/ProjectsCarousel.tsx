@@ -73,7 +73,7 @@ export function ProjectsCarousel({
       role="region"
       aria-label="projects carousel"
     >
-      <Carousel items={items} />
+      <Carousel items={items} compact={compact} />
     </div>
   );
 }
