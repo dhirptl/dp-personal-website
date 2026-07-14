@@ -275,10 +275,16 @@
   .card {
     flex-direction: column;
     border-radius: 16px;
+    min-height: 0;
   }
 
   .left {
-    padding: 40px 28px;
+    padding: 32px 24px;
+  }
+
+  .right {
+    min-height: 240px;
+    max-height: 45vh;
   }
 
   .below {

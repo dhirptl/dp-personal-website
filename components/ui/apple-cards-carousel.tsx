@@ -33,6 +33,8 @@ const MOBILE_BREAKPOINT = 760;
 /* must match .cardFace sizes + .track gap in ProjectsCarousel.module.css */
 const CARD_WIDTH = 384;
 const CARD_WIDTH_MOBILE = 224;
+const CARD_WIDTH_COMPACT = 180;
+const CARD_WIDTH_COMPACT_MOBILE = 150;
 const CARD_GAP = 16;
 
 /* the modal portals to document.body, which only exists client-side.
@@ -49,6 +51,8 @@ const useMounted = () =>
 interface CarouselProps {
   items: React.ReactElement[];
   initialScroll?: number;
+  /** MacBook lid variant — uses compact card widths for scroll step */
+  compact?: boolean;
 }
 
 type Card = {
@@ -75,7 +79,11 @@ export const ModalDescriptionContext = createContext<string | undefined>(
   undefined,
 );
 
-export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
+export const Carousel = ({
+  items,
+  initialScroll = 0,
+  compact = false,
+}: CarouselProps) => {
   const rootRef = React.useRef<HTMLDivElement>(null);
   const carouselRef = React.useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
@@ -103,8 +111,21 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
   const isMobile = () =>
     typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT;
 
-  const cardStep = () =>
-    (isMobile() ? CARD_WIDTH_MOBILE : CARD_WIDTH) + CARD_GAP;
+  const cardStep = () => {
+    // Prefer measured face width so compact CSS (150/180) stays in sync
+    const face = carouselRef.current?.querySelector(
+      `.${styles.cardFace}`,
+    ) as HTMLElement | null;
+    if (face) {
+      return face.getBoundingClientRect().width + CARD_GAP;
+    }
+    if (compact) {
+      return (
+        (isMobile() ? CARD_WIDTH_COMPACT_MOBILE : CARD_WIDTH_COMPACT) + CARD_GAP
+      );
+    }
+    return (isMobile() ? CARD_WIDTH_MOBILE : CARD_WIDTH) + CARD_GAP;
+  };
 
   const scrollBehavior = (): ScrollBehavior =>
     reduceMotion ? "auto" : "smooth";

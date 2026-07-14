@@ -90,4 +90,11 @@
   .gallery {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .albums {
+    grid-auto-flow: unset;
+    grid-auto-columns: unset;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
 }
