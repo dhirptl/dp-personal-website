@@ -2,13 +2,18 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(10, 10, 10, 0.72);
+  isolation: isolate;
+  pointer-events: auto;
+  /* Near-opaque so iOS sticky + backdrop-filter doesn't pass taps through */
+  background: rgba(10, 10, 10, 0.94);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
   backdrop-filter: blur(14px) saturate(1.2);
   border-bottom: 1px solid var(--border-faint);
 }
 
 .inner {
+  position: relative;
+  z-index: 2;
   max-width: var(--container);
   margin: 0 auto;
   display: flex;
@@ -27,8 +32,10 @@
   transition: color 0.2s ease;
 }
 
-.wordmark:hover {
-  color: #fff;
+@media (hover: hover) {
+  .wordmark:hover {
+    color: #fff;
+  }
 }
 
 .primary {
@@ -51,8 +58,10 @@
   transition: color 0.2s ease, background-size 0.4s var(--ease-premium);
 }
 
-.navLink:hover {
-  color: #fff;
+@media (hover: hover) {
+  .navLink:hover {
+    color: #fff;
+  }
 }
 
 .active {
@@ -64,29 +73,7 @@
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: var(--space-5);
-}
-
-.extLink {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.05em;
-  color: var(--muted-1);
-  transition: color 0.2s ease;
-}
-
-.extLink:hover {
-  color: #fff;
-}
-
-.ext {
-  margin-left: var(--space-1);
-  font-size: 10px;
-  opacity: 0.7;
-}
-
-.cta {
-  font-size: 12px;
+  gap: var(--space-2);
 }
 
 /* hamburger toggle — mono text, matching the site's "[<] back" convention */
@@ -101,46 +88,56 @@
   font-size: 12px;
   letter-spacing: 0.06em;
   color: var(--muted-1);
-  padding: var(--space-2);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-1);
   transition: color 0.2s ease;
 }
 
-.menuBtn:hover,
+@media (hover: hover) {
+  .menuBtn:hover {
+    color: #fff;
+  }
+}
+
 .menuBtn[aria-expanded="true"] {
   color: #fff;
 }
 
-/* slide-down mobile panel */
+/* slide-down mobile panel — always mounted; visibility driven by data-open */
 .panel {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
   padding: var(--space-4) var(--gutter-mobile) var(--space-7);
-  background: rgba(10, 10, 10, 0.92);
+  background: rgba(10, 10, 10, 0.96);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
   backdrop-filter: blur(14px) saturate(1.2);
   border-bottom: 1px solid var(--border-faint);
-  animation: panelIn 0.36s var(--ease-premium) both;
+  opacity: 0;
+  /* Instant visibility (not transitioned) so focus trap can find links on open */
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-10px);
+  transition:
+    opacity 0.28s var(--ease-premium),
+    transform 0.28s var(--ease-premium);
 }
 
-@keyframes panelIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+.panel[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .panel {
-    animation: none;
+    transition: none;
   }
 }
 
@@ -159,7 +156,13 @@
   transition: color 0.2s ease;
 }
 
-.panelLink:hover {
+@media (hover: hover) {
+  .panelLink:hover {
+    color: #fff;
+  }
+}
+
+.panelLink:active {
   color: #fff;
 }
 
@@ -176,7 +179,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-4) var(--space-5);
+  gap: var(--space-3) var(--space-4);
 }
 
 @media (max-width: 760px) {
@@ -194,5 +197,11 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+  }
+
+  .panelLink {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
   }
 }

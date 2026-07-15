@@ -14,7 +14,11 @@
   display: flex;
   width: 100%;
   overflow-x: auto;
-  overscroll-behavior-x: auto;
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
+  /* Prefer horizontal swipes inside the track; page scroll stays vertical */
+  touch-action: pan-x pan-y;
+  -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
   padding: var(--space-10) 0 var(--space-9);
   scrollbar-width: none;
@@ -56,8 +60,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   appearance: none;
   cursor: pointer;
@@ -83,7 +87,6 @@
   height: 20px;
 }
 
-.navBtn:hover:not(:disabled),
 .navBtn:focus-visible {
   color: #0b0b0b;
   background: #f4f4f5;
@@ -92,8 +95,28 @@
   box-shadow: none;
 }
 
+@media (hover: hover) {
+  .navBtn:hover:not(:disabled) {
+    color: #0b0b0b;
+    background: #f4f4f5;
+    border-color: transparent;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
 .navBtn:active:not(:disabled) {
   transform: scale(0.96);
+}
+
+@media (pointer: coarse) {
+  .navBtn:active:not(:disabled) {
+    color: #0b0b0b;
+    background: #f4f4f5;
+    border-color: transparent;
+    transform: scale(0.96);
+    box-shadow: none;
+  }
 }
 
 .navBtn:disabled {
@@ -119,17 +142,25 @@
   text-align: left;
   color: inherit;
   border-radius: var(--radius-xl);
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid var(--border-faint);
+  /* quiet plate — ChromeRim fills the bezel gap behind .cardInner */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #121214;
+  overflow: hidden;
   box-shadow:
     0 40px 90px -50px rgba(var(--shadow-tint), 0.85),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  transition: border-color 0.25s ease, box-shadow 0.3s ease;
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.02);
+  transition: box-shadow 0.3s ease, filter 0.3s ease, border-color 0.3s ease;
 }
 
 .cardFace:hover,
 .cardFace:focus-visible {
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 44px 100px -48px rgba(var(--shadow-tint), 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+  filter: brightness(1.02);
 }
 
 .cardFace:focus-visible {
@@ -139,6 +170,7 @@
 
 .cardInner {
   position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -146,10 +178,10 @@
   height: 100%;
   overflow: hidden;
   border-radius: var(--radius-lg);
-  background: rgba(6, 6, 6, 0.94);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(6, 6, 6, 0.96);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
     inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
@@ -217,16 +249,16 @@
   text-wrap: balance;
 }
 
-/* chrome seam along the lower edge on hover */
+/* chrome seam along the lower edge — stronger on hover */
 .cardSeam {
   position: absolute;
   left: 12%;
   right: 12%;
   bottom: 0;
   height: 1px;
-  z-index: 4;
+  z-index: 5;
   pointer-events: none;
-  opacity: 0;
+  opacity: 0.45;
   transition: opacity 0.35s ease;
   background: linear-gradient(
     90deg,
@@ -379,24 +411,26 @@
 /* ---- site breakpoint: 760px (not Tailwind's 768) ---------------------- */
 @media (max-width: 760px) {
   .scroller {
-    padding: var(--space-8) 0;
+    padding: var(--space-6) 0 var(--space-5);
   }
 
   .track {
     padding-left: var(--gutter-mobile);
+    gap: var(--space-3);
   }
 
   .cell:last-child {
-    padding-right: 5%;
+    padding-right: 12%;
   }
 
   .controls {
     padding: 0 var(--gutter-mobile);
+    justify-content: flex-start;
   }
 
   .cardFace {
-    width: 224px;
-    height: 340px;
+    width: min(280px, 72vw);
+    height: min(420px, 108vw);
     padding: 5px;
     border-radius: var(--radius-lg);
   }
@@ -409,16 +443,37 @@
     padding: var(--space-5);
   }
 
+  .cardTitle {
+    font-size: clamp(20px, 5.5vw, 26px);
+  }
+
+  .modalRoot {
+    /* keep modal above sticky header on iOS */
+    z-index: 200;
+  }
+
   .modalPanel {
     width: calc(100% - var(--gutter-mobile) * 2);
-    margin: var(--space-5) auto var(--space-8);
+    margin: max(var(--space-5), env(safe-area-inset-top, 0px)) auto
+      max(var(--space-8), env(safe-area-inset-bottom, 0px));
     padding: var(--space-5);
+    max-height: none;
+  }
+
+  .modalClose {
+    width: 44px;
+    height: 44px;
+    top: max(var(--space-3), env(safe-area-inset-top, 0px));
   }
 
   .modalContent {
     padding: var(--space-7) 0 var(--space-3);
   }
 
+  .cta .eng-btn,
+  .cta :global(.eng-btn) {
+    min-height: 44px;
+  }
 }
 
 /* compact variant — inside MacBook screen */

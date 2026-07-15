@@ -1,0 +1,20 @@
+.rim {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.rim > :global(*) {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rim {
+    display: none;
+  }
+}

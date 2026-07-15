@@ -21,6 +21,7 @@ import type { ImgHTMLAttributes } from "react";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { WithLiquidMetal } from "@/components/WithLiquidMetal";
+import { ChromeRim } from "@/components/ChromeRim";
 import styles from "@/components/ProjectsCarousel.module.css";
 
 /* matches --ease-premium in globals.css (CSS custom properties aren't
@@ -32,7 +33,8 @@ const MOBILE_BREAKPOINT = 760;
 
 /* must match .cardFace sizes + .track gap in ProjectsCarousel.module.css */
 const CARD_WIDTH = 384;
-const CARD_WIDTH_MOBILE = 224;
+/* fallback when face isn't measurable yet — keep near mobile CSS min(280px, 72vw) */
+const CARD_WIDTH_MOBILE = 280;
 const CARD_WIDTH_COMPACT = 180;
 const CARD_WIDTH_COMPACT_MOBILE = 150;
 const CARD_GAP = 16;
@@ -371,9 +373,10 @@ export const Card = ({
         ref={faceRef}
         layoutId={layout ? `card-${card.title}` : undefined}
         onClick={handleOpen}
-        className={styles.cardFace}
+        className={`${styles.cardFace} chrome-rim`}
         aria-haspopup="dialog"
       >
+        <ChromeRim />
         <span className={styles.cardInner}>
           <BlurImage
             src={card.src}

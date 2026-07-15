@@ -14,13 +14,6 @@
   transition: background 0.18s ease, color 0.18s ease, padding 0.18s ease;
 }
 
-.link:hover {
-  background: #f4f4f5;
-  color: #0b0b0b;
-  padding-left: 26px;
-  border-bottom-color: transparent;
-}
-
 .title {
   font-size: 18px;
   font-weight: 600;
@@ -30,10 +23,6 @@
   font-size: 14px;
   color: #9a9a95;
   transition: color 0.18s ease;
-}
-
-.link:hover .org {
-  color: #3a3a38;
 }
 
 .now {
@@ -46,11 +35,6 @@
   transition: background 0.18s ease, color 0.18s ease;
 }
 
-.link:hover .now {
-  background: #0b0b0b;
-  color: #f4f4f5;
-}
-
 .range {
   margin-left: auto;
   font-family: var(--font-mono);
@@ -60,9 +44,27 @@
   transition: color 0.18s ease;
 }
 
-.link:hover .range,
-.link:focus-visible .range {
-  color: #3a3a38;
+/* Desktop hover chrome invert */
+@media (hover: hover) {
+  .link:hover {
+    background: #f4f4f5;
+    color: #0b0b0b;
+    padding-left: 26px;
+    border-bottom-color: transparent;
+  }
+
+  .link:hover .org {
+    color: #3a3a38;
+  }
+
+  .link:hover .now {
+    background: #0b0b0b;
+    color: #f4f4f5;
+  }
+
+  .link:hover .range {
+    color: #3a3a38;
+  }
 }
 
 .link:focus-visible {
@@ -73,7 +75,8 @@
   outline: none;
 }
 
-.link:focus-visible .org {
+.link:focus-visible .org,
+.link:focus-visible .range {
   color: #3a3a38;
 }
 
@@ -82,12 +85,33 @@
   color: #f4f4f5;
 }
 
+/* Touch: press mirrors hover invert */
+@media (pointer: coarse) {
+  .link:active {
+    background: #f4f4f5;
+    color: #0b0b0b;
+    padding-left: 26px;
+    border-bottom-color: transparent;
+  }
+
+  .link:active .org,
+  .link:active .range {
+    color: #3a3a38;
+  }
+
+  .link:active .now {
+    background: #0b0b0b;
+    color: #f4f4f5;
+  }
+}
+
 @media (max-width: 760px) {
   .exp {
     flex-wrap: wrap;
     align-items: flex-start;
     gap: 6px 12px;
     padding: var(--space-4) var(--space-3);
+    min-height: 44px;
   }
 
   .title {

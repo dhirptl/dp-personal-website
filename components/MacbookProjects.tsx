@@ -1,15 +1,32 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useMotionValue, useMotionValueEvent } from "motion/react";
 import {
   MACBOOK_PHASE,
   MacbookScroll,
 } from "@/components/ui/macbook-scroll";
 import { ProjectsCarousel } from "@/components/ProjectsCarousel";
-import { WithLiquidMetal } from "@/components/WithLiquidMetal";
+import { SocialChromeLink } from "@/components/SocialIcons";
 import { SITE } from "@/lib/site-data";
 import styles from "./MacbookProjects.module.css";
+
+/** Site convention: 760px primary breakpoint (see ProjectsCarousel / SiteHeader). */
+const MOBILE_MQ = "(max-width: 760px)";
+
+function subscribeMobile(onStoreChange: () => void) {
+  const mq = window.matchMedia(MOBILE_MQ);
+  mq.addEventListener("change", onStoreChange);
+  return () => mq.removeEventListener("change", onStoreChange);
+}
+
+function getMobile() {
+  return window.matchMedia(MOBILE_MQ).matches;
+}
+
+function useIsMobile() {
+  return useSyncExternalStore(subscribeMobile, getMobile, () => false);
+}
 
 function ProjectsScreen() {
   return (
@@ -34,14 +51,46 @@ function ProjectsScreen() {
   );
 }
 
-function inHoldWindow(v: number) {
+function isSettled(v: number) {
+  return v >= MACBOOK_PHASE.settleEnd - 0.005;
+}
+
+function ContactsFooter() {
+  const external = SITE.nav.filter((n) => n.href.startsWith("http"));
+  const email = SITE.nav.find((n) => n.href.startsWith("mailto:"));
+
   return (
-    v >= MACBOOK_PHASE.settleEnd - 0.005 &&
-    v < MACBOOK_PHASE.exitStart - 0.005
+    <footer className={styles.footer}>
+      <div className={styles.footerInner}>
+        <h2 className={styles.footerTitle}>my contacts</h2>
+
+        <nav className={styles.footerLinks} aria-label="social links">
+          {external.map((n) => (
+            <SocialChromeLink key={n.label} href={n.href} label={n.label} size="lg" />
+          ))}
+          {email && (
+            <SocialChromeLink href={email.href} label={email.label} size="lg" />
+          )}
+        </nav>
+      </div>
+    </footer>
   );
 }
 
-export function MacbookProjects() {
+/** Phone layout — full-width carousel (scaled MacBook lid is untappable). */
+function MobileProjects() {
+  return (
+    <section className={styles.section} aria-label="projects">
+      <div className={styles.mobileStage}>
+        <h2 className={styles.mobileTitle}>things i&apos;ve built</h2>
+        <ProjectsCarousel list={SITE.projects} />
+      </div>
+      <ContactsFooter />
+    </section>
+  );
+}
+
+function DesktopMacbookProjects() {
   const pinRef = useRef<HTMLDivElement>(null);
   const scrollYProgress = useMotionValue(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -83,16 +132,13 @@ export function MacbookProjects() {
   const [interactive, setInteractive] = useState(false);
 
   useEffect(() => {
-    setInteractive(inHoldWindow(scrollYProgress.get()));
+    setInteractive(isSettled(scrollYProgress.get()));
   }, [scrollYProgress]);
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    setInteractive(inHoldWindow(v));
+    setInteractive(isSettled(v));
     if (pinRef.current) pinRef.current.dataset.progress = v.toFixed(3);
   });
-
-  const external = SITE.nav.filter((n) => n.href.startsWith("http"));
-  const email = SITE.nav.find((n) => n.href.startsWith("mailto:"));
 
   return (
     <section className={styles.section} aria-label="projects">
@@ -112,30 +158,12 @@ export function MacbookProjects() {
         </div>
       </div>
 
-      <footer className={styles.footer}>
-        <div className={styles.footerInner}>
-          <h2 className={styles.footerTitle}>my contacts</h2>
-
-          <div className={styles.footerActions}>
-            {email && (
-              <WithLiquidMetal as="a" className="eng-btn lg" href={email.href}>
-                {email.label}
-                <span className="eng-arrow" aria-hidden="true">
-                  →
-                </span>
-              </WithLiquidMetal>
-            )}
-            <nav className={styles.footerLinks} aria-label="social links">
-              {external.map((n) => (
-                <a key={n.label} href={n.href} target="_blank" rel="noreferrer">
-                  {n.label}
-                  <span aria-hidden="true"> ↗</span>
-                </a>
-              ))}
-            </nav>
-          </div>
-        </div>
-      </footer>
+      <ContactsFooter />
     </section>
   );
+}
+
+export function MacbookProjects() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileProjects /> : <DesktopMacbookProjects />;
 }

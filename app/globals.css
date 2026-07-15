@@ -241,8 +241,10 @@ main {
   transition: color 0.2s ease;
 }
 
-.back-link:hover {
-  color: #fff;
+@media (hover: hover) {
+  .back-link:hover {
+    color: #fff;
+  }
 }
 
 .arrow-link {
@@ -259,21 +261,34 @@ main {
   transition: opacity 0.15s ease, margin-left 0.15s ease;
 }
 
-.arrow-link:hover,
 .arrow-link:focus-visible {
   color: #fff;
 }
 
-.arrow-link:hover::after,
 .arrow-link:focus-visible::after {
   opacity: 1;
   margin-left: 10px;
+}
+
+@media (hover: hover) {
+  .arrow-link:hover {
+    color: #fff;
+  }
+
+  .arrow-link:hover::after {
+    opacity: 1;
+    margin-left: 10px;
+  }
 }
 
 @media (pointer: coarse) {
   .arrow-link::after {
     opacity: 1;
     margin-left: 10px;
+  }
+
+  .arrow-link:active {
+    color: #fff;
   }
 }
 
@@ -311,7 +326,6 @@ main {
   z-index: 1;
 }
 
-.eng-btn:hover,
 .eng-btn[aria-pressed="true"],
 .eng-btn:focus-visible {
   color: #0b0b0b;
@@ -319,6 +333,29 @@ main {
   border-color: transparent;
   transform: none;
   box-shadow: none;
+}
+
+@media (hover: hover) {
+  .eng-btn:hover {
+    color: #0b0b0b;
+    background: #f4f4f5;
+    border-color: transparent;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .eng-btn.on:hover {
+    border-color: transparent;
+  }
+
+  .eng-btn:hover .filtCount {
+    color: #3a3a38;
+  }
+
+  .eng-btn:hover .eng-arrow {
+    transform: translate(2px, 0);
+    background: rgba(0, 0, 0, 0.1);
+  }
 }
 
 .eng-btn:active {
@@ -331,21 +368,37 @@ main {
   border-color: rgba(11, 11, 11, 0.12);
 }
 
-.eng-btn.on:hover,
 .eng-btn.on:focus-visible {
   border-color: transparent;
 }
 
-.eng-btn:hover .filtCount,
 .eng-btn.on .filtCount {
   color: #3a3a38;
 }
 
-.eng-btn:hover .eng-arrow,
 .eng-btn:focus-visible .eng-arrow,
 .eng-btn.on .eng-arrow {
   transform: translate(2px, 0);
   background: rgba(0, 0, 0, 0.1);
+}
+
+@media (pointer: coarse) {
+  .eng-btn:active {
+    color: #0b0b0b;
+    background: #f4f4f5;
+    border-color: transparent;
+    transform: scale(0.985);
+    box-shadow: none;
+  }
+
+  .eng-btn:active .filtCount {
+    color: #3a3a38;
+  }
+
+  .eng-btn:active .eng-arrow {
+    transform: translate(2px, 0);
+    background: rgba(0, 0, 0, 0.1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -413,6 +466,126 @@ a:focus-visible {
   background: rgba(0, 0, 0, 0.28);
   font-size: 12px;
   transition: transform 0.45s var(--ease-premium), background 0.3s ease;
+}
+
+/* ---- chrome social icon plate — circular cousin of .eng-btn / .navBtn */
+.social-chrome {
+  position: relative;
+  z-index: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  appearance: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: #bdbdb8;
+  background: #060606;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.2s ease,
+    transform 0.4s var(--ease-premium),
+    box-shadow 0.15s ease;
+}
+
+/* Metallic glyph — same vertical chrome wash as the hero “dhir” */
+.social-chrome-glyph {
+  position: relative;
+  z-index: 1;
+  display: block;
+  background: linear-gradient(to bottom, #fafafa 28%, #9a9a95 72%, #6e6e6a);
+  -webkit-mask-image: var(--social-icon);
+  mask-image: var(--social-icon);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  filter: drop-shadow(0 0 5px rgba(244, 244, 245, 0.28));
+  transition:
+    background 0.15s ease,
+    filter 0.15s ease;
+}
+
+.social-chrome:focus-visible {
+  color: #0b0b0b;
+  background: #f4f4f5;
+  border-color: transparent;
+  transform: none;
+  box-shadow: none;
+  border-radius: 999px;
+}
+
+.social-chrome:focus-visible .social-chrome-glyph {
+  background: #0b0b0b;
+  filter: none;
+}
+
+@media (hover: hover) {
+  .social-chrome:hover {
+    color: #0b0b0b;
+    background: #f4f4f5;
+    border-color: transparent;
+    transform: none;
+    box-shadow: none;
+    border-radius: 999px;
+  }
+
+  .social-chrome:hover .social-chrome-glyph {
+    background: #0b0b0b;
+    filter: none;
+  }
+}
+
+.social-chrome:active {
+  transform: scale(0.96);
+}
+
+@media (pointer: coarse) {
+  .social-chrome:active {
+    color: #0b0b0b;
+    background: #f4f4f5;
+    border-color: transparent;
+    transform: scale(0.96);
+    box-shadow: none;
+  }
+
+  .social-chrome:active .social-chrome-glyph {
+    background: #0b0b0b;
+    filter: none;
+  }
+}
+
+.social-chrome.sm {
+  width: 32px;
+  height: 32px;
+}
+
+.social-chrome.lg {
+  width: 40px;
+  height: 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-chrome {
+    transition: none;
+  }
+
+  .social-chrome:active {
+    transform: none;
+  }
+}
+
+/* ---- chrome rim host (LiquidMetal fill in components/ChromeRim) ------- */
+.chrome-rim {
+  position: relative;
+  isolation: isolate;
 }
 
 /* ---- liquid metal hover fill ------------------------------------------ */

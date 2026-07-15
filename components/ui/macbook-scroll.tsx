@@ -43,14 +43,16 @@ function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
 }
 
-/** Piecewise-linear map — kept in JS so Chrome doesn't promote to a broken ViewTimeline. */
+/** Piecewise map — kept in JS so Chrome doesn't promote to a broken ViewTimeline.
+ * Each segment is smoothstep-eased so joins have zero velocity (no hard corners). */
 function phaseValue(v: number, stops: number[], values: number[]) {
   if (v <= stops[0]) return values[0];
   for (let i = 0; i < stops.length - 1; i++) {
     if (v <= stops[i + 1]) {
       const span = stops[i + 1] - stops[i];
       const t = span === 0 ? 1 : (v - stops[i]) / span;
-      return lerp(values[i], values[i + 1], Math.min(1, Math.max(0, t)));
+      const c = Math.min(1, Math.max(0, t));
+      return lerp(values[i], values[i + 1], c * c * (3 - 2 * c));
     }
   }
   return values[values.length - 1];
@@ -107,50 +109,37 @@ export const MacbookScroll = ({
 
   // Children: Aceternity-like pop, viewport-capped end scale. Function-form
   // avoids Chrome ViewTimeline bugs.
-  const scaleX = useTransform(scrollYProgress, (v) => {
-    if (!hasChildren) return phaseValue(v, [0, OPEN_END], [1.2, endScale]);
+  //
+  // One transform string so the op order is scale → rotate → translate about a
+  // bottom origin — the same pipeline as the static back plate. At rest
+  // (scaleX 1, scaleY 0.5, rotateX -25) the screen then projects exactly onto
+  // the plate instead of rendering narrower under a mismatched perspective.
+  const lidTransform = useTransform(scrollYProgress, (v) => {
+    const stops = [0, popEnd, rotateEnd, settleEnd, exitStart, 1];
     const mid = popMidScaleRef.current;
     const end = popEndScaleRef.current;
-    return phaseValue(
-      v,
-      [0, popEnd, rotateEnd, settleEnd, exitStart, 1],
-      [1.25, mid, end, end, end, end],
-    );
+    const sx = hasChildren
+      ? phaseValue(v, stops, [1, mid, end, end, end, end])
+      : phaseValue(v, [0, OPEN_END], [1.2, endScale]);
+    const sy = hasChildren
+      ? phaseValue(v, stops, [0.5, mid, end, end, end, end])
+      : phaseValue(v, [0, OPEN_END], [0.6, endScale]);
+    const t = hasChildren
+      ? phaseValue(v, stops, [0, -28, 16, 32, 32, 32])
+      : phaseValue(v, [0, OPEN_END], [0, 1500]);
+    const r = hasChildren
+      ? phaseValue(v, stops, [-25, -25, 0, 0, 0, 0])
+      : phaseValue(v, [0.1, 0.12, OPEN_END], [-28, -28, 0]);
+    // Origin is the lid's bottom (384px = h-96); shift so the top edge lands
+    // where the old top-origin layout put it: ty = t + 384·(sy − 1).
+    const ty = t + 384 * (sy - 1);
+    return `translateY(${ty}px) rotateX(${r}deg) scaleX(${sx}) scaleY(${sy})`;
   });
-  const scaleY = useTransform(scrollYProgress, (v) => {
-    if (!hasChildren) return phaseValue(v, [0, OPEN_END], [0.6, endScale]);
-    const mid = popMidScaleRef.current;
-    const end = popEndScaleRef.current;
-    return phaseValue(
-      v,
-      [0, popEnd, rotateEnd, settleEnd, exitStart, 1],
-      [0.5, mid, end, end, end, end],
-    );
-  });
-  const translate = useTransform(scrollYProgress, (v) =>
-    hasChildren
-      ? phaseValue(
-          v,
-          [0, popEnd, rotateEnd, settleEnd, exitStart, 1],
-          [0, -28, 16, 32, 32, 32],
-        )
-      : phaseValue(v, [0, OPEN_END], [0, 1500]),
-  );
-  const rotate = useTransform(scrollYProgress, (v) =>
-    hasChildren
-      ? phaseValue(
-          v,
-          [0, popEnd, rotateEnd, settleEnd, exitStart, 1],
-          [-28, -28, 0, 0, 0, 0],
-        )
-      : phaseValue(v, [0.1, 0.12, OPEN_END], [-28, -28, 0]),
-  );
-  // Interactive only during the hold window (settle → exit).
+  // Interactive from settle onward — the open screen stays visible (and
+  // clickable) even after the sticky releases.
   const screenPointerEvents = useTransform(scrollYProgress, (v) => {
     if (!hasChildren) return "auto";
-    const inHold =
-      v >= settleEnd - 0.005 && v < exitStart - 0.005;
-    return inHold ? "auto" : "none";
+    return v >= settleEnd - 0.005 ? "auto" : "none";
   });
   const textTransform = useTransform(scrollYProgress, (v) =>
     phaseValue(v, [0, OPEN_END], [0, 100]),
@@ -176,10 +165,7 @@ export const MacbookScroll = ({
         <div className="relative z-20">
           <Lid
             src={src}
-            scaleX={scaleX}
-            scaleY={scaleY}
-            rotate={rotate}
-            translate={translate}
+            transform={lidTransform}
             pointerEvents={screenPointerEvents}
           >
             {children}
@@ -213,18 +199,12 @@ export const MacbookScroll = ({
 };
 
 export const Lid = ({
-  scaleX,
-  scaleY,
-  rotate,
-  translate,
+  transform,
   pointerEvents,
   src,
   children,
 }: {
-  scaleX: MotionValue<number>;
-  scaleY: MotionValue<number>;
-  rotate: MotionValue<number>;
-  translate: MotionValue<number>;
+  transform: MotionValue<string>;
   pointerEvents?: MotionValue<string>;
   src?: string;
   children?: React.ReactNode;
@@ -233,7 +213,9 @@ export const Lid = ({
     <div className="relative [perspective:800px]">
       <div
         style={{
-          transform: "perspective(800px) rotateX(-25deg) translateZ(0px)",
+          // Shared wrapper perspective only — a self perspective() here would
+          // project the plate differently from the screen and break flushness.
+          transform: "rotateX(-25deg)",
           transformOrigin: "bottom",
           transformStyle: "preserve-3d",
         }}
@@ -250,12 +232,9 @@ export const Lid = ({
       </div>
       <motion.div
         style={{
-          scaleX: scaleX,
-          scaleY: scaleY,
-          rotateX: rotate,
-          translateY: translate,
+          transform,
           transformStyle: "preserve-3d",
-          transformOrigin: "top center",
+          transformOrigin: "bottom center",
         }}
         className="absolute inset-0 h-96 w-[32rem] rounded-2xl bg-[#010101] p-2"
       >

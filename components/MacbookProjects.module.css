@@ -64,10 +64,15 @@
   }
 
   .stage {
+    /* Break out of .container; clear max-width: 100% so 100vw can center */
     width: 100vw;
+    max-width: 100vw;
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
-    overflow: visible;
+    /* Back plate's perspective projection is ~784px wide — clip it at the
+       viewport edge (761–784px band) instead of widening the document. */
+    overflow-x: clip;
+    overflow-y: visible;
   }
 
   .macLayer :global(.macbook-scroll-root) {
@@ -180,29 +185,34 @@
   line-height: 1.15;
 }
 
-.footerActions {
-  align-items: center;
-  gap: var(--space-5) var(--space-7);
-  flex-wrap: wrap;
-  display: flex;
-}
-
 .footerLinks {
-  gap: var(--space-4) var(--space-6);
+  gap: var(--space-2);
   flex-wrap: wrap;
+  align-items: center;
   display: flex;
 }
 
-.footerLinks a {
-  font-family: var(--font-mono), monospace;
-  color: #8c8c87;
-  font-size: 13px;
-  text-decoration: none;
-  transition: color 0.2s;
+/* Phone: full-bleed carousel — MacBook lid scale makes taps unusable */
+.mobileStage {
+  /* Break out of .container so carousel padding matches portfolio */
+  width: 100vw;
+  max-width: 100vw;
+  margin-top: var(--space-2);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
 }
 
-.footerLinks a:hover {
-  color: #f3f3f0;
+.mobileTitle {
+  letter-spacing: -0.03em;
+  background: linear-gradient(#fafafa 30%, #9a9a95);
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  margin: 0 0 var(--space-2);
+  padding: 0 var(--gutter-mobile);
+  font-size: clamp(28px, 8vw, 40px);
+  font-weight: 700;
+  line-height: 1.05;
 }
 
 @media (max-width: 760px) {
@@ -212,10 +222,5 @@
 
   .footer {
     padding: var(--space-5) var(--gutter-mobile) 0;
-  }
-
-  .footerActions {
-    flex-direction: column;
-    align-items: flex-start;
   }
 }

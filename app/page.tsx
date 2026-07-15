@@ -6,6 +6,7 @@ import { SITE } from "@/lib/site-data";
 import { useTyping } from "@/lib/useTyping";
 import { ExperienceRow } from "@/components/ExperienceRow";
 import { MacbookProjects } from "@/components/MacbookProjects";
+import { ChromeRim } from "@/components/ChromeRim";
 import styles from "./page.module.css";
 
 const SPLINE_SCENE_URL = "https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode";
@@ -35,7 +36,8 @@ export default function HomePage() {
         strategy="afterInteractive"
       />
 
-      <div className={`${styles.cardShell} rv`}>
+      <div className={`${styles.cardShell} chrome-rim rv`}>
+      <ChromeRim />
       <div className={styles.card}>
         <svg className={styles.spotlight} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3787 2842" fill="none">
           <g filter="url(#spotH)">
