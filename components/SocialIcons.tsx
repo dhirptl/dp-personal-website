@@ -77,7 +77,7 @@ export function SocialChromeLink({
       aria-label={label}
       title={label}
       target={external ? "_blank" : undefined}
-      rel={external ? "noreferrer" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
       onClick={onClick}
     >
       <SocialIcon label={label} size={GLYPH_PX[size]} />

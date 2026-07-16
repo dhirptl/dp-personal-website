@@ -2,25 +2,18 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import LiquidMetal, { liquidMetalPresets } from "@/components/ui/liquid-metal";
+import {
+  LIQUID_METAL_CHROME,
+  LIQUID_METAL_OPACITY,
+} from "@/components/ui/liquid-metal-fill";
 import styles from "./ChromeRim.module.css";
 
 const BASE_PARAMS = liquidMetalPresets[0].params as Record<string, unknown>;
 
-/** Brighter chrome so the bezel ring reads on dark plates. */
-const RIM_PARAMS = {
-  fit: "cover",
-  softness: 0.15,
-  speed: 0.65,
-  colorBack: "#2a2a2c",
-  colorTint: "#f4f4f5",
-  shape: "diamond",
-  scale: 2.2,
-  distortion: 0.12,
-};
-
 /**
  * Liquid-metal chrome that fills the host. Pair with a double-bezel shell
  * (padding + raised inner plate) so only the bezel gap shows as chrome.
+ * Same plate params + opacity as button liquid-metal fills.
  */
 export function ChromeRim() {
   const hostRef = useRef<HTMLDivElement | null>(null);
@@ -48,7 +41,7 @@ export function ChromeRim() {
 
   if (reducedMotion) return null;
 
-  const params = { ...BASE_PARAMS, ...RIM_PARAMS };
+  const params = { ...BASE_PARAMS, ...LIQUID_METAL_CHROME };
 
   return (
     <div ref={hostRef} className={styles.rim} aria-hidden="true">
@@ -60,7 +53,7 @@ export function ChromeRim() {
               width: "100%",
               height: "100%",
               borderRadius: "inherit",
-              opacity: 1,
+              opacity: LIQUID_METAL_OPACITY,
             }}
           />
         </Suspense>

@@ -3,6 +3,8 @@ import { GalleryTile } from "@/components/GalleryTile";
 import { ImageSlot } from "@/components/ImageSlot";
 import styles from "./about.module.css";
 
+export const dynamic = "force-static";
+
 export default function AboutPage() {
   return (
     <main id="main" className="container">

@@ -221,9 +221,11 @@ main {
 
 .gradient-title {
   font-weight: 700;
-  line-height: 0.84;
+  /* Sub-1 line-heights clip descenders (j/g/p/y) with background-clip:text. */
+  line-height: 1.05;
   letter-spacing: -0.04em;
   margin: 0;
+  padding-bottom: 0.06em;
   background: linear-gradient(to bottom, #fafafa 30%, #9a9a95);
   -webkit-background-clip: text;
   background-clip: text;

@@ -5,6 +5,8 @@
   border-radius: inherit;
   pointer-events: none;
   overflow: hidden;
+  /* same light plate buttons flip to before the liquid-metal overlay */
+  background: #f4f4f5;
 }
 
 .rim > :global(*) {

@@ -4,6 +4,8 @@ import { SITE } from "@/lib/site-data";
 import { Reveal } from "@/components/Reveal";
 import styles from "./experience.module.css";
 
+export const dynamic = "force-static";
+
 export function generateStaticParams() {
   return Object.keys(SITE.expDetail).map((slug) => ({ slug }));
 }
@@ -35,7 +37,7 @@ export default async function ExperienceDetailPage({ params }: { params: Promise
       </h1>
       <p className={`${styles.at} rv`} style={{ "--d": ".15s" } as React.CSSProperties}>
         <span className={styles.atLab}>at </span>
-        <a className={styles.org} href={e.orgHref} target="_blank" rel="noreferrer">
+        <a className={styles.org} href={e.orgHref} target="_blank" rel="noopener noreferrer">
           {e.org}
           <span className={styles.ext}>↗</span>
         </a>
@@ -96,7 +98,7 @@ export default async function ExperienceDetailPage({ params }: { params: Promise
             <div className={styles.metaList}>
               <div className={styles.metaRow}>
                 <span className={styles.metaKey}>company</span>
-                <a className={styles.metaOrgLink} href={e.orgHref} target="_blank" rel="noreferrer">
+                <a className={styles.metaOrgLink} href={e.orgHref} target="_blank" rel="noopener noreferrer">
                   {e.org} ↗
                 </a>
               </div>

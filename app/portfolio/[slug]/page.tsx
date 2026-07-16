@@ -5,6 +5,8 @@ import { ImageSlot } from "@/components/ImageSlot";
 import { Reveal } from "@/components/Reveal";
 import styles from "./project.module.css";
 
+export const dynamic = "force-static";
+
 export function generateStaticParams() {
   return SITE.projects.map((p) => ({ slug: p.slug }));
 }
@@ -85,7 +87,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               <div className={styles.seclabel}>links</div>
               <div className={styles.links}>
                 {p.links.map((l) => (
-                  <a key={l.href} href={l.href} target="_blank" rel="noreferrer">
+                  <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer">
                     <span>{l.label}</span>
                     <span>↗</span>
                   </a>

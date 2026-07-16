@@ -243,7 +243,7 @@ export const SITE = {
     { id: "take-care", title: "take care", artist: "drake", cover: "/images/album-takecare.jpeg" },
     { id: "second-new", title: "alone at prom", artist: "tory lanez", cover: "/images/album-second.jpeg" },
     { id: "channel-orange", title: "channel orange", artist: "frank ocean", cover: "/images/album-channel-orange.jpeg" },
-    { id: "carti", title: "playboi carti", artist: "self-titled", cover: "/images/album-playboi-carti.jpeg" },
+    { id: "carti", title: "playboi carti", artist: "self-titled", cover: "/images/album-carti-self-titled.jpeg" },
   ] satisfies Album[],
 
   education: {

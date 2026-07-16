@@ -162,7 +162,8 @@
 }
 
 .footer {
-  padding: var(--space-6) var(--gutter) 0;
+  /* Clear the MacBook chin tab that hangs below the chassis */
+  padding: var(--space-10) var(--gutter) 0;
   position: relative;
 }
 
