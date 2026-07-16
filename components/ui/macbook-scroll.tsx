@@ -137,7 +137,7 @@ export const MacbookScroll = ({
   });
   // Interactive from settle onward — the open screen stays visible (and
   // clickable) even after the sticky releases.
-  const screenPointerEvents = useTransform(scrollYProgress, (v) => {
+  const screenPointerEvents = useTransform(scrollYProgress, (v): string => {
     if (!hasChildren) return "auto";
     return v >= settleEnd - 0.005 ? "auto" : "none";
   });
