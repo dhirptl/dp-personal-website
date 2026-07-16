@@ -1,4 +1,4 @@
-/* Space Black MacBook materials — used by macbook-scroll.tsx */
+/* Space Black MacBook chassis — shell + lid only (keypad stays Aceternity) */
 
 .shell {
   position: relative;
@@ -7,7 +7,7 @@
   height: 22rem;
   width: 32rem;
   overflow: hidden;
-  border-radius: 0.75rem; /* ~12px — matches lid rounded-xl */
+  border-radius: 0.75rem;
   background: linear-gradient(
     180deg,
     #2a2a2c 0%,
@@ -34,39 +34,6 @@
   z-index: 1;
 }
 
-.hinge {
-  height: 1rem;
-  width: 80%;
-  margin-inline: auto;
-  margin-top: 0.75rem;
-  border-radius: 2px;
-  background: linear-gradient(
-    90deg,
-    #3a3a3c 0%,
-    #1a1a1c 18%,
-    #0c0c0e 50%,
-    #1a1a1c 82%,
-    #3a3a3c 100%
-  );
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.08) inset,
-    0 -1px 0 0 rgba(0, 0, 0, 0.55) inset,
-    0 2px 4px rgba(0, 0, 0, 0.35);
-}
-
-.spill {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  background: radial-gradient(
-    ellipse 65% 50% at 50% 8%,
-    rgba(190, 205, 255, 0.1) 0%,
-    rgba(150, 170, 220, 0.04) 40%,
-    transparent 68%
-  );
-}
-
 .chin {
   position: absolute;
   inset-inline: 0;
@@ -78,6 +45,7 @@
   border-top-right-radius: 1.5rem;
   background: linear-gradient(to top, #1a1a1c, #0c0c0e);
   box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04) inset;
+  z-index: 2;
 }
 
 .fadeGradient {
@@ -95,7 +63,6 @@
   );
 }
 
-/* Lid back plate + active lid */
 .backPlate {
   position: relative;
   height: 12rem;
@@ -142,10 +109,10 @@
 .activeLid {
   position: absolute;
   inset: 0;
-  height: 24rem; /* h-96 */
+  height: 24rem;
   width: 32rem;
   border-radius: 0.75rem;
-  padding: 0.375rem; /* ~p-1.5 */
+  padding: 0.375rem;
   background: linear-gradient(180deg, #1a1a1c 0%, #0e0e10 100%);
   box-shadow:
     0 0 0 1px #080808,
@@ -188,74 +155,4 @@
     inset 0 -1px 0 0 rgba(0, 0, 0, 0.35),
     inset 0 0 0 1px rgba(0, 0, 0, 0.25),
     inset 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.speakerWell {
-  margin-top: 0.5rem;
-  margin-inline: auto;
-  height: 10rem;
-  width: 100%;
-  overflow: hidden;
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.35);
-  box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.55),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.4);
-}
-
-.speakerGrid {
-  height: 100%;
-  width: 100%;
-  background-image: radial-gradient(circle, #08080a 0.5px, transparent 0.5px);
-  background-size: 3px 3px;
-  opacity: 0.9;
-}
-
-.keypad {
-  margin-inline: 0.25rem;
-  height: 100%;
-  border-radius: 0.375rem;
-  background: #0a0a0c;
-  padding: 0.25rem;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
-  transform: translateZ(0);
-}
-
-.keyOuter {
-  border-radius: 4px;
-  padding: 0.5px;
-  transform: translateZ(0);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.keyOuterBacklit {
-  background: rgba(200, 210, 230, 0.06);
-  box-shadow: inset 0 0 0 0.5px rgba(180, 200, 255, 0.08);
-}
-
-.keyFace {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 3.5px;
-  background: linear-gradient(180deg, #1a191e 0%, #0c0b10 55%, #08070b 100%);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.07),
-    inset 0 -0.5px 2px 0 #050508,
-    inset -0.5px 0 2px 0 #050508;
-}
-
-.keyLegend {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 5px;
-  color: #c8c8d0;
-}
-
-.keyLegendBacklit {
-  color: #f0f2f8;
-  text-shadow: 0 0 4px rgba(180, 200, 255, 0.35);
 }

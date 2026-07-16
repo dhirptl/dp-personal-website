@@ -15,59 +15,32 @@ export function SplineHero() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const host = hostRef.current;
-    if (!host) return;
-
-    let cancelled = false;
-    let idleId: number | undefined;
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
-
-    const start = () => {
-      import("@splinetool/viewer")
-        .then(() => {
-          if (!cancelled) setBoot(true);
-        })
-        .catch(() => {
-          /* keep poster/loader if the viewer fails to load */
-        });
-    };
-
-    const schedule = () => {
-      if ("requestIdleCallback" in window) {
-        idleId = window.requestIdleCallback(start, { timeout: 1800 });
-      } else {
-        timeoutId = setTimeout(start, 200);
-      }
-    };
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        io.disconnect();
-        schedule();
-      },
-      { rootMargin: "120px" },
-    );
-
-    io.observe(host);
-
+    // Hero is above the fold; load viewer on mount (module is cached after first visit).
+    let active = true;
+    import("@splinetool/viewer")
+      .then(() => {
+        if (active) setBoot(true);
+      })
+      .catch((err) => {
+        console.error("[SplineHero] viewer import failed", err);
+      });
     return () => {
-      cancelled = true;
-      io.disconnect();
-      if (idleId !== undefined && "cancelIdleCallback" in window) {
-        window.cancelIdleCallback(idleId);
-      }
-      if (timeoutId !== undefined) clearTimeout(timeoutId);
+      active = false;
     };
   }, []);
 
   useEffect(() => {
     if (!boot) return;
-    const el = hostRef.current?.querySelector("spline-viewer");
+    const el = hostRef.current?.querySelector("spline-viewer") as
+      | (HTMLElement & { _loaded?: boolean })
+      | null
+      | undefined;
     if (!el) return;
 
     const onLoad = () => setLoaded(true);
     el.addEventListener("load", onLoad);
+    // Scene may finish before this effect runs (cached import / fast network).
+    if (el._loaded) setLoaded(true);
     const t = setTimeout(() => setLoaded(true), 6000);
     return () => {
       el.removeEventListener("load", onLoad);
@@ -77,7 +50,8 @@ export function SplineHero() {
 
   return (
     <div
-      className={`${styles.right}${loaded ? ` ${styles.on}` : ""}`}
+      className={styles.right}
+      data-loaded={loaded ? "true" : "false"}
       ref={hostRef}
       aria-busy={!loaded}
     >
@@ -86,7 +60,9 @@ export function SplineHero() {
         <div className={styles.spinner}></div>
         <span className={styles.loaderLabel}>{boot ? "loading scene…" : "preparing…"}</span>
       </div>
-      {boot ? <spline-viewer url={SPLINE_SCENE_URL}></spline-viewer> : null}
+      {boot ? (
+        <spline-viewer url={SPLINE_SCENE_URL} loading="eager"></spline-viewer>
+      ) : null}
     </div>
   );
 }

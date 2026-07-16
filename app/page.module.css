@@ -198,9 +198,10 @@
   transition: opacity 0.6s ease;
 }
 
-.right.on .poster {
+.right[data-loaded="true"] .poster {
   opacity: 0;
   pointer-events: none;
+  visibility: hidden;
 }
 
 .right :global(spline-viewer) {
@@ -213,7 +214,7 @@
   transition: opacity 0.6s ease;
 }
 
-.right.on :global(spline-viewer) {
+.right[data-loaded="true"] :global(spline-viewer) {
   opacity: 1;
 }
 
@@ -227,9 +228,10 @@
   transition: opacity 0.5s ease;
 }
 
-.right.on .loader {
+.right[data-loaded="true"] .loader {
   opacity: 0;
   pointer-events: none;
+  visibility: hidden;
 }
 
 .spinner {

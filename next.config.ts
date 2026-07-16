@@ -2,7 +2,8 @@ import type { NextConfig } from "next";
 
 /**
  * Security headers for a static portfolio.
- * Spline scene assets still load from prod.spline.design; the viewer itself is self-hosted.
+ * Spline scene assets load from prod.spline.design; optional WASM/decoders from unpkg + gstatic.
+ * 'unsafe-eval' is required: @splinetool/viewer unpacks .splinecode via new Function().
  */
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -10,14 +11,15 @@ const contentSecurityPolicy = [
   "form-action 'self'",
   "frame-ancestors 'none'",
   "object-src 'none'",
-  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  "img-src 'self' data: blob: https://app.spline.design",
   "font-src 'self' data:",
-  "connect-src 'self' https://prod.spline.design",
+  "connect-src 'self' https://prod.spline.design https://unpkg.com https://www.gstatic.com https://hooks.spline.design https://relayserver.spline.design https://apis.spline.design",
   "worker-src 'self' blob:",
   "child-src 'self' blob:",
-  "media-src 'self'",
+  // Spline eye animation is an embedded .mp4 played via blob: URL
+  "media-src 'self' blob: data:",
   "upgrade-insecure-requests",
 ].join("; ");
 

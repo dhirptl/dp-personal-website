@@ -148,16 +148,6 @@ export const MacbookScroll = ({
   const textOpacity = useTransform(scrollYProgress, (v) =>
     phaseValue(v, [0, 0.2], [1, 0]),
   );
-  // Screen spill onto the deck: off while closed → rises through rotate → holds.
-  const spillOpacity = useTransform(scrollYProgress, (v) =>
-    hasChildren
-      ? phaseValue(
-          v,
-          [0, popEnd, rotateEnd, settleEnd, exitStart, 1],
-          [0, 0.15, 0.85, 1, 1, 1],
-        )
-      : phaseValue(v, [0, OPEN_END], [0, 1]),
-  );
 
   return (
     <div className="macbook-scroll-root flex shrink-0 flex-col items-center justify-start py-0 [perspective:800px]">
@@ -184,15 +174,10 @@ export const MacbookScroll = ({
         </div>
         <div className={styles.shell}>
           <div className={styles.shellNoise} aria-hidden="true" />
-          <motion.div
-            className={styles.spill}
-            style={{ opacity: spillOpacity }}
-            aria-hidden="true"
-          />
-          <div className="relative z-[3] h-10 w-full">
-            <div className={styles.hinge} aria-hidden="true" />
+          <div className="relative z-[2] h-10 w-full">
+            <div className="absolute inset-x-0 mx-auto h-4 w-[80%] bg-[#050505]" />
           </div>
-          <div className="relative z-[3] flex">
+          <div className="relative z-[2] flex">
             <div className="mx-auto h-full w-[10%] overflow-hidden">
               <SpeakerGrid />
             </div>
@@ -274,7 +259,7 @@ export const Trackpad = () => {
 
 export const Keypad = () => {
   return (
-    <div className={styles.keypad}>
+    <div className="mx-1 h-full [transform:translateZ(0)] rounded-md bg-[#050505] p-1 [will-change:transform]">
       <div className="mb-[2px] flex w-full shrink-0 gap-[2px]">
         <KBtn
           className="w-10 items-end justify-start pb-[2px] pl-[4px]"
@@ -637,14 +622,26 @@ export const KBtn = ({
 }) => {
   return (
     <div
-      className={cn(styles.keyOuter, backlit && styles.keyOuterBacklit)}
+      className={cn(
+        "[transform:translateZ(0)] rounded-[4px] p-[0.5px] [will-change:transform]",
+        backlit && "bg-white/[0.2] shadow-xl shadow-white",
+      )}
     >
-      <div className={cn(styles.keyFace, "flex h-6 w-6 items-center justify-center", className)}>
+      <div
+        className={cn(
+          "flex h-6 w-6 items-center justify-center rounded-[3.5px] bg-[#0A090D]",
+          className,
+        )}
+        style={{
+          boxShadow:
+            "0px -0.5px 2px 0 #0D0D0F inset, -0.5px 0px 2px 0 #0D0D0F inset",
+        }}
+      >
         <div
           className={cn(
-            styles.keyLegend,
+            "flex w-full flex-col items-center justify-center text-[5px] text-neutral-200",
             childrenClassName,
-            backlit && styles.keyLegendBacklit,
+            backlit && "text-white",
           )}
         >
           {children}
@@ -656,9 +653,14 @@ export const KBtn = ({
 
 export const SpeakerGrid = () => {
   return (
-    <div className={styles.speakerWell} aria-hidden="true">
-      <div className={styles.speakerGrid} />
-    </div>
+    <div
+      className="mt-2 flex h-40 gap-[2px] px-[0.5px]"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle, #08080A 0.5px, transparent 0.5px)",
+        backgroundSize: "3px 3px",
+      }}
+    ></div>
   );
 };
 
