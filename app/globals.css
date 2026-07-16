@@ -221,15 +221,19 @@ main {
 
 .gradient-title {
   font-weight: 700;
-  /* Sub-1 line-heights clip descenders (j/g/p/y) with background-clip:text. */
-  line-height: 1.05;
+  /* background-clip:text only paints inside the box; sub-1 leading + no
+     padding makes descenders (j/g/p/y) transparent and look "cut off". */
+  display: inline-block;
+  line-height: 1.1;
   letter-spacing: -0.04em;
   margin: 0;
-  padding-bottom: 0.06em;
+  padding: 0.12em 0.02em 0.18em;
   background: linear-gradient(to bottom, #fafafa 30%, #9a9a95);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 .back-link {

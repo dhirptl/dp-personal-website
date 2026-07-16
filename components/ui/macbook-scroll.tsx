@@ -24,6 +24,7 @@ import { IconWorld } from "@tabler/icons-react";
 import { IconCommand } from "@tabler/icons-react";
 import { IconCaretLeftFilled } from "@tabler/icons-react";
 import { IconCaretDownFilled } from "@tabler/icons-react";
+import styles from "./macbook-scroll.module.css";
 
 const OPEN_END = 0.35;
 
@@ -147,6 +148,16 @@ export const MacbookScroll = ({
   const textOpacity = useTransform(scrollYProgress, (v) =>
     phaseValue(v, [0, 0.2], [1, 0]),
   );
+  // Screen spill onto the deck: off while closed → rises through rotate → holds.
+  const spillOpacity = useTransform(scrollYProgress, (v) =>
+    hasChildren
+      ? phaseValue(
+          v,
+          [0, popEnd, rotateEnd, settleEnd, exitStart, 1],
+          [0, 0.15, 0.85, 1, 1, 1],
+        )
+      : phaseValue(v, [0, OPEN_END], [0, 1]),
+  );
 
   return (
     <div className="macbook-scroll-root flex shrink-0 flex-col items-center justify-start py-0 [perspective:800px]">
@@ -171,11 +182,17 @@ export const MacbookScroll = ({
             {children}
           </Lid>
         </div>
-        <div className="relative z-10 -mt-2 h-[22rem] w-[32rem] overflow-hidden rounded-2xl bg-gray-200 dark:bg-[#272729]">
-          <div className="relative h-10 w-full">
-            <div className="absolute inset-x-0 mx-auto h-4 w-[80%] bg-[#050505]" />
+        <div className={styles.shell}>
+          <div className={styles.shellNoise} aria-hidden="true" />
+          <motion.div
+            className={styles.spill}
+            style={{ opacity: spillOpacity }}
+            aria-hidden="true"
+          />
+          <div className="relative z-[3] h-10 w-full">
+            <div className={styles.hinge} aria-hidden="true" />
           </div>
-          <div className="relative flex">
+          <div className="relative z-[3] flex">
             <div className="mx-auto h-full w-[10%] overflow-hidden">
               <SpeakerGrid />
             </div>
@@ -187,11 +204,9 @@ export const MacbookScroll = ({
             </div>
           </div>
           <Trackpad />
-          <div className="absolute inset-x-0 bottom-0 mx-auto h-2 w-20 rounded-tl-3xl rounded-tr-3xl bg-gradient-to-t from-[#272729] to-[#050505]" />
-          {showGradient && (
-            <div className="absolute inset-x-0 bottom-0 z-50 h-40 w-full bg-gradient-to-t from-white via-white to-transparent dark:from-black dark:via-black"></div>
-          )}
-          {badge && <div className="absolute bottom-4 left-4">{badge}</div>}
+          <div className={styles.chin} aria-hidden="true" />
+          {showGradient && <div className={styles.fadeGradient} />}
+          {badge && <div className="absolute bottom-4 left-4 z-[4]">{badge}</div>}
         </div>
       </div>
     </div>
@@ -219,15 +234,10 @@ export const Lid = ({
           transformOrigin: "bottom",
           transformStyle: "preserve-3d",
         }}
-        className="relative h-[12rem] w-[32rem] rounded-2xl bg-[#010101] p-2"
+        className={styles.backPlate}
       >
-        <div
-          style={{
-            boxShadow: "0px 2px 0px 2px #171717 inset",
-          }}
-          className="absolute inset-0 flex items-center justify-center rounded-lg bg-[#010101]"
-        >
-          <span className="h-3 w-3 rounded-full bg-[#272729]" aria-hidden="true" />
+        <div className={styles.backPlateInner}>
+          <span className={styles.camera} aria-hidden="true" />
         </div>
       </div>
       <motion.div
@@ -236,12 +246,12 @@ export const Lid = ({
           transformStyle: "preserve-3d",
           transformOrigin: "bottom center",
         }}
-        className="absolute inset-0 h-96 w-[32rem] rounded-2xl bg-[#010101] p-2"
+        className={styles.activeLid}
       >
-        <div className="absolute inset-0 rounded-lg bg-[#272729]" />
+        <div className={styles.screenGlass} />
         {children ? (
           <motion.div
-            className="absolute inset-0 overflow-hidden rounded-lg"
+            className={styles.screenContent}
             style={{ pointerEvents: pointerEvents ?? "auto" }}
           >
             {children}
@@ -250,7 +260,7 @@ export const Lid = ({
           <img
             src={src}
             alt=""
-            className="absolute inset-0 h-full w-full rounded-lg object-cover object-left-top"
+            className={`${styles.screenContent} h-full w-full object-cover object-left-top`}
           />
         ) : null}
       </motion.div>
@@ -259,19 +269,12 @@ export const Lid = ({
 };
 
 export const Trackpad = () => {
-  return (
-    <div
-      className="mx-auto my-1 h-32 w-[40%] rounded-xl"
-      style={{
-        boxShadow: "0px 0px 1px 1px #00000020 inset",
-      }}
-    ></div>
-  );
+  return <div className={styles.trackpad} aria-hidden="true" />;
 };
 
 export const Keypad = () => {
   return (
-    <div className="mx-1 h-full [transform:translateZ(0)] rounded-md bg-[#050505] p-1 [will-change:transform]">
+    <div className={styles.keypad}>
       <div className="mb-[2px] flex w-full shrink-0 gap-[2px]">
         <KBtn
           className="w-10 items-end justify-start pb-[2px] pl-[4px]"
@@ -634,26 +637,14 @@ export const KBtn = ({
 }) => {
   return (
     <div
-      className={cn(
-        "[transform:translateZ(0)] rounded-[4px] p-[0.5px] [will-change:transform]",
-        backlit && "bg-white/[0.2] shadow-xl shadow-white",
-      )}
+      className={cn(styles.keyOuter, backlit && styles.keyOuterBacklit)}
     >
-      <div
-        className={cn(
-          "flex h-6 w-6 items-center justify-center rounded-[3.5px] bg-[#0A090D]",
-          className,
-        )}
-        style={{
-          boxShadow:
-            "0px -0.5px 2px 0 #0D0D0F inset, -0.5px 0px 2px 0 #0D0D0F inset",
-        }}
-      >
+      <div className={cn(styles.keyFace, "flex h-6 w-6 items-center justify-center", className)}>
         <div
           className={cn(
-            "flex w-full flex-col items-center justify-center text-[5px] text-neutral-200",
+            styles.keyLegend,
             childrenClassName,
-            backlit && "text-white",
+            backlit && styles.keyLegendBacklit,
           )}
         >
           {children}
@@ -665,14 +656,9 @@ export const KBtn = ({
 
 export const SpeakerGrid = () => {
   return (
-    <div
-      className="mt-2 flex h-40 gap-[2px] px-[0.5px]"
-      style={{
-        backgroundImage:
-          "radial-gradient(circle, #08080A 0.5px, transparent 0.5px)",
-        backgroundSize: "3px 3px",
-      }}
-    ></div>
+    <div className={styles.speakerWell} aria-hidden="true">
+      <div className={styles.speakerGrid} />
+    </div>
   );
 };
 

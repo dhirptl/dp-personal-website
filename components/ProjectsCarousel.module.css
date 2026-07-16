@@ -341,7 +341,7 @@
   margin: var(--space-3) 0 0;
   font-size: clamp(30px, 4.5vw, 52px);
   font-weight: 700;
-  line-height: 1.02;
+  line-height: 1.15;
   letter-spacing: -0.03em;
   color: var(--fg);
 }
