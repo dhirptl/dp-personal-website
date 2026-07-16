@@ -5,6 +5,7 @@ declare module "react" {
     interface IntrinsicElements {
       "spline-viewer": DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
         url?: string;
+        loading?: "auto" | "lazy" | "eager";
       };
     }
   }
