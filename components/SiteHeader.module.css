@@ -114,9 +114,10 @@
   flex-direction: column;
   gap: var(--space-6);
   padding: var(--space-4) var(--gutter-mobile) var(--space-7);
-  background: rgba(10, 10, 10, 0.96);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-  backdrop-filter: blur(14px) saturate(1.2);
+  /* Fully opaque — translucent glass let hero type/Spline bleed through */
+  background: #0a0a0a;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   border-bottom: 1px solid var(--border-faint);
   opacity: 0;
   /* Instant visibility (not transitioned) so focus trap can find links on open */

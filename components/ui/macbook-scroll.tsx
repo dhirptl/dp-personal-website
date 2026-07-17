@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { MotionValue, motion, useTransform } from "motion/react";
 import { cn } from "@/lib/utils";
 import {
@@ -94,19 +95,23 @@ export const MacbookScroll = ({
 
   // Match CSS root scale breakpoints in MacbookProjects.module.css
   const rootScale =
-    viewportW < 640 ? 0.42 : viewportW < 761 ? 0.65 : 1.22;
+    viewportW < 640 ? 0.58 : viewportW < 761 ? 0.72 : 1.22;
   const chassisPx = 512 * rootScale;
-  // Cap lid so popped screen stays ~90% of viewport width (still > keyboard).
+  // Cap lid so popped screen stays ~92% of viewport width (still > keyboard).
+  // Mobile allows a higher cap so phones can actually reach ~90vw.
+  const popCap = isMobile ? 2.2 : 1.4;
   const popEndScale = Math.min(
-    1.4,
-    Math.max(1.12, (viewportW * 0.9) / chassisPx),
+    popCap,
+    Math.max(1.12, (viewportW * 0.92) / chassisPx),
   );
   const popMidScale = Math.min(1.1, 0.85 + popEndScale * 0.15);
   // Refs so scroll-linked transforms always read the latest viewport cap.
   const popEndScaleRef = React.useRef(popEndScale);
   const popMidScaleRef = React.useRef(popMidScale);
+  const isMobileRef = React.useRef(isMobile);
   popEndScaleRef.current = popEndScale;
   popMidScaleRef.current = popMidScale;
+  isMobileRef.current = isMobile;
 
   // Children: Aceternity-like pop, viewport-capped end scale. Function-form
   // avoids Chrome ViewTimeline bugs.
@@ -119,14 +124,19 @@ export const MacbookScroll = ({
     const stops = [0, popEnd, rotateEnd, settleEnd, exitStart, 1];
     const mid = popMidScaleRef.current;
     const end = popEndScaleRef.current;
+    const mobile = isMobileRef.current;
     const sx = hasChildren
       ? phaseValue(v, stops, [1, mid, end, end, end, end])
       : phaseValue(v, [0, OPEN_END], [1.2, endScale]);
     const sy = hasChildren
       ? phaseValue(v, stops, [0.5, mid, end, end, end, end])
       : phaseValue(v, [0, OPEN_END], [0.6, endScale]);
+    // Soften settle translate on narrow viewports so the open screen stays
+    // under the sticky header instead of drifting down off-stage.
+    const settleY = mobile ? 8 : 32;
+    const midY = mobile ? 4 : 16;
     const t = hasChildren
-      ? phaseValue(v, stops, [0, -28, 16, 32, 32, 32])
+      ? phaseValue(v, stops, [0, -28, midY, settleY, settleY, settleY])
       : phaseValue(v, [0, OPEN_END], [0, 1500]);
     const r = hasChildren
       ? phaseValue(v, stops, [-25, -25, 0, 0, 0, 0])
@@ -242,11 +252,15 @@ export const Lid = ({
             {children}
           </motion.div>
         ) : src ? (
-          <img
-            src={src}
-            alt=""
-            className={`${styles.screenContent} h-full w-full object-cover object-left-top`}
-          />
+          <div className={styles.screenContent}>
+            <Image
+              src={src}
+              alt=""
+              fill
+              className="object-cover object-left-top"
+              sizes="(max-width: 760px) 90vw, 512px"
+            />
+          </div>
         ) : null}
       </motion.div>
     </div>
@@ -624,7 +638,8 @@ export const KBtn = ({
     <div
       className={cn(
         "[transform:translateZ(0)] rounded-[4px] p-[0.5px] [will-change:transform]",
-        backlit && "bg-white/[0.2] shadow-xl shadow-white",
+        /* Soft key edge only — shadow-xl bloom reads as a white fog on mobile */
+        backlit && "bg-white/[0.14] shadow-[0_0_0_0.5px_rgba(255,255,255,0.28)]",
       )}
     >
       <div

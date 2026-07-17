@@ -28,7 +28,7 @@
   text-shadow: 0 1px 10px rgba(0, 0, 0, 0.8);
 }
 
-.slideshow.nocap {
+.nocap {
   cursor: pointer;
 }
 
@@ -36,6 +36,13 @@
   position: absolute;
   inset: 0;
   transition: opacity 0.45s ease;
+}
+
+/* Keep photos in color when hovering overlays (e.g. location pill), not only the image itself */
+.tile:hover img,
+.tile:focus-within img {
+  filter: grayscale(0) contrast(1);
+  transform: scale(var(--zoom, 1));
 }
 
 .dots {
@@ -116,4 +123,51 @@
 .locpill.liquid-metal-host:hover .arr,
 .locpill.liquid-metal-host:focus-visible .arr {
   background: rgba(0, 0, 0, 0.1);
+}
+
+.locText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Keep caption clear of the location pill on all sizes */
+.tile:has(.locpill) .cap {
+  max-width: calc(100% - 11px - 9.5rem);
+}
+
+@media (max-width: 760px) {
+  /* Keep caption clear of the location pill on 2-col tiles */
+  .tile:has(.locpill) .cap {
+    top: 11px;
+    bottom: auto;
+    left: 11px;
+    max-width: calc(100% - 24px);
+  }
+
+  .locpill {
+    max-width: calc(100% - 14px);
+    gap: 6px;
+    padding: 5px 6px 5px 9px;
+    font-size: 10px;
+  }
+
+  .locpill .arr {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    font-size: 10px;
+  }
+
+  .cap {
+    font-size: 11px;
+    left: 10px;
+    bottom: 9px;
+  }
+
+  .dots {
+    right: 10px;
+    top: 10px;
+  }
 }

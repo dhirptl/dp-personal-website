@@ -42,9 +42,24 @@ export function SplineHero() {
     // Scene may finish before this effect runs (cached import / fast network).
     if (el._loaded) setLoaded(true);
     const t = setTimeout(() => setLoaded(true), 6000);
+
+    // Hide the free-tier "Built with Spline" badge — it sits on the robot
+    // and reads as UI chrome on mobile.
+    const hideLogo = () => {
+      const logo = el.shadowRoot?.querySelector("#logo") as HTMLElement | null;
+      if (logo) logo.style.setProperty("display", "none", "important");
+    };
+    hideLogo();
+    el.addEventListener("load", hideLogo);
+    const logoPoll = window.setInterval(hideLogo, 400);
+    const logoStop = window.setTimeout(() => clearInterval(logoPoll), 10000);
+
     return () => {
       el.removeEventListener("load", onLoad);
+      el.removeEventListener("load", hideLogo);
       clearTimeout(t);
+      clearInterval(logoPoll);
+      clearTimeout(logoStop);
     };
   }, [boot]);
 
@@ -61,7 +76,7 @@ export function SplineHero() {
         <span className={styles.loaderLabel}>{boot ? "loading scene…" : "preparing…"}</span>
       </div>
       {boot ? (
-        <spline-viewer url={SPLINE_SCENE_URL} loading="eager"></spline-viewer>
+        <spline-viewer url={SPLINE_SCENE_URL} loading="lazy"></spline-viewer>
       ) : null}
     </div>
   );

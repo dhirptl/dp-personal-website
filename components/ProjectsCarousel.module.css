@@ -316,9 +316,11 @@
 
 .modalClose {
   composes: navBtn;
-  position: sticky;
+  /* float in the panel corner — equal inset from top/right matches the xl radius */
+  position: absolute;
   top: var(--space-4);
-  margin-left: auto;
+  right: var(--space-4);
+  z-index: 3;
   width: 36px;
   height: 36px;
 }
@@ -330,6 +332,7 @@
 
 .modalCategory {
   margin: 0;
+  padding-right: calc(36px + var(--space-4));
   font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 0.04em;
@@ -339,6 +342,7 @@
 
 .modalTitle {
   margin: var(--space-3) 0 0;
+  padding-right: calc(36px + var(--space-4));
   font-size: clamp(30px, 4.5vw, 52px);
   font-weight: 700;
   line-height: 1.15;
@@ -464,6 +468,12 @@
     width: 44px;
     height: 44px;
     top: max(var(--space-3), env(safe-area-inset-top, 0px));
+    right: var(--space-3);
+  }
+
+  .modalCategory,
+  .modalTitle {
+    padding-right: calc(44px + var(--space-3));
   }
 
   .modalContent {
@@ -542,8 +552,9 @@
 
 @media (max-width: 760px) {
   .wrapCompact .cardFace {
-    width: 150px;
-    height: 220px;
+    /* Larger faces so post-scale tap targets stay usable (~44px+) */
+    width: 170px;
+    height: 240px;
   }
 
   .wrapCompact .cardTitle {
@@ -551,8 +562,13 @@
   }
 
   .wrapCompact .navBtn {
-    width: 26px;
-    height: 26px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .wrapCompact .controls {
+    padding: 0 8px 4px;
+    gap: 8px;
   }
 }
 

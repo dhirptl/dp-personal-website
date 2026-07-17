@@ -135,6 +135,9 @@
   inset: 6px;
   overflow: hidden;
   border-radius: 0.5rem;
+  /* iOS: keep touches on the screen surface after the lid settles flat */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .trackpad {

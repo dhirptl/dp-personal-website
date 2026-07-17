@@ -20,6 +20,7 @@ export function GalleryTile({ item }: { item: GalleryItem }) {
             placeholder={item.label}
             shape="rect"
             zoom={1.04}
+            sizes="(max-width: 760px) 50vw, 33vw"
           />
         )}
         <span className={styles.cap}>{item.label}</span>
@@ -27,25 +28,46 @@ export function GalleryTile({ item }: { item: GalleryItem }) {
     );
   }
 
-  const next = () => setIdx((i) => (i + 1) % photos.length);
+  const next = (el?: HTMLElement | null) => {
+    setIdx((i) => (i + 1) % photos.length);
+    // Drop focus so :focus-within doesn't leave the tile permanently colorized
+    el?.blur();
+  };
   const cur = photos[idx];
   const captioned = photos.some((p) => p.location);
+  const gallerySizes = "(max-width: 760px) 50vw, 33vw";
 
   return (
     <div
       className={[styles.tile, !captioned ? styles.nocap : ""].filter(Boolean).join(" ")}
-      onClick={captioned ? undefined : next}
+      onClick={
+        captioned
+          ? undefined
+          : (e) => next(e.currentTarget instanceof HTMLElement ? e.currentTarget : null)
+      }
       role={captioned ? undefined : "button"}
       aria-label={captioned ? undefined : "next photo"}
+      tabIndex={captioned ? undefined : 0}
+      onKeyDown={
+        captioned
+          ? undefined
+          : (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                next(e.currentTarget);
+              }
+            }
+      }
     >
       {photos.map((p, i) => (
         <div key={p.id} className={styles.photo} style={{ opacity: i === idx ? 1 : 0, zIndex: i === idx ? 1 : 0 }}>
           <ImageSlot
             src={p.src}
-            alt={item.label + (p.location ? ` · ${p.location}` : "")}
-            placeholder={item.label + (p.location ? ` · ${p.location}` : "")}
+            alt={item.label + (p.location ? ` - ${p.location}` : "")}
+            placeholder={item.label + (p.location ? ` - ${p.location}` : "")}
             shape="rect"
             zoom={1.04}
+            sizes={gallerySizes}
           />
         </div>
       ))}
@@ -59,10 +81,13 @@ export function GalleryTile({ item }: { item: GalleryItem }) {
         <WithLiquidMetal
           as="button"
           className={`${styles.locpill} eng-btn`}
-          onClick={next}
+          onClick={(e) => {
+            e.stopPropagation();
+            next(e.currentTarget);
+          }}
           aria-label="next photo"
         >
-          <span>{cur.location}</span>
+          <span className={styles.locText}>{cur.location}</span>
           <span className={styles.arr}>→</span>
         </WithLiquidMetal>
       )}

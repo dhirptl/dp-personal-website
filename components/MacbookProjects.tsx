@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMotionValue, useMotionValueEvent } from "motion/react";
 import {
   MACBOOK_PHASE,
@@ -10,23 +10,6 @@ import { ProjectsCarousel } from "@/components/ProjectsCarousel";
 import { SocialChromeLink } from "@/components/SocialIcons";
 import { SITE } from "@/lib/site-data";
 import styles from "./MacbookProjects.module.css";
-
-/** Site convention: 760px primary breakpoint (see ProjectsCarousel / SiteHeader). */
-const MOBILE_MQ = "(max-width: 760px)";
-
-function subscribeMobile(onStoreChange: () => void) {
-  const mq = window.matchMedia(MOBILE_MQ);
-  mq.addEventListener("change", onStoreChange);
-  return () => mq.removeEventListener("change", onStoreChange);
-}
-
-function getMobile() {
-  return window.matchMedia(MOBILE_MQ).matches;
-}
-
-function useIsMobile() {
-  return useSyncExternalStore(subscribeMobile, getMobile, () => false);
-}
 
 function ProjectsScreen() {
   return (
@@ -77,20 +60,7 @@ function ContactsFooter() {
   );
 }
 
-/** Phone layout — full-width carousel (scaled MacBook lid is untappable). */
-function MobileProjects() {
-  return (
-    <section className={styles.section} aria-label="projects">
-      <div className={styles.mobileStage}>
-        <h2 className={styles.mobileTitle}>things i&apos;ve built</h2>
-        <ProjectsCarousel list={SITE.projects} />
-      </div>
-      <ContactsFooter />
-    </section>
-  );
-}
-
-function DesktopMacbookProjects() {
+export function MacbookProjects() {
   const pinRef = useRef<HTMLDivElement>(null);
   const scrollYProgress = useMotionValue(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -104,29 +74,48 @@ function DesktopMacbookProjects() {
   }, []);
 
   // rAF sampling — window "scroll" events are unreliable with sticky pinning.
+  // Pause when the pin zone is off-screen to avoid burning mobile battery.
   useEffect(() => {
+    const el = pinRef.current;
+    if (!el) return;
+
     let raf = 0;
+    let visible = true;
+
     const tick = () => {
-      const el = pinRef.current;
-      if (el) {
-        if (reducedMotion) {
-          // Jump to open + interactive hold; skip the long pin choreography.
-          scrollYProgress.set(
-            (MACBOOK_PHASE.settleEnd + MACBOOK_PHASE.exitStart) / 2,
-          );
-        } else {
-          const total = el.offsetHeight || 1;
-          const p = Math.min(
-            1,
-            Math.max(0, -el.getBoundingClientRect().top / total),
-          );
-          scrollYProgress.set(p);
-        }
+      raf = 0;
+      if (!visible) return;
+
+      if (reducedMotion) {
+        // Jump to open + interactive hold; skip the long pin choreography.
+        scrollYProgress.set(
+          (MACBOOK_PHASE.settleEnd + MACBOOK_PHASE.exitStart) / 2,
+        );
+      } else {
+        const total = el.offsetHeight || 1;
+        const p = Math.min(
+          1,
+          Math.max(0, -el.getBoundingClientRect().top / total),
+        );
+        scrollYProgress.set(p);
       }
       raf = requestAnimationFrame(tick);
     };
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible && !raf) raf = requestAnimationFrame(tick);
+      },
+      { rootMargin: "20% 0px" },
+    );
+    io.observe(el);
+
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      io.disconnect();
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, [scrollYProgress, reducedMotion]);
 
   const [interactive, setInteractive] = useState(false);
@@ -161,9 +150,4 @@ function DesktopMacbookProjects() {
       <ContactsFooter />
     </section>
   );
-}
-
-export function MacbookProjects() {
-  const isMobile = useIsMobile();
-  return isMobile ? <MobileProjects /> : <DesktopMacbookProjects />;
 }

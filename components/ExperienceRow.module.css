@@ -107,23 +107,33 @@
 @media (max-width: 760px) {
   .exp {
     flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 6px 12px;
+    align-items: center;
+    gap: 6px 10px;
     padding: var(--space-4) var(--space-3);
     min-height: 44px;
   }
 
   .title {
-    flex: 1 1 100%;
+    flex: 1 1 auto;
+    order: 1;
+    min-width: 0;
     font-size: 16px;
   }
 
+  .now {
+    order: 2;
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+
   .org {
-    flex: 1 1 auto;
+    flex: 1 1 100%;
+    order: 3;
     min-width: 0;
   }
 
   .range {
+    order: 4;
     margin-left: 0;
     flex: 0 0 100%;
     white-space: normal;

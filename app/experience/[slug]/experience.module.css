@@ -132,7 +132,7 @@
 }
 
 .sec li::before {
-  content: "—";
+  content: "-";
   position: absolute;
   left: 0;
   color: #5f5f5b;
@@ -234,4 +234,34 @@
   margin: 72px 0 0;
   padding: 30px 0 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 760px) {
+  .metarow {
+    margin: 22px 0 12px;
+  }
+
+  .lede {
+    font-size: clamp(18px, 4.5vw, 22px);
+    margin-top: 22px;
+  }
+
+  .sec {
+    padding: 22px 0;
+  }
+
+  .sec p,
+  .sec li {
+    font-size: 15px;
+  }
+
+  .projlinks a {
+    min-height: 44px;
+  }
+
+  .footnav {
+    margin-top: 48px;
+    padding-top: 22px;
+    gap: 16px;
+  }
 }

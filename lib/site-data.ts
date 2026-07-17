@@ -91,13 +91,13 @@ const EXP_DETAIL: Record<string, ExperienceDetail> = {
     role: "unity & ml intern",
     org: "clutchvr",
     orgHref: "https://clutch-vr.com",
-    range: "may 2026 — present",
+    range: "may 2026 - present",
     status: "incoming · summer 2026",
     location: "remote",
     team: "product & engineering",
     now: true,
     summary:
-      "incoming unity & ml intern at clutchvr — joining for summer 2026 to build immersive vr in unity and ship machine-learning–driven features inside a real product.",
+      "incoming unity & ml intern at clutchvr - joining for summer 2026 to build immersive vr in unity and ship machine-learning-driven features inside a real product.",
     responsibilities: [
       "build and iterate on interactive vr experiences in unity, from prototype to production.",
       "integrate machine-learning models into real-time, in-headset workflows.",
@@ -109,7 +109,7 @@ const EXP_DETAIL: Record<string, ExperienceDetail> = {
       "learning how ml actually gets productionized inside an immersive product.",
     ],
     growth:
-      "this is my first industry role bridging the two things i care about most — real-time 3d and machine learning. i'm treating it as a chance to learn how production software is built, reviewed, and maintained at a company, not just shipped at a hackathon.",
+      "this is my first industry role bridging the two things i care about most - real-time 3d and machine learning. i'm treating it as a chance to learn how production software is built, reviewed, and maintained at a company, not just shipped at a hackathon.",
     teamwork:
       "joining a lean product team means writing code other people depend on, reviewing and being reviewed, and communicating tradeoffs clearly. i'm coming in ready to ask sharp questions and pull my weight from week one.",
     stack: ["unity", "c#", "machine learning", "vr"],
@@ -120,25 +120,25 @@ const EXP_DETAIL: Record<string, ExperienceDetail> = {
     role: "undergraduate research assistant",
     org: "glenrose rehabilitation hospital",
     orgHref: "https://www.imagination-centre.ca/research",
-    range: "jan 2026 — present",
+    range: "jan 2026 - present",
     status: "now",
     location: "edmonton, ab",
     team: "assistive robotics research",
     now: true,
     summary:
-      "undergraduate research assistant building assistive robotics for kids — bridging unity and ros 2 to make an autonomous wheelchair navigable, safe, and genuinely fun for pediatric users with visual impairments.",
+      "undergraduate research assistant building assistive robotics for kids - bridging unity and ros 2 to make an autonomous wheelchair navigable, safe, and genuinely fun for pediatric users with visual impairments.",
     responsibilities: [
       "own the unity ↔ ros 2 integration layer for an autonomous pediatric wheelchair.",
       "design and build the human-robot interface used by pediatric participants.",
       "turn open-ended research goals from graduate supervisors into working, testable software.",
     ],
     accomplishments: [
-      "built a real-time bridge between unity and ros 2 humble — bidirectional pub/sub syncing urdf wheelchair models with slam occupancy grids.",
+      "built a real-time bridge between unity and ros 2 humble - bidirectional pub/sub syncing urdf wheelchair models with slam occupancy grids.",
       "wrote dual-mode control: a virtual joystick for cmd_vel teleop, and a gui for publishing autonomous nav2 goals.",
       "designed a high-contrast, gamified human-robot interface for pediatric users with visual impairments, driven by the robot's real-time pose.",
     ],
     growth:
-      "research taught me to work without a spec — to take an open-ended question, scope it into something buildable, and defend my technical choices to people who know far more than i do. i got much more comfortable reading robotics papers and ros docs and turning them into code.",
+      "research taught me to work without a spec - to take an open-ended question, scope it into something buildable, and defend my technical choices to people who know far more than i do. i got much more comfortable reading robotics papers and ros docs and turning them into code.",
     teamwork:
       "i work under graduate-student researchers and alongside clinicians, so i had to learn to translate between robotics, software, and the real needs of pediatric patients. building something a child will actually use raises the bar on communication and care.",
     stack: ["unity 2022.3", "ros 2 humble", "c#", "nav2", "slam"],
@@ -149,25 +149,25 @@ const EXP_DETAIL: Record<string, ExperienceDetail> = {
     role: "drivetrain subsystem",
     org: "university of alberta formula racing",
     orgHref: "https://www.ualbertafsae.com",
-    range: "nov 2025 — present",
+    range: "nov 2025 - present",
     status: "now",
     location: "edmonton, ab",
     team: "30-person drivetrain subsystem",
     now: true,
     summary:
-      "drivetrain member on the university of alberta's formula sae team — designing, simulating, and validating mechanical parts that have to survive technical inspection and a race weekend.",
+      "drivetrain member on the university of alberta's formula sae team - designing, simulating, and validating mechanical parts that have to survive technical inspection and a race weekend.",
     responsibilities: [
       "design and revise drivetrain components in solidworks to meet competition rules and inspection.",
       "validate every design with fea before anything is manufactured.",
       "coordinate with a large subsystem to hit build and inspection deadlines.",
     ],
     accomplishments: [
-      "redesigned the jacking bar in solidworks after the original failed inspection — lighter, with targeted reinforcements.",
+      "redesigned the jacking bar in solidworks after the original failed inspection - lighter, with targeted reinforcements.",
       "ran fea to find high-stress regions, then iterated the design to mitigate failure points.",
       "helped a 30-person drivetrain subsystem pass technical inspection and reach race readiness.",
     ],
     growth:
-      "formula sae is where i learned that a design isn't done when it looks right — it's done when it survives inspection and the track. failing an inspection early forced me to take simulation, tolerances, and safety factors seriously.",
+      "formula sae is where i learned that a design isn't done when it looks right - it's done when it survives inspection and the track. failing an inspection early forced me to take simulation, tolerances, and safety factors seriously.",
     teamwork:
       "thirty people building one car means your part has to interface with everyone else's. i learned to document decisions, hand off cleanly, and work to a shared deadline where one late part blocks the whole team.",
     stack: ["solidworks", "fea", "gd&t"],
@@ -184,14 +184,14 @@ export const SITE = {
     "training computer vision models",
     "shipping vr in unity",
     "working on a bci wheelchair",
-    "building cool projects",
-    "enjoying life",
+    "a fsae drivetrain subsystem member",
+    "working on a drone @ uarad",
   ],
 
   experience: [
-    { slug: "clutchvr", title: "unity & ml intern", org: "clutchvr", range: "may 2026 — present", now: true },
-    { slug: "robotic-navigation", title: "research assistant", org: "glenrose rehabilitation hospital", range: "jan 2026 — present", now: true },
-    { slug: "formula-sae", title: "drivetrain subsystem", org: "formula sae", range: "nov 2025 — present", now: true },
+    { slug: "clutchvr", title: "unity & ml intern", org: "clutchvr", range: "may 2026 - present", now: true },
+    { slug: "robotic-navigation", title: "research assistant", org: "glenrose rehabilitation hospital", range: "jan 2026 - present", now: true },
+    { slug: "formula-sae", title: "drivetrain subsystem", org: "formula sae", range: "nov 2025 - present", now: true },
   ] satisfies ExperienceIndexEntry[],
 
   nav: [
@@ -249,7 +249,7 @@ export const SITE = {
   education: {
     school: "university of alberta",
     degree: "bsc engineering",
-    range: "sep 2025 — present",
+    range: "sep 2025 - present",
     location: "edmonton, ab",
   },
 
@@ -270,13 +270,13 @@ export const SITE = {
       sections: [
         {
           title: "what it does",
-          body: 'an operator says "alpha take off to 10 meters", "fly to the northwest watch tower", or "return to the landing pad and land." the system parses intent with an llm command brain, resolves natural-language locations to canonical waypoints, runs hard safety checks, and returns a validated execution result with confidence and risk context — all reflected in a real-time mission view.',
+          body: 'an operator says "alpha take off to 10 meters", "fly to the northwest watch tower", or "return to the landing pad and land." the system parses intent with an llm command brain, resolves natural-language locations to canonical waypoints, runs hard safety checks, and returns a validated execution result with confidence and risk context - all reflected in a real-time mission view.',
         },
         {
           title: "core features",
           items: [
             "natural-language command parsing into structured drone actions.",
-            'challenge-aware waypoint mapping — "northwest watch tower" resolves to TOWER_NW.',
+            'challenge-aware waypoint mapping - "northwest watch tower" resolves to TOWER_NW.',
             "hard-block safety enforcement for no-go zones, bad waypoints, and unsafe targets.",
             "operator confirm/cancel flow for ambiguous or high-risk commands.",
             'session memory + follow-ups ("do that again", "same target").',
@@ -290,10 +290,10 @@ export const SITE = {
         {
           title: "architecture",
           items: [
-            "frontend/ — operator ui: command log, mission status, interaction panels.",
-            "whisper-backend/ — fastapi stt + command-execution bridge.",
-            "groq-integration/ — llm parser, validator, and mission command brain.",
-            "challenge/ + mavsdk sim stack — waypoints, no-go zones, sitl/gazebo context.",
+            "frontend/ - operator ui: command log, mission status, interaction panels.",
+            "whisper-backend/ - fastapi stt + command-execution bridge.",
+            "groq-integration/ - llm parser, validator, and mission command brain.",
+            "challenge/ + mavsdk sim stack - waypoints, no-go zones, sitl/gazebo context.",
           ],
         },
         {
@@ -314,7 +314,7 @@ export const SITE = {
       date: "2026",
       tech: ["python", "flask", "react", "typescript", "vite", "tailwind"],
       overview:
-        "a greedy routing and dispatch system for a multi-shuttle warehouse — it receives boxes, stores them intelligently, ships them through active pallet destinations, and plays the whole run back visually.",
+        "a greedy routing and dispatch system for a multi-shuttle warehouse - it receives boxes, stores them intelligently, ships them through active pallet destinations, and plays the whole run back visually.",
       sections: [
         {
           title: "what it does",
@@ -351,18 +351,18 @@ export const SITE = {
       slug: "pediatric-wheelchair",
       name: "pediatric wheelchair gui",
       categories: ["robotics"],
-      date: "jan 2026 — apr 2026",
+      date: "jan 2026 - apr 2026",
       tech: ["unity 2022.3", "ros 2 humble", "c#", "nav2", "urp"],
       xp: { label: "research @ glenrose", route: "/experience/robotic-navigation" },
       overview:
-        "a unity-based, gamified control interface wired directly into a ros 2 autonomous wheelchair — built to make navigation engaging and safe for pediatric users with visual challenges.",
+        "a unity-based, gamified control interface wired directly into a ros 2 autonomous wheelchair - built to make navigation engaging and safe for pediatric users with visual challenges.",
       sections: [
         {
           title: "key features",
           items: [
             "dual control modes: a virtual joystick for low-level motion, and destination-based autonomous navigation.",
             "a pediatric-friendly, high-contrast palette (yellow on black) to assist children with visual challenges.",
-            "gamification — collectibles, progress indicators, and feedback triggered by the wheelchair's actual pose, not commanded motion.",
+            "gamification - collectibles, progress indicators, and feedback triggered by the wheelchair's actual pose, not commanded motion.",
             "ros 2 integration with the nav2 stack over standard topics and action interfaces.",
           ],
         },
@@ -383,7 +383,7 @@ export const SITE = {
         {
           title: "highlights",
           items: [
-            "mediapipe extracts egocentric 3d hand landmarks for real-time translation — aimed at the 70% communication gap for the deaf community.",
+            "mediapipe extracts egocentric 3d hand landmarks for real-time translation - aimed at the 70% communication gap for the deaf community.",
             "temporal gesture pipeline in tensorflow, moving from static letters to dynamic word-level gestures.",
             "a proprietary egocentric dataset plus a 'logic toggle' engine that separates fingerspelling from full words.",
           ],
@@ -402,7 +402,7 @@ export const SITE = {
           title: "highlights",
           items: [
             "react app that auto-generates child behavior logs from facial recognition, voice cues, and the gpt api.",
-            "separate dashboards — caregivers get log reviews and behavior graphs; kids get mood tracking, calming games, avatar rewards.",
+            "separate dashboards - caregivers get log reviews and behavior graphs; kids get mood tracking, calming games, avatar rewards.",
             "mediapipe and voice input for passive symptom tracking, built around accessibility and inclusive design.",
           ],
         },
@@ -419,7 +419,7 @@ export const SITE = {
         {
           title: "highlights",
           items: [
-            "2-layer pcb in kicad around a seeed xiao rp2040 — i2c oled and daisy-chained addressable rgb.",
+            "2-layer pcb in kicad around a seeed xiao rp2040 - i2c oled and daisy-chained addressable rgb.",
             "custom snap-fit enclosure in fusion 360, toleranced for fdm printing around switches and encoders.",
             "kmk firmware handling matrix scanning, encoder interrupts, and live oled layer visualization.",
           ],
@@ -430,7 +430,7 @@ export const SITE = {
       slug: "jacking-bar",
       name: "jacking bar",
       categories: ["mechanical", "hardware"],
-      date: "nov 2025 — present",
+      date: "nov 2025 - present",
       tech: ["solidworks", "fea"],
       xp: { label: "formula sae", route: "/experience/formula-sae" },
       overview: "a redesigned jacking bar for the formula sae car's drivetrain subsystem.",
@@ -438,7 +438,7 @@ export const SITE = {
         {
           title: "the work",
           items: [
-            "redesigned in solidworks after the original failed inspection — lighter, with targeted reinforcements.",
+            "redesigned in solidworks after the original failed inspection - lighter, with targeted reinforcements.",
             "ran fea to find high-stress regions, then iterated the design to mitigate failure points.",
             "built within a 30-person drivetrain subsystem working toward technical inspection and race readiness.",
           ],

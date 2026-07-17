@@ -18,6 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { ImgHTMLAttributes } from "react";
+import Image from "next/image";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { WithLiquidMetal } from "@/components/WithLiquidMetal";
@@ -36,7 +37,7 @@ const CARD_WIDTH = 384;
 /* fallback when face isn't measurable yet — keep near mobile CSS min(280px, 72vw) */
 const CARD_WIDTH_MOBILE = 280;
 const CARD_WIDTH_COMPACT = 180;
-const CARD_WIDTH_COMPACT_MOBILE = 150;
+const CARD_WIDTH_COMPACT_MOBILE = 170;
 const CARD_GAP = 16;
 
 /* the modal portals to document.body, which only exists client-side.
@@ -414,20 +415,37 @@ export const BlurImage = ({
 }: ImgHTMLAttributes<HTMLImageElement> & { src: string }) => {
   const isDataUri = typeof src === "string" && src.startsWith("data:");
   const [isLoading, setLoading] = useState(!isDataUri);
+  const classNames = cn(
+    styles.blurImage,
+    isLoading && styles.blurImageLoading,
+    className,
+  );
+  const resolvedAlt = alt ?? "Background of a beautiful view";
+
+  // data: URIs (e.g. project card SVG placeholders) can't use the optimizer
+  if (isDataUri) {
+    return (
+      <img
+        className={classNames}
+        onLoad={() => setLoading(false)}
+        src={src}
+        width={width}
+        height={height}
+        loading="lazy"
+        decoding="async"
+        alt={resolvedAlt}
+      />
+    );
+  }
+
   return (
-    <img
-      className={cn(
-        styles.blurImage,
-        isLoading && styles.blurImageLoading,
-        className,
-      )}
+    <Image
+      className={classNames}
       onLoad={() => setLoading(false)}
       src={src}
-      width={width}
-      height={height}
-      loading="lazy"
-      decoding="async"
-      alt={alt ?? "Background of a beautiful view"}
+      alt={resolvedAlt}
+      fill
+      sizes="(max-width: 760px) 72vw, 384px"
     />
   );
 };

@@ -37,6 +37,7 @@ export default function AboutPage() {
                 shape="rounded"
                 radius={10}
                 zoom={1}
+                sizes="(max-width: 760px) 45vw, 18vw"
               />
               <div className={styles.acap}>
                 <span className={styles.at}>{a.title}</span>
