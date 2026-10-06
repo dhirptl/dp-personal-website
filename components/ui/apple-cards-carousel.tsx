@@ -197,7 +197,12 @@ export const Carousel = ({
               <motion.div
                 key={"card" + index}
                 className={styles.cell}
-                initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+                /* initial must not depend on useReducedMotion(): it is
+                   resolved synchronously on the client but is null on the
+                   server, so a branch here would mismatch on hydration.
+                   Reduced motion is honoured by the zero-duration transition
+                   below instead. */
+                initial={{ opacity: 0, y: 20 }}
                 animate={{
                   opacity: 1,
                   y: 0,
@@ -386,6 +391,7 @@ export const Card = ({
             src={card.src}
             alt={card.title}
             className={styles.cardImage}
+            eager={index === 0}
           />
           <span className={styles.cardScrim} aria-hidden="true" />
           <span className={styles.cardText}>
@@ -415,7 +421,12 @@ export const BlurImage = ({
   src,
   className,
   alt,
-}: ImgHTMLAttributes<HTMLImageElement> & { src: string }) => {
+  eager = false,
+}: ImgHTMLAttributes<HTMLImageElement> & {
+  src: string;
+  /** first visible card: load immediately for LCP instead of lazily */
+  eager?: boolean;
+}) => {
   const isDataUri = typeof src === "string" && src.startsWith("data:");
   const [isLoading, setLoading] = useState(!isDataUri);
   const classNames = cn(
@@ -435,7 +446,8 @@ export const BlurImage = ({
         src={src}
         width={width}
         height={height}
-        loading="lazy"
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : undefined}
         decoding="async"
         alt={resolvedAlt}
       />
@@ -450,6 +462,8 @@ export const BlurImage = ({
       alt={resolvedAlt}
       fill
       sizes="(max-width: 760px) 72vw, 384px"
+      loading={eager ? "eager" : "lazy"}
+      fetchPriority={eager ? "high" : undefined}
     />
   );
 };

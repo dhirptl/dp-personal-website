@@ -255,8 +255,17 @@ export function ProjectMediaBlocks({ media, name }: { media: ProjectMedia; name:
                       </button>
                     </>
                   )}
-                  <button type="button" className="eng-btn" ref={closeRef} onClick={() => setOpen(null)}>
-                    close<span className={styles.escHint}>[esc]</span>
+                  <button
+                    type="button"
+                    className="eng-btn"
+                    ref={closeRef}
+                    onClick={() => setOpen(null)}
+                    aria-label="close"
+                  >
+                    close
+                    <span className={styles.escHint} aria-hidden="true">
+                      [esc]
+                    </span>
                   </button>
                 </div>
               </div>

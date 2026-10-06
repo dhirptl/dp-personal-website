@@ -314,19 +314,22 @@
     padding: 28px 22px 24px;
   }
 
+  /* Reserve the label line plus two text lines up front, so the hero card
+     doesn't grow mid-typing when a phrase wraps. Plain inline flow (not
+     flex) keeps the caret glued to the end of the wrapped text instead of
+     dropping onto a third row. 18px = .lab line box (12px x 1.5 leading),
+     6px = its bottom margin; 3em is the fallback for 2lh at 1.5 leading. */
   .currentlyRow {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 4px 0;
     margin-top: 18px;
+    min-height: calc(18px + 6px + 3em);
+    min-height: calc(18px + 6px + 2lh);
   }
 
   /* Label on its own line so long typing phrases don't collide with it */
   .lab {
-    flex: 0 0 100%;
+    display: block;
     margin-right: 0;
-    margin-bottom: 2px;
+    margin-bottom: 6px;
   }
 
   .meta {

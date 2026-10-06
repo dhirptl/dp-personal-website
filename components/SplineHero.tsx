@@ -43,7 +43,7 @@ export function SplineHero() {
   useEffect(() => {
     if (!boot) return;
     const el = hostRef.current?.querySelector("spline-viewer") as
-      | (HTMLElement & { _loaded?: boolean })
+      | (HTMLElement & { _loaded?: boolean; unload?: () => void })
       | null
       | undefined;
     if (!el) return;
@@ -72,6 +72,24 @@ export function SplineHero() {
       clearTimeout(t);
       clearInterval(logoPoll);
       clearTimeout(logoStop);
+
+      // The viewer's disconnectedCallback only drops its IntersectionObserver;
+      // its render loop keeps drawing into the detached zero-size canvas and
+      // floods the console with WebGL framebuffer errors after client-side
+      // navigation. Dispose the scene once the element is really gone. The
+      // isConnected check (on the next task, after React has removed the node)
+      // keeps StrictMode's simulated unmount from killing the live robot.
+      setTimeout(() => {
+        if (el.isConnected) return;
+        if (el._loaded) {
+          el.unload?.();
+        } else {
+          // still loading: dispose as soon as it finishes instead
+          el.addEventListener("load-complete", () => el.unload?.(), {
+            once: true,
+          });
+        }
+      }, 0);
     };
   }, [boot]);
 
