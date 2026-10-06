@@ -6,7 +6,8 @@ import { ImageSlot } from "@/components/ImageSlot";
 import { WithLiquidMetal } from "@/components/WithLiquidMetal";
 import styles from "./GalleryTile.module.css";
 
-export function GalleryTile({ item }: { item: GalleryItem }) {
+// priority marks the tile's (first) image as the page's lcp image: eager load + preload
+export function GalleryTile({ item, priority }: { item: GalleryItem; priority?: boolean }) {
   const photos = item.photos ?? null;
   const [idx, setIdx] = useState(0);
 
@@ -21,6 +22,7 @@ export function GalleryTile({ item }: { item: GalleryItem }) {
             shape="rect"
             zoom={1.04}
             sizes="(max-width: 760px) 50vw, 33vw"
+            priority={priority}
           />
         )}
         <span className={styles.cap}>{item.label}</span>
@@ -68,6 +70,7 @@ export function GalleryTile({ item }: { item: GalleryItem }) {
             shape="rect"
             zoom={1.04}
             sizes={gallerySizes}
+            priority={priority && i === 0}
           />
         </div>
       ))}
