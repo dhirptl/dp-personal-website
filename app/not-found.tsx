@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/metadata";
 
 // the root title template adds the "· dhir patel" suffix; next adds the
-// noindex robots tag to not-found responses itself
-export const metadata: Metadata = {
+// noindex robots tag to not-found responses itself (setting robots here too
+// would emit a second tag). own og / twitter tags with no path, so no
+// canonical or og:url - a 404 never shares as the home page
+export const metadata: Metadata = pageMetadata({
   title: "not found",
   description: "there's nothing at this address.",
-};
+});
 
 export default function NotFound() {
   return (

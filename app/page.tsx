@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { preload } from "react-dom";
 import { SITE } from "@/lib/site-data";
 import { ExperienceRow } from "@/components/ExperienceRow";
@@ -9,6 +10,12 @@ import { SPLINE_MODELLING_WASM_URL, SPLINE_SCENE_URL } from "@/lib/spline";
 import styles from "./page.module.css";
 
 export const dynamic = "force-static";
+
+// title, description and share tags come from the root layout; the home page
+// only adds its canonical (sub-pages get theirs from pageMetadata)
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function HomePage() {
   // Fetch the hero scene + its wasm in parallel with the JS bundle; the viewer

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { SITE } from "@/lib/site-data";
+import { SITE, type GalleryItem } from "@/lib/site-data";
 import { pageMetadata } from "@/lib/metadata";
 import { GalleryTile } from "@/components/GalleryTile";
 import { ImageSlot } from "@/components/ImageSlot";
+import tileStyles from "@/components/GalleryTile.module.css";
 import styles from "./about.module.css";
 
 export const dynamic = "force-static";
@@ -26,9 +27,27 @@ export default function AboutPage() {
 
       <div className={`${styles.sec} rv`} style={{ "--d": ".2s" } as React.CSSProperties}>
         <div className={styles.gallery}>
-          {SITE.gallery.map((g) => (
-            <GalleryTile item={g} key={g.id} />
-          ))}
+          {SITE.gallery.map((g: GalleryItem, i) =>
+            // the first tile is the page's lcp image, so it loads eagerly with
+            // priority. GalleryTile has no priority prop, so a plain single-photo
+            // first tile is rendered here with the same markup GalleryTile uses
+            i === 0 && !g.photos && !g.noImage && g.src ? (
+              <div className={tileStyles.tile} key={g.id}>
+                <ImageSlot
+                  src={g.src}
+                  alt={g.label}
+                  placeholder={g.label}
+                  shape="rect"
+                  zoom={1.04}
+                  sizes="(max-width: 760px) 50vw, 33vw"
+                  priority
+                />
+                <span className={tileStyles.cap}>{g.label}</span>
+              </div>
+            ) : (
+              <GalleryTile item={g} key={g.id} />
+            ),
+          )}
         </div>
       </div>
 

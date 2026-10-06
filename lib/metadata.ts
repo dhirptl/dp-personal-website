@@ -12,8 +12,12 @@ type PageMetadataInput = {
   /** page title without the site suffix, e.g. "about me" */
   title: string;
   description: string;
-  /** site-relative path, e.g. "/about" (resolved against metadataBase) */
-  path: string;
+  /**
+   * site-relative path, e.g. "/about" (resolved against metadataBase). omit it
+   * for pages with no address of their own (the 404) - no canonical or og:url
+   * is emitted then.
+   */
+  path?: string;
   /** share image; falls back to the generated site card */
   image?: OgImage;
 };
@@ -32,12 +36,12 @@ export function pageMetadata({ title, description, path, image }: PageMetadataIn
   return {
     title,
     description,
-    alternates: { canonical: path },
+    ...(path ? { alternates: { canonical: path } } : {}),
     openGraph: {
       type: "website",
       siteName: SITE_NAME,
       locale: SITE_LOCALE,
-      url: path,
+      ...(path ? { url: path } : {}),
       title: shareTitle,
       description,
       images,

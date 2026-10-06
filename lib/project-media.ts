@@ -134,7 +134,8 @@ export const PROJECT_MEDIA: Record<string, ProjectMedia> = {
     },
   },
   "pediatric-wheelchair": {
-    thumb: `${PW}/magic-travel.png`,
+    /* cropped below the tab bar so the ui text doesn't sit under the card's category label */
+    thumb: `${PW}/magic-travel-thumb.png`,
     hero: `${PW}/magic-travel.png`,
     heroAlt:
       "yellow-on-black unity interface with a mode tab bar, a magic travel room list, a blue wheelchair model on the generated map and a mini-map in the corner",
@@ -142,7 +143,8 @@ export const PROJECT_MEDIA: Record<string, ProjectMedia> = {
       "the unity client in magic travel mode - the central active command panel, generated map, wheelchair model and mini-map.",
     gallery: [
       {
-        src: `${PW}/system-architecture.png`,
+        /* inverted copy of system-architecture.png (light lines on dark) so it doesn't glare on the dark page */
+        src: `${PW}/system-architecture-dark.png`,
         caption:
           "system architecture - solid arrows are implemented; the dashed arrow (goal and velocity publishing from unity to nav2) is stubbed in the current build. all motion and pose traffic crosses the unity-ros boundary through one bridge.",
         alt: "block diagram of the unity client and the ros 2 humble stack, joined by the wheelchair state bridge, with an eeg classifier feeding switch input over tcp",
