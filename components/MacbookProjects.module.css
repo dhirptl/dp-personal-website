@@ -9,9 +9,12 @@
   --mac-root-scale: 0.58;
   /* must match .stage padding-top on phones */
   --mac-stage-pad: clamp(0.5rem, 4vh, 2rem);
-  /* Phones: the stage is only as tall as the scaled MacBook (pad + chassis
-     footprint) instead of a full viewport, so nothing empty trails it. */
-  --mac-stage-h: calc(var(--mac-stage-pad) + 34rem * var(--mac-root-scale));
+  /* Height the MacBook occupies in layout: the scaled chassis footprint.
+     Phones raise it to the open lid's extent (see the max-width: 760px block). */
+  --mac-body-h: calc(34rem * var(--mac-root-scale));
+  /* Phones: the stage is only as tall as the scaled MacBook (pad + body)
+     instead of a full viewport, so nothing empty trails it. */
+  --mac-stage-h: calc(var(--mac-stage-pad) + var(--mac-body-h));
   /* Phones: room kept under the pinned MacBook for the contacts footer
      (footer ~125px + page bottom padding 20px, rounded up). */
   --mac-footer-reserve: 9.5rem;
@@ -54,7 +57,7 @@
   width: 100%;
   max-width: 100%;
   /* Reserve scaled footprint so layout doesn't think chassis is still 512px */
-  min-height: calc(34rem * var(--mac-root-scale));
+  min-height: var(--mac-body-h);
 }
 
 /* Uniform scale only — keep Aceternity aspect; bump size without stretching */
@@ -212,6 +215,27 @@
 @media (max-width: 760px) {
   .section {
     margin-top: var(--space-4);
+    /* The open lid grows down from the back plate's top edge and, once
+       popped to ~92vw, runs past the chassis (640–760px especially), so
+       reserve whichever is taller. Mirrors viewportMetrics() in
+       ui/macbook-scroll.tsx: lid height 384px × popEndScale, where
+       popEndScale = clamp(1.12, 0.92·vw / chassisPx, 2.2), so
+       384px × popEndScale × root scale = clamp(…, 69vw, …). The 0.75rem
+       covers the plate offset plus the 8px settle translate. */
+    --mac-lid-h: calc(
+      0.75rem * var(--mac-root-scale) +
+        clamp(
+          24rem * 1.12 * var(--mac-root-scale),
+          69vw,
+          24rem * 2.2 * var(--mac-root-scale)
+        )
+    );
+    --mac-body-h: max(34rem * var(--mac-root-scale), var(--mac-lid-h));
+  }
+
+  .macLayer {
+    /* Chassis at the top of the reserved box; the lid fills it downward. */
+    align-items: flex-start;
   }
 
   .scrollZone {

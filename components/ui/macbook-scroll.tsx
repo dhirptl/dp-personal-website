@@ -46,10 +46,11 @@ export const MACBOOK_PHASE = {
   exitStart: 0.5,
 } as const;
 
-/** Viewport-derived lid sizing. Root scale breakpoints must match
- * MacbookProjects.module.css (--mac-root-scale). */
+/** Viewport-derived lid sizing. Breakpoints and the pop scale must match
+ * MacbookProjects.module.css (--mac-root-scale, --mac-lid-h), which reserves
+ * layout room for the open lid on phones. */
 function viewportMetrics(viewportW: number) {
-  const mobile = viewportW < 760 ? 1 : 0;
+  const mobile = viewportW < 761 ? 1 : 0;
   const rootScale = viewportW < 640 ? 0.58 : viewportW < 761 ? 0.72 : 1.22;
   const chassisPx = 512 * rootScale;
   // Cap lid so popped screen stays ~92% of viewport width (still > keyboard).
