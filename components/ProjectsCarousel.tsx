@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from "react";
+import { Fragment, useContext } from "react";
 import Link from "next/link";
 import {
   Carousel,
@@ -64,7 +64,12 @@ export function ProjectsCarousel({
       card={{
         src: media.thumb ?? media.hero ?? getProjectCardSrc(p.slug),
         title: p.name,
-        category: p.categories.join(" · "),
+        category: p.categories.map((tag, tagIndex) => (
+          <Fragment key={tag}>
+            {tagIndex > 0 ? " · " : null}
+            <span style={{ whiteSpace: "nowrap" }}>{tag}</span>
+          </Fragment>
+        )),
         content: <ProjectCardContent project={p} />,
       }}
     />

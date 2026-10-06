@@ -523,6 +523,7 @@
   padding-left: 10px;
   gap: 10px;
   max-width: none;
+  flex-shrink: 0;
 }
 
 .wrapCompact .cell:last-child {
@@ -534,6 +535,7 @@
    Stretch chain: scroller (flex:1) → track → cell → face (height:100%). */
 .wrapCompact .cell {
   display: flex;
+  flex-shrink: 0;
 }
 
 .wrapCompact .controls {
@@ -549,10 +551,10 @@
 }
 
 .wrapCompact .cardFace {
-  height: 100%;
-  max-height: 260px;
-  width: auto;
-  aspect-ratio: 180 / 260;
+  width: 135px;
+  height: 225px;
+  aspect-ratio: auto;
+  max-height: none;
   padding: 4px;
   border-radius: var(--radius-md);
 }
@@ -574,10 +576,6 @@
 }
 
 @media (max-width: 760px) {
-  .wrapCompact .cardFace {
-    max-height: 240px;
-  }
-
   .wrapCompact .cardTitle {
     font-size: 13px;
   }

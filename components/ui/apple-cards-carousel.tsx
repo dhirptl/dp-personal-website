@@ -86,7 +86,7 @@ interface CarouselProps {
 type Card = {
   src: string;
   title: string;
-  category: string;
+  category: React.ReactNode;
   content: React.ReactNode;
 };
 
@@ -396,7 +396,7 @@ export const Card = ({
           <span className={styles.cardScrim} aria-hidden="true" />
           <span className={styles.cardText}>
             <motion.span
-              layoutId={layout ? `category-${card.category}` : undefined}
+              layoutId={layout ? `category-${card.title}` : undefined}
               className={styles.cardCategory}
             >
               {card.category}
