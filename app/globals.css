@@ -630,8 +630,8 @@ a:focus-visible {
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: var(--font-sans);
+  --font-heading: var(--font-display), sans-serif;
+  --font-sans: var(--font-display), sans-serif;
   --color-ring: var(--ring);
   --color-border: var(--border);
   --color-accent: var(--accent);

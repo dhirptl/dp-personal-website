@@ -46,6 +46,15 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
+  async redirects() {
+    return [
+      {
+        source: "/portfolio/integratedflight",
+        destination: "/portfolio/flightreacts",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

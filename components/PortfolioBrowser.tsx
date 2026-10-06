@@ -26,12 +26,17 @@ export function PortfolioBrowser({ categories, projects, heading }: PortfolioBro
     <>
       <div className={styles.inner}>
         {heading}
-        <div className={`${styles.filters} rv`} style={{ "--d": ".12s" } as React.CSSProperties}>
+        <div
+          className={`${styles.filters} rv`}
+          role="group"
+          aria-label="filter projects by category"
+          style={{ "--d": ".12s" } as React.CSSProperties}>
           {filters.map((f) => (
             <WithLiquidMetal
               key={f}
               as="button"
               className={`eng-btn ${styles.filt}${cat === f ? " on" : ""}`}
+              aria-pressed={cat === f}
               onClick={() => setCat(f)}
             >
               {f}

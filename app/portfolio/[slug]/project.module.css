@@ -68,6 +68,26 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
+/* gradient stand-in when a project has no hero photo yet */
+.heroBand {
+  height: clamp(120px, 16vw, 200px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  background-color: #141412;
+  background-size: cover;
+  background-position: center;
+}
+
+.heroCap {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  color: #8c8c87;
+  letter-spacing: 0.01em;
+  margin: 12px 0 0;
+  max-width: 760px;
+}
+
 .body {
   composes: body from "../../../components/detail-layout.module.css";
 }
@@ -84,6 +104,9 @@
 
 .seclabel {
   composes: seclabel from "../../../components/detail-layout.module.css";
+  /* rendered as <h2>: neutralise UA heading styles */
+  font-weight: inherit;
+  line-height: inherit;
 }
 
 .sec p {
@@ -192,6 +215,10 @@
 
   .heroSlot {
     height: clamp(220px, 58vw, 360px);
+  }
+
+  .heroBand {
+    height: clamp(96px, 26vw, 140px);
   }
 
   .sec {

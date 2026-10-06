@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/apple-cards-carousel";
 import type { Project } from "@/lib/site-data";
 import { getProjectCardSrc } from "@/lib/project-card-gradient";
+import { getProjectMedia } from "@/lib/project-media";
 import { WithLiquidMetal } from "@/components/WithLiquidMetal";
 import styles from "./ProjectsCarousel.module.css";
 
@@ -54,18 +55,21 @@ export function ProjectsCarousel({
   list: Project[];
   compact?: boolean;
 }) {
-  const items = list.map((p, i) => (
+  const items = list.map((p, i) => {
+    const media = getProjectMedia(p.slug);
+    return (
     <Card
       key={p.slug}
       index={i}
       card={{
-        src: getProjectCardSrc(i, p.slug),
+        src: media.thumb ?? media.hero ?? getProjectCardSrc(p.slug),
         title: p.name,
         category: p.categories.join(" · "),
         content: <ProjectCardContent project={p} />,
       }}
     />
-  ));
+    );
+  });
 
   return (
     <div

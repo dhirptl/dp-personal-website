@@ -1,8 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
-import { MotionValue, motion, useTransform } from "motion/react";
+import {
+  MotionValue,
+  motion,
+  useMotionValue,
+  useTransform,
+} from "motion/react";
 import { cn } from "@/lib/utils";
 import {
   IconBrightnessDown,
@@ -41,6 +46,23 @@ export const MACBOOK_PHASE = {
   exitStart: 0.5,
 } as const;
 
+/** Viewport-derived lid sizing. Root scale breakpoints must match
+ * MacbookProjects.module.css (--mac-root-scale). */
+function viewportMetrics(viewportW: number) {
+  const mobile = viewportW < 760 ? 1 : 0;
+  const rootScale = viewportW < 640 ? 0.58 : viewportW < 761 ? 0.72 : 1.22;
+  const chassisPx = 512 * rootScale;
+  // Cap lid so popped screen stays ~92% of viewport width (still > keyboard).
+  // Mobile allows a higher cap so phones can actually reach ~90vw.
+  const popCap = mobile ? 2.2 : 1.4;
+  const popEndScale = Math.min(
+    popCap,
+    Math.max(1.12, (viewportW * 0.92) / chassisPx),
+  );
+  const popMidScale = Math.min(1.1, 0.85 + popEndScale * 0.15);
+  return { mobile, popEndScale, popMidScale };
+}
+
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
 }
@@ -75,43 +97,33 @@ export const MacbookScroll = ({
   badge?: React.ReactNode;
   children?: React.ReactNode;
 }) => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [viewportW, setViewportW] = useState(1280);
+  const { popEnd, rotateEnd, settleEnd, exitStart } = MACBOOK_PHASE;
+  const hasChildren = Boolean(children);
+
+  // Viewport-derived inputs live in motion values (not refs/state) so the
+  // scroll-linked transform below recomputes on resize as well as on scroll,
+  // without writing refs during render or re-rendering the whole chassis.
+  const initial = viewportMetrics(1280);
+  const mobileMv = useMotionValue(initial.mobile);
+  const popEndMv = useMotionValue(initial.popEndScale);
+  const popMidMv = useMotionValue(initial.popMidScale);
+  const hasChildrenMv = useMotionValue(hasChildren ? 1 : 0);
+
+  useEffect(() => {
+    hasChildrenMv.set(hasChildren ? 1 : 0);
+  }, [hasChildren, hasChildrenMv]);
 
   useEffect(() => {
     const sync = () => {
-      const w = window.innerWidth;
-      setIsMobile(w < 760);
-      setViewportW(w);
+      const m = viewportMetrics(window.innerWidth);
+      mobileMv.set(m.mobile);
+      popEndMv.set(m.popEndScale);
+      popMidMv.set(m.popMidScale);
     };
     sync();
     window.addEventListener("resize", sync);
     return () => window.removeEventListener("resize", sync);
-  }, []);
-
-  const endScale = isMobile ? 1 : 1.5;
-  const { popEnd, rotateEnd, settleEnd, exitStart } = MACBOOK_PHASE;
-  const hasChildren = Boolean(children);
-
-  // Match CSS root scale breakpoints in MacbookProjects.module.css
-  const rootScale =
-    viewportW < 640 ? 0.58 : viewportW < 761 ? 0.72 : 1.22;
-  const chassisPx = 512 * rootScale;
-  // Cap lid so popped screen stays ~92% of viewport width (still > keyboard).
-  // Mobile allows a higher cap so phones can actually reach ~90vw.
-  const popCap = isMobile ? 2.2 : 1.4;
-  const popEndScale = Math.min(
-    popCap,
-    Math.max(1.12, (viewportW * 0.92) / chassisPx),
-  );
-  const popMidScale = Math.min(1.1, 0.85 + popEndScale * 0.15);
-  // Refs so scroll-linked transforms always read the latest viewport cap.
-  const popEndScaleRef = React.useRef(popEndScale);
-  const popMidScaleRef = React.useRef(popMidScale);
-  const isMobileRef = React.useRef(isMobile);
-  popEndScaleRef.current = popEndScale;
-  popMidScaleRef.current = popMidScale;
-  isMobileRef.current = isMobile;
+  }, [mobileMv, popEndMv, popMidMv]);
 
   // Children: Aceternity-like pop, viewport-capped end scale. Function-form
   // avoids Chrome ViewTimeline bugs.
@@ -120,38 +132,44 @@ export const MacbookScroll = ({
   // bottom origin — the same pipeline as the static back plate. At rest
   // (scaleX 1, scaleY 0.5, rotateX -25) the screen then projects exactly onto
   // the plate instead of rendering narrower under a mismatched perspective.
-  const lidTransform = useTransform(scrollYProgress, (v) => {
-    const stops = [0, popEnd, rotateEnd, settleEnd, exitStart, 1];
-    const mid = popMidScaleRef.current;
-    const end = popEndScaleRef.current;
-    const mobile = isMobileRef.current;
-    const sx = hasChildren
-      ? phaseValue(v, stops, [1, mid, end, end, end, end])
-      : phaseValue(v, [0, OPEN_END], [1.2, endScale]);
-    const sy = hasChildren
-      ? phaseValue(v, stops, [0.5, mid, end, end, end, end])
-      : phaseValue(v, [0, OPEN_END], [0.6, endScale]);
-    // Soften settle translate on narrow viewports so the open screen stays
-    // under the sticky header instead of drifting down off-stage.
-    const settleY = mobile ? 8 : 32;
-    const midY = mobile ? 4 : 16;
-    const t = hasChildren
-      ? phaseValue(v, stops, [0, -28, midY, settleY, settleY, settleY])
-      : phaseValue(v, [0, OPEN_END], [0, 1500]);
-    const r = hasChildren
-      ? phaseValue(v, stops, [-25, -25, 0, 0, 0, 0])
-      : phaseValue(v, [0.1, 0.12, OPEN_END], [-28, -28, 0]);
-    // Origin is the lid's bottom (384px = h-96); shift so the top edge lands
-    // where the old top-origin layout put it: ty = t + 384·(sy − 1).
-    const ty = t + 384 * (sy - 1);
-    return `translateY(${ty}px) rotateX(${r}deg) scaleX(${sx}) scaleY(${sy})`;
-  });
+  const lidTransform = useTransform(
+    [scrollYProgress, popMidMv, popEndMv, mobileMv, hasChildrenMv],
+    ([v, mid, end, mobileFlag, childrenFlag]: number[]) => {
+      const stops = [0, popEnd, rotateEnd, settleEnd, exitStart, 1];
+      const mobile = mobileFlag === 1;
+      const withChildren = childrenFlag === 1;
+      const endScale = mobile ? 1 : 1.5;
+      const sx = withChildren
+        ? phaseValue(v, stops, [1, mid, end, end, end, end])
+        : phaseValue(v, [0, OPEN_END], [1.2, endScale]);
+      const sy = withChildren
+        ? phaseValue(v, stops, [0.5, mid, end, end, end, end])
+        : phaseValue(v, [0, OPEN_END], [0.6, endScale]);
+      // Soften settle translate on narrow viewports so the open screen stays
+      // under the sticky header instead of drifting down off-stage.
+      const settleY = mobile ? 8 : 32;
+      const midY = mobile ? 4 : 16;
+      const t = withChildren
+        ? phaseValue(v, stops, [0, -28, midY, settleY, settleY, settleY])
+        : phaseValue(v, [0, OPEN_END], [0, 1500]);
+      const r = withChildren
+        ? phaseValue(v, stops, [-25, -25, 0, 0, 0, 0])
+        : phaseValue(v, [0.1, 0.12, OPEN_END], [-28, -28, 0]);
+      // Origin is the lid's bottom (384px = h-96); shift so the top edge lands
+      // where the old top-origin layout put it: ty = t + 384·(sy − 1).
+      const ty = t + 384 * (sy - 1);
+      return `translateY(${ty}px) rotateX(${r}deg) scaleX(${sx}) scaleY(${sy})`;
+    },
+  );
   // Interactive from settle onward — the open screen stays visible (and
   // clickable) even after the sticky releases.
-  const screenPointerEvents = useTransform(scrollYProgress, (v): string => {
-    if (!hasChildren) return "auto";
-    return v >= settleEnd - 0.005 ? "auto" : "none";
-  });
+  const screenPointerEvents = useTransform(
+    [scrollYProgress, hasChildrenMv],
+    ([v, childrenFlag]: number[]): string => {
+      if (childrenFlag !== 1) return "auto";
+      return v >= settleEnd - 0.005 ? "auto" : "none";
+    },
+  );
   const textTransform = useTransform(scrollYProgress, (v) =>
     phaseValue(v, [0, OPEN_END], [0, 100]),
   );
@@ -191,7 +209,7 @@ export const MacbookScroll = ({
             <div className="mx-auto h-full w-[10%] overflow-hidden">
               <SpeakerGrid />
             </div>
-            <div className="mx-auto h-full w-[80%]">
+            <div className="mx-auto h-full w-[80%]" aria-hidden="true">
               <Keypad />
             </div>
             <div className="mx-auto h-full w-[10%] overflow-hidden">

@@ -1,9 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { SITE } from "@/lib/site-data";
+import { pageMetadata } from "@/lib/metadata";
 import { PortfolioBrowser } from "@/components/PortfolioBrowser";
 import styles from "./portfolio.module.css";
 
 export const dynamic = "force-static";
+
+export const metadata: Metadata = pageMetadata({
+  title: "projects",
+  description: "projects by dhir patel - robotics, ml, and product design.",
+  path: "/portfolio",
+});
 
 export default function PortfolioPage() {
   return (

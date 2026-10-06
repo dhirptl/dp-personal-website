@@ -3,6 +3,18 @@
   margin-top: var(--space-4);
   position: relative;
   --mac-header-offset: var(--header-offset, 60px);
+  /* Phone: large enough that the open lid (~90vw) stays tappable.
+     Declared on the section (not .macLayer) so the pin zone and stage can
+     size themselves from it too. */
+  --mac-root-scale: 0.58;
+  /* must match .stage padding-top on phones */
+  --mac-stage-pad: clamp(0.5rem, 4vh, 2rem);
+  /* Phones: the stage is only as tall as the scaled MacBook (pad + chassis
+     footprint) instead of a full viewport, so nothing empty trails it. */
+  --mac-stage-h: calc(var(--mac-stage-pad) + 34rem * var(--mac-root-scale));
+  /* Phones: room kept under the pinned MacBook for the contacts footer
+     (footer ~125px + page bottom padding 20px, rounded up). */
+  --mac-footer-reserve: 9.5rem;
 }
 
 .scrollZone {
@@ -30,11 +42,12 @@
   /* clip layout overhang from CSS-scaled 32rem chassis; lid pop still reads inside */
   overflow-x: clip;
   overflow-y: visible;
+  /* The MacBook only fills part of this box; let clicks through the rest. */
+  pointer-events: none;
 }
 
 .macLayer {
-  /* Phone: large enough that the open lid (~90vw) stays tappable */
-  --mac-root-scale: 0.58;
+  pointer-events: auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -54,13 +67,13 @@
 }
 
 @media (min-width: 640px) {
-  .macLayer {
+  .section {
     --mac-root-scale: 0.72;
   }
 }
 
 @media (min-width: 761px) {
-  .macLayer {
+  .section {
     --mac-root-scale: 1.22;
   }
 
@@ -202,12 +215,15 @@
   }
 
   .scrollZone {
-    /* Slightly shorter pin on phones so the hold doesn't feel endless */
-    height: 180vh;
+    /* Pin travel (80vh + header) plus the stage itself. Same travel the old
+       180vh zone gave a viewport-tall stage, but without the stage's empty
+       lower band, so the zone ends right under the MacBook. */
+    height: calc(80vh + var(--mac-header-offset) + var(--mac-stage-h));
   }
 
   .scrollZoneReduced {
-    height: 100vh;
+    /* No pin choreography: just the MacBook, footer directly below. */
+    height: auto;
   }
 
   .stage {
@@ -220,7 +236,18 @@
     overflow-y: visible;
     /* Prefer flex-start so a tall open lid doesn't clip under the header */
     align-items: flex-start;
-    padding-top: clamp(0.5rem, 4vh, 2rem);
+    padding-top: var(--mac-stage-pad);
+    /* Only as tall as the MacBook (= --mac-stage-h). */
+    min-height: 0;
+    /* A phone viewport is taller than MacBook + footer, so pinning under the
+       header would end the page with the footer mid-screen and blank space
+       below it. Pin lower instead, leaving exactly the footer's room beneath:
+       the footer scrolls up and docks under the MacBook as the page ends.
+       vh (not dvh) so the pin doesn't shift while the URL bar collapses. */
+    top: max(
+      var(--mac-header-offset),
+      100vh - var(--mac-stage-h) - var(--mac-footer-reserve)
+    );
   }
 
   .screenTitle {

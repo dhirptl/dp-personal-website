@@ -11,13 +11,15 @@ This is the **master edit sheet** for everything project-related on your site.
 
 **Site style note:** copy is currently **all lowercase**. Match that unless you want to change the voice site-wide.
 
+**Media:** project images and video are wired per slug in [`lib/project-media.ts`](lib/project-media.ts) (thumb, hero, gallery with captions + alt, video). The image rows in the blocks below are an older snapshot.
+
 **Image naming suggestion** (put files under `public/images/projects/{slug}/`):
 
 | Slot | Suggested filename | Where it shows |
 |------|--------------------|----------------|
 | Card / thumbnail | `thumb.jpg` | Portfolio carousel + home MacBook cards |
 | Hero | `hero.jpg` | Top of project detail page |
-| Gallery 1…n | `gallery-01.jpg`, `gallery-02.jpg`, … | Extra images on detail page (not wired yet — I’ll add support when you fill these) |
+| Gallery 1…n | `gallery-01.jpg`, `gallery-02.jpg`, … | Extra images on detail page (wired via `lib/project-media.ts`) |
 | Optional video | `demo.mp4` or a YouTube/Vimeo URL | Detail page media |
 
 Leave a field blank or write `TODO` if you don’t have it yet.
@@ -33,14 +35,20 @@ Leave a field blank or write `TODO` if you don’t have it yet.
 ## Display order
 Projects appear in this order on the site today. Reorder the list if you want a different sequence:
 
-1. integratedflight
-2. optibox
-3. pediatric-wheelchair
-4. signbridge
-5. cocare
+1. pediatric-wheelchair
+2. jacking-bar
+3. motor-mounts *(new — hexacopter motor mounts, uarad)*
+4. flightreacts *(renamed from integratedflight)*
+5. fade-ninja *(new — hack the north 2026)*
 6. macropad
-7. jacking-bar
-8. model-rocket
+7. signbridge
+8. optibox
+9. cocare
+10. model-rocket
+
+> strain-gauge-pcb was removed from the site on 2026-09-28; its write-up is saved in [`drafts/strain-gauge-pcb.md`](drafts/strain-gauge-pcb.md).
+
+> **Note (site-content-update):** the full, current write-ups (problem / design choices / what went wrong / what i learned) now live in [`lib/site-data.ts`](lib/site-data.ts), which is the source of truth. The per-project blocks below are an older snapshot and haven't been rewritten; motor-mounts and fade-ninja only exist in `site-data.ts`.
 
 ## Categories (filter chips)
 - hardware
@@ -53,11 +61,11 @@ Projects appear in this order on the site today. Reorder the list if you want a 
 
 ---
 
-# Project 1 — integratedflight
+# Project 1 — flightreacts *(formerly integratedflight)*
 
 ## Meta
-- **slug:** `integratedflight` *(URL: /portfolio/integratedflight — don’t change unless you want a new URL)*
-- **name:** integratedflight
+- **slug:** `flightreacts` *(URL: /portfolio/flightreacts — renamed from `integratedflight`)*
+- **name:** flightreacts
 - **categories:** robotics, full stack, ml / ai
 - **date:** 2026
 - **tech:** python, fastapi, groq, react, vite, whisper, mavsdk, ardupilot
@@ -70,15 +78,15 @@ a safety-first drone command and mission-control platform that turns plain-engli
 ## Links
 | Label | URL |
 |-------|-----|
-| github ↗ | https://github.com/harsituni/IntegratedFlight |
+| github | https://github.com/harsituni/FlightReacts |
 
 *(Add more rows: demo, demo video, docs, etc.)*
 
 ## Images
 | Slot | Path or URL | Caption / notes | Status |
 |------|-------------|-----------------|--------|
-| Thumbnail (card) | `public/images/projects/integratedflight/thumb.jpg` | | MISSING |
-| Hero | `public/images/projects/integratedflight/hero.jpg` | | MISSING |
+| Thumbnail (card) | `public/images/projects/flightreacts/thumb.jpg` | | media lives in `lib/project-media.ts` |
+| Hero | `public/images/projects/flightreacts/hero.jpg` | | media lives in `lib/project-media.ts` |
 | Gallery 1 | | | |
 | Gallery 2 | | | |
 | Gallery 3 | | | |
@@ -136,13 +144,13 @@ a greedy routing and dispatch system for a multi-shuttle warehouse — it receiv
 ## Links
 | Label | URL |
 |-------|-----|
-| *(add github / demo / etc.)* | |
+| github | https://github.com/dhirptl/optibox |
 
 ## Images
 | Slot | Path or URL | Caption / notes | Status |
 |------|-------------|-----------------|--------|
-| Thumbnail (card) | `public/images/projects/optibox/thumb.jpg` | | MISSING |
-| Hero | `public/images/projects/optibox/hero.jpg` | | MISSING |
+| Thumbnail (card) | `public/images/projects/optibox/thumb.jpg` | | media lives in `lib/project-media.ts` |
+| Hero | `public/images/projects/optibox/hero.jpg` | | media lives in `lib/project-media.ts` |
 | Gallery 1 | | | |
 | Gallery 2 | | | |
 | Gallery 3 | | | |
@@ -175,19 +183,21 @@ how to manage complex warehouse constraints with clear state transitions, how mu
 
 ---
 
-# Project 3 — pediatric wheelchair gui
+# Project 3 — bci wheelchair gui
 
 ## Meta
 - **slug:** `pediatric-wheelchair`
-- **name:** pediatric wheelchair gui
+- **name:** bci wheelchair gui *(renamed from "pediatric wheelchair gui"; the slug is unchanged because the url is already live)*
 - **categories:** robotics
-- **date:** jan 2026 — apr 2026
+- **date:** jan 2026 - present
 - **tech:** unity 2022.3, ros 2 humble, c#, nav2, urp
 - **experience link label:** research @ glenrose
 - **experience link route:** `/experience/robotic-navigation`
 
 ## Overview
-a unity-based, gamified control interface wired directly into a ros 2 autonomous wheelchair — built to make navigation engaging and safe for pediatric users with visual challenges.
+a gamified unity front end for a ros 2 autonomous pediatric power wheelchair - every child-facing function is reachable with two switches, one switch, or discrete commands from a brain-computer interface, and rewards only ever come from trips the chair actually made.
+
+*(the live copy for this project is in `lib/site-data.ts`, written from the unity frontend gui report; the sections below are the older draft.)*
 
 ## Links
 | Label | URL |
@@ -197,8 +207,8 @@ a unity-based, gamified control interface wired directly into a ros 2 autonomous
 ## Images
 | Slot | Path or URL | Caption / notes | Status |
 |------|-------------|-----------------|--------|
-| Thumbnail (card) | `public/images/projects/pediatric-wheelchair/thumb.jpg` | | MISSING |
-| Hero | `public/images/projects/pediatric-wheelchair/hero.jpg` | | MISSING |
+| Thumbnail (card) | `public/images/projects/pediatric-wheelchair/thumb.jpg` | | media lives in `lib/project-media.ts` |
+| Hero | `public/images/projects/pediatric-wheelchair/hero.jpg` | | media lives in `lib/project-media.ts` |
 | Gallery 1 | | | |
 | Gallery 2 | | | |
 | Gallery 3 | | | |
@@ -241,8 +251,8 @@ a wearable that translates sign language in real time.
 ## Images
 | Slot | Path or URL | Caption / notes | Status |
 |------|-------------|-----------------|--------|
-| Thumbnail (card) | `public/images/projects/signbridge/thumb.jpg` | | MISSING |
-| Hero | `public/images/projects/signbridge/hero.jpg` | | MISSING |
+| Thumbnail (card) | `public/images/projects/signbridge/thumb.jpg` | | media lives in `lib/project-media.ts` |
+| Hero | `public/images/projects/signbridge/hero.jpg` | | media lives in `lib/project-media.ts` |
 | Gallery 1 | | | |
 | Gallery 2 | | | |
 | Gallery 3 | | | |
@@ -256,7 +266,7 @@ a wearable that translates sign language in real time.
 - temporal gesture pipeline in tensorflow, moving from static letters to dynamic word-level gestures.
 - a proprietary egocentric dataset plus a 'logic toggle' engine that separates fingerspelling from full words.
 
-*(Want longer write-ups like integratedflight? Add new section headings below — e.g. “how it works”, “hardware”, “what’s next”.)*
+*(Want longer write-ups like flightreacts? Add new section headings below — e.g. “how it works”, “hardware”, “what’s next”.)*
 
 ---
 
@@ -282,8 +292,8 @@ an ai companion that helps caregivers track behavior.
 ## Images
 | Slot | Path or URL | Caption / notes | Status |
 |------|-------------|-----------------|--------|
-| Thumbnail (card) | `public/images/projects/cocare/thumb.jpg` | | MISSING |
-| Hero | `public/images/projects/cocare/hero.jpg` | | MISSING |
+| Thumbnail (card) | `public/images/projects/cocare/thumb.jpg` | | media lives in `lib/project-media.ts` |
+| Hero | `public/images/projects/cocare/hero.jpg` | | media lives in `lib/project-media.ts` |
 | Gallery 1 | | | |
 | Gallery 2 | | | |
 | Gallery 3 | | | |
@@ -321,8 +331,8 @@ a mechanical keypad designed from the copper up.
 ## Images
 | Slot | Path or URL | Caption / notes | Status |
 |------|-------------|-----------------|--------|
-| Thumbnail (card) | `public/images/projects/macropad/thumb.jpg` | | MISSING |
-| Hero | `public/images/projects/macropad/hero.jpg` | | MISSING |
+| Thumbnail (card) | `public/images/projects/macropad/thumb.jpg` | | media lives in `lib/project-media.ts` |
+| Hero | `public/images/projects/macropad/hero.jpg` | | media lives in `lib/project-media.ts` |
 | Gallery 1 | | PCB render / photo | |
 | Gallery 2 | | Enclosure / assembled pad | |
 | Gallery 3 | | OLED / RGB lit | |
@@ -344,7 +354,7 @@ a mechanical keypad designed from the copper up.
 - **slug:** `jacking-bar`
 - **name:** jacking bar
 - **categories:** mechanical, hardware
-- **date:** nov 2025 — present
+- **date:** nov 2025 - 2026
 - **tech:** solidworks, fea
 - **experience link label:** formula sae
 - **experience link route:** `/experience/formula-sae`
@@ -360,8 +370,8 @@ a redesigned jacking bar for the formula sae car's drivetrain subsystem.
 ## Images
 | Slot | Path or URL | Caption / notes | Status |
 |------|-------------|-----------------|--------|
-| Thumbnail (card) | `public/images/projects/jacking-bar/thumb.jpg` | | MISSING |
-| Hero | `public/images/projects/jacking-bar/hero.jpg` | | MISSING |
+| Thumbnail (card) | `public/images/projects/jacking-bar/thumb.jpg` | | media lives in `lib/project-media.ts` |
+| Hero | `public/images/projects/jacking-bar/hero.jpg` | | media lives in `lib/project-media.ts` |
 | Gallery 1 | | CAD / FEA screenshot | |
 | Gallery 2 | | Physical part | |
 | Gallery 3 | | | |
@@ -405,8 +415,8 @@ a model rocket build.
 ## Images
 | Slot | Path or URL | Caption / notes | Status |
 |------|-------------|-----------------|--------|
-| Thumbnail (card) | `public/images/projects/model-rocket/thumb.jpg` | | MISSING |
-| Hero | `public/images/projects/model-rocket/hero.jpg` | | MISSING |
+| Thumbnail (card) | `public/images/projects/model-rocket/thumb.jpg` | | media lives in `lib/project-media.ts` |
+| Hero | `public/images/projects/model-rocket/hero.jpg` | | media lives in `lib/project-media.ts` |
 | Gallery 1 | | | |
 | Gallery 2 | | | |
 | Gallery 3 | | | |
@@ -442,7 +452,7 @@ one short paragraph for the card + detail intro.
 ## Links
 | Label | URL |
 |-------|-----|
-| github ↗ | |
+| github | |
 | live demo | |
 
 ## Images
@@ -486,7 +496,7 @@ Right now **every project has zero real images** — cards use gradient placehol
 
 | Project | Thumb | Hero | Gallery | Links besides GitHub |
 |---------|-------|------|---------|----------------------|
-| integratedflight | ❌ | ❌ | ❌ | ✅ GitHub only |
+| flightreacts | ❌ | ❌ | ❌ | ✅ GitHub only |
 | optibox | ❌ | ❌ | ❌ | ❌ |
 | pediatric-wheelchair | ❌ | ❌ | ❌ | ❌ |
 | signbridge | ❌ | ❌ | ❌ | ❌ |

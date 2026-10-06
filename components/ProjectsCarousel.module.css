@@ -39,8 +39,12 @@
   padding-left: var(--gutter);
 }
 
+/* End gutter lives on the last cell (not .track) because the track is
+   width-capped and the cards overflow it. Matching the left gutter means the
+   scroll end parks the last card flush with the right gutter instead of
+   leaving it half off-screen / the viewport mostly empty. */
 .cell:last-child {
-  padding-right: 33%;
+  padding-right: var(--gutter);
 }
 
 /* prev/next controls — icon-button cousins of .eng-btn (same plate + chrome hover) */
@@ -217,7 +221,14 @@
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 45%);
+  /* Title/category sit at the top of the card — keep them legible over
+     light photo thumbnails (white CAD renders, bright walls). */
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.5) 30%,
+    transparent 60%
+  );
 }
 
 .cardText {
@@ -225,6 +236,7 @@
   z-index: 3;
   display: block;
   padding: var(--space-7);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 0 12px rgba(0, 0, 0, 0.35);
 }
 
 .cardCategory {
@@ -424,7 +436,7 @@
   }
 
   .cell:last-child {
-    padding-right: 12%;
+    padding-right: var(--gutter-mobile);
   }
 
   .controls {
@@ -514,11 +526,20 @@
 }
 
 .wrapCompact .cell:last-child {
-  padding-right: 20%;
+  padding-right: 10px;
+}
+
+/* Size cards from the space the lid screen actually has, so borders and
+   rounded corners are never clipped by .screenCarousel's overflow:hidden.
+   Stretch chain: scroller (flex:1) → track → cell → face (height:100%). */
+.wrapCompact .cell {
+  display: flex;
 }
 
 .wrapCompact .controls {
-  padding: 0 10px;
+  flex-shrink: 0;
+  /* bottom room so the nav buttons' focus outline isn't clipped */
+  padding: 0 10px 8px;
   max-width: none;
 }
 
@@ -528,8 +549,10 @@
 }
 
 .wrapCompact .cardFace {
-  width: 180px;
-  height: 260px;
+  height: 100%;
+  max-height: 260px;
+  width: auto;
+  aspect-ratio: 180 / 260;
   padding: 4px;
   border-radius: var(--radius-md);
 }
@@ -552,9 +575,7 @@
 
 @media (max-width: 760px) {
   .wrapCompact .cardFace {
-    /* Larger faces so post-scale tap targets stay usable (~44px+) */
-    width: 170px;
-    height: 240px;
+    max-height: 240px;
   }
 
   .wrapCompact .cardTitle {

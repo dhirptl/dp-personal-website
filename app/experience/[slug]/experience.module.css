@@ -102,6 +102,9 @@
 
 .seclabel {
   composes: seclabel from "../../../components/detail-layout.module.css";
+  /* rendered as <h2>: neutralise UA heading styles */
+  font-weight: inherit;
+  line-height: inherit;
 }
 
 .sec p {

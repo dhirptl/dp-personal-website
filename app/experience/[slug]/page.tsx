@@ -1,16 +1,33 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SITE } from "@/lib/site-data";
+import { pageMetadata } from "@/lib/metadata";
 import { Reveal } from "@/components/Reveal";
 import styles from "./experience.module.css";
 
 export const dynamic = "force-static";
+// only the slugs from generateStaticParams exist; anything else is the static 404
+export const dynamicParams = false;
+
+type Params = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
   return Object.keys(SITE.expDetail).map((slug) => ({ slug }));
 }
 
-export default async function ExperienceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params;
+  const e = SITE.expDetail[slug as keyof typeof SITE.expDetail];
+  if (!e) return {};
+  return pageMetadata({
+    title: `${e.role} · ${e.org}`,
+    description: e.summary,
+    path: `/experience/${slug}`,
+  });
+}
+
+export default async function ExperienceDetailPage({ params }: Params) {
   const { slug } = await params;
   const e = SITE.expDetail[slug as keyof typeof SITE.expDetail];
 
@@ -50,7 +67,7 @@ export default async function ExperienceDetailPage({ params }: { params: Promise
         <div>
           {e.responsibilities && e.responsibilities.length > 0 && (
             <Reveal className={styles.sec}>
-              <div className={styles.seclabel}>responsibilities</div>
+              <h2 className={styles.seclabel}>responsibilities</h2>
               <ul>
                 {e.responsibilities.map((it, j) => (
                   <li key={j}>{it}</li>
@@ -60,7 +77,7 @@ export default async function ExperienceDetailPage({ params }: { params: Promise
           )}
           {e.accomplishments && e.accomplishments.length > 0 && (
             <Reveal className={styles.sec}>
-              <div className={styles.seclabel}>what i accomplished</div>
+              <h2 className={styles.seclabel}>what i accomplished</h2>
               <ul>
                 {e.accomplishments.map((it, j) => (
                   <li key={j}>{it}</li>
@@ -70,7 +87,7 @@ export default async function ExperienceDetailPage({ params }: { params: Promise
           )}
           {e.focus && e.focus.length > 0 && (
             <Reveal className={styles.sec}>
-              <div className={styles.seclabel}>what i&apos;m focused on</div>
+              <h2 className={styles.seclabel}>what i&apos;m focused on</h2>
               <ul>
                 {e.focus.map((it, j) => (
                   <li key={j}>{it}</li>
@@ -80,13 +97,13 @@ export default async function ExperienceDetailPage({ params }: { params: Promise
           )}
           {e.growth && (
             <Reveal className={styles.sec}>
-              <div className={styles.seclabel}>professional growth</div>
+              <h2 className={styles.seclabel}>professional growth</h2>
               <p>{e.growth}</p>
             </Reveal>
           )}
           {e.teamwork && (
             <Reveal className={styles.sec}>
-              <div className={styles.seclabel}>teamwork & responsibility</div>
+              <h2 className={styles.seclabel}>teamwork & responsibility</h2>
               <p>{e.teamwork}</p>
             </Reveal>
           )}
@@ -94,7 +111,7 @@ export default async function ExperienceDetailPage({ params }: { params: Promise
 
         <aside className={styles.side}>
           <div>
-            <div className={styles.seclabel}>at a glance</div>
+            <h2 className={styles.seclabel}>at a glance</h2>
             <div className={styles.metaList}>
               <div className={styles.metaRow}>
                 <span className={styles.metaKey}>company</span>
@@ -123,7 +140,7 @@ export default async function ExperienceDetailPage({ params }: { params: Promise
 
           {e.stack && e.stack.length > 0 && (
             <div>
-              <div className={styles.seclabel}>stack</div>
+              <h2 className={styles.seclabel}>stack</h2>
               <div className={styles.chips}>
                 {e.stack.map((t) => (
                   <span key={t}>{t}</span>
@@ -134,7 +151,7 @@ export default async function ExperienceDetailPage({ params }: { params: Promise
 
           {linkedProjects.length > 0 && (
             <div>
-              <div className={styles.seclabel}>projects from this role</div>
+              <h2 className={styles.seclabel}>projects from this role</h2>
               <div className={styles.projlinks}>
                 {linkedProjects.map((p) => (
                   <Link key={p.slug} href={`/portfolio/${p.slug}`}>

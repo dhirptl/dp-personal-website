@@ -18,6 +18,47 @@
   transform: scale(var(--zoom, 1));
 }
 
+/* grayscale={false}: full colour at rest (project heroes) */
+.img.color {
+  filter: none;
+}
+
+/* fit="auto": fade in once the orientation has been measured, so a portrait
+   source doesn't flash as a cover crop before switching to contain */
+.img.auto {
+  opacity: 0;
+  transition: filter 0.35s ease, transform 0.45s ease, opacity 0.35s ease;
+}
+
+.img.auto.ready {
+  opacity: 1;
+}
+
+.img.contain {
+  object-fit: contain;
+}
+
+.slot:hover .img.contain {
+  transform: none;
+}
+
+/* blurred, darkened copy behind a contained portrait image */
+.backdrop {
+  object-fit: cover;
+  filter: grayscale(1) blur(28px) brightness(0.45);
+  transform: scale(1.15);
+}
+
+.backdrop.color {
+  filter: blur(28px) brightness(0.45) saturate(1.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .img.auto {
+    transition: none;
+  }
+}
+
 .placeholder {
   position: absolute;
   inset: 0;

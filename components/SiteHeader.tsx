@@ -38,17 +38,31 @@ export function SiteHeader() {
   useOutsideClick(headerRef, close, open);
 
   // Lock background scroll while the mobile menu is open.
+  //
+  // Only the root element is locked. <html> already has a non-visible
+  // overflow (globals.css), so its overflow propagates to the viewport; if
+  // <body> also got overflow:hidden it would become its own (non-scrolling)
+  // scroll container, the sticky header would stick to body instead of the
+  // viewport and jump to its static position (off-screen when scrolled),
+  // taking the absolutely-positioned menu panel with it. overflow:hidden on
+  // the root keeps the viewport as the scroller, so the scroll offset and the
+  // sticky header stay put; iOS Safari 16+ honours it for touch scrolling.
   useEffect(() => {
     if (!open) return;
-    const html = document.documentElement;
-    const body = document.body;
-    const prevHtml = html.style.overflow;
-    const prevBody = body.style.overflow;
-    html.style.overflow = "hidden";
-    body.style.overflow = "hidden";
+    const root = document.documentElement;
+    const prevOverflow = root.style.overflow;
+    const prevOverscroll = root.style.overscrollBehavior;
+    const scrollY = window.scrollY;
+    root.style.overflow = "hidden";
+    root.style.overscrollBehavior = "none";
     return () => {
-      html.style.overflow = prevHtml;
-      body.style.overflow = prevBody;
+      root.style.overflow = prevOverflow;
+      root.style.overscrollBehavior = prevOverscroll;
+      // Some engines can nudge the offset while locked (e.g. iOS toolbar
+      // resize); put the page back exactly where the user left it.
+      if (Math.abs(window.scrollY - scrollY) > 1) {
+        window.scrollTo({ top: scrollY, behavior: "instant" });
+      }
     };
   }, [open]);
 

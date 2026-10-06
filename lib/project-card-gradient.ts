@@ -16,9 +16,23 @@ function hashSlug(slug: string): number {
   return Math.abs(h);
 }
 
-export function getProjectCardSrc(index: number, slug?: string): string {
-  const [t1, t2] = TINTS[index % TINTS.length];
-  const seed = slug ? hashSlug(slug) : index * 53;
+/**
+ * Chrome-gradient placeholder for a project card, keyed ONLY by slug so a
+ * project keeps the same colours no matter where it appears in a (filtered)
+ * list.
+ *
+ * Preferred: `getProjectCardSrc(slug)`.
+ * Legacy: `getProjectCardSrc(index, slug)` is still accepted for compatibility,
+ * but the index is ignored whenever a slug is given (it is only used as a
+ * last-resort seed when called with an index alone).
+ */
+export function getProjectCardSrc(slug: string): string;
+export function getProjectCardSrc(index: number, slug?: string): string;
+export function getProjectCardSrc(a: string | number, b?: string): string {
+  const slug = typeof a === "string" ? a : b;
+  const seed = slug ? hashSlug(slug) : Math.abs(Math.trunc(a as number)) * 53;
+  // Tint derives from a different slice of the hash than the geometry below.
+  const [t1, t2] = TINTS[(seed >> 5) % TINTS.length];
   const cx = 10 + (seed % 80);
   const cy = 15 + ((seed >> 3) % 65);
   const angle = 25 + (seed % 130);

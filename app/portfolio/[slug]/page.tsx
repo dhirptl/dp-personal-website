@@ -1,17 +1,52 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SITE } from "@/lib/site-data";
 import { ImageSlot } from "@/components/ImageSlot";
 import { Reveal } from "@/components/Reveal";
+import { ProjectMediaBlocks } from "@/components/ProjectMediaBlocks";
+import { getProjectMedia } from "@/lib/project-media";
+import { pageMetadata } from "@/lib/metadata";
+import { getProjectCardSrc } from "@/lib/project-card-gradient";
 import styles from "./project.module.css";
 
 export const dynamic = "force-static";
+// only the slugs from generateStaticParams exist; anything else is the static 404
+export const dynamicParams = false;
+
+type Params = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
   return SITE.projects.map((p) => ({ slug: p.slug }));
 }
 
-export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params;
+  const p = SITE.projects.find((x) => x.slug === slug);
+  if (!p) return {};
+  const media = getProjectMedia(p.slug);
+  // no hero photo: pageMetadata falls back to the root generated card
+  return pageMetadata({
+    title: p.name,
+    description: p.overview,
+    path: `/portfolio/${p.slug}`,
+    image: media.hero ? { url: media.hero, alt: media.heroAlt ?? p.name } : undefined,
+  });
+}
+
+/* Stable per-slug tint index for the gradient card (independent of list order). */
+function slugIndex(slug: string): number {
+  let h = 0;
+  for (let i = 0; i < slug.length; i++) h = (h * 33 + slug.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+/* site-data link labels may already end in "↗"; the page adds its own arrow */
+function cleanLabel(label: string): string {
+  return label.replace(/\s*↗\s*$/u, "");
+}
+
+export default async function ProjectPage({ params }: Params) {
   const { slug } = await params;
   const idx = SITE.projects.findIndex((p) => p.slug === slug);
   const p = SITE.projects[idx];
@@ -19,6 +54,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   if (!p) notFound();
 
   const next = SITE.projects[(idx + 1) % SITE.projects.length];
+  const media = getProjectMedia(p.slug);
 
   return (
     <main id="main" className="container">
@@ -46,21 +82,42 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         {p.overview}
       </p>
 
-      <div className={`${styles.hero} rv`} style={{ "--d": ".26s" } as React.CSSProperties}>
-        <ImageSlot
-          className={styles.heroSlot}
-          alt={p.name}
-          placeholder={`drop a ${p.name} shot`}
-          shape="rounded"
-          radius={16}
+      {media.hero ? (
+        <figure className={`${styles.hero} rv`} style={{ "--d": ".26s" } as React.CSSProperties}>
+          <ImageSlot
+            className={styles.heroSlot}
+            src={media.hero}
+            alt={media.heroAlt ?? p.name}
+            placeholder={p.name}
+            shape="rounded"
+            radius={16}
+            sizes="(max-width: 1200px) 100vw, 1200px"
+            priority
+            grayscale={false}
+            fit="auto"
+          />
+          {media.heroCaption && <figcaption className={styles.heroCap}>{media.heroCaption}</figcaption>}
+        </figure>
+      ) : (
+        /* no photography yet: a slim band of the project's chrome gradient card
+           (same art family as the carousel cards) instead of an empty slot */
+        <div
+          className={`${styles.hero} ${styles.heroBand} rv`}
+          style={
+            {
+              "--d": ".26s",
+              backgroundImage: `url("${getProjectCardSrc(slugIndex(p.slug), p.slug)}")`,
+            } as React.CSSProperties
+          }
+          aria-hidden="true"
         />
-      </div>
+      )}
 
       <div className={styles.body}>
         <div>
           {p.sections.map((s, i) => (
             <Reveal key={i} className={styles.sec}>
-              <div className={styles.seclabel}>{s.title}</div>
+              <h2 className={styles.seclabel}>{s.title}</h2>
               {s.body && <p>{s.body}</p>}
               {s.items && (
                 <ul>
@@ -71,11 +128,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               )}
             </Reveal>
           ))}
+          <ProjectMediaBlocks media={media} name={p.name} />
         </div>
 
         <aside className={styles.side}>
           <div>
-            <div className={styles.seclabel}>stack</div>
+            <h2 className={styles.seclabel}>stack</h2>
             <div className={styles.chips}>
               {p.tech.map((t) => (
                 <span key={t}>{t}</span>
@@ -84,12 +142,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </div>
           {p.links && p.links.length > 0 && (
             <div>
-              <div className={styles.seclabel}>links</div>
+              <h2 className={styles.seclabel}>links</h2>
               <div className={styles.links}>
                 {p.links.map((l) => (
                   <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer">
-                    <span>{l.label}</span>
-                    <span>↗</span>
+                    <span>{cleanLabel(l.label)}</span>
+                    <span aria-hidden="true">↗</span>
                   </a>
                 ))}
               </div>

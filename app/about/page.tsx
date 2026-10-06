@@ -1,9 +1,17 @@
+import type { Metadata } from "next";
 import { SITE } from "@/lib/site-data";
+import { pageMetadata } from "@/lib/metadata";
 import { GalleryTile } from "@/components/GalleryTile";
 import { ImageSlot } from "@/components/ImageSlot";
 import styles from "./about.module.css";
 
 export const dynamic = "force-static";
+
+export const metadata: Metadata = pageMetadata({
+  title: "about me",
+  description: "about dhir patel - mechatronics and robotics at the university of alberta, plus some stuff i like.",
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

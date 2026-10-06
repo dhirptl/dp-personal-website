@@ -1,10 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, IBM_Plex_Mono, Geist } from "next/font/google";
+import { Bricolage_Grotesque, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { SiteHeader } from "@/components/SiteHeader";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+import { SITE_LOCALE, SITE_NAME, SITE_URL } from "@/lib/metadata";
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -20,9 +19,25 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const DESCRIPTION = "dhir patel — bsc engineering, university of alberta. robotics, ml, and product design.";
+
 export const metadata: Metadata = {
-  title: "dhir patel",
-  description: "dhir patel — bsc engineering, university of alberta. robotics, ml, and product design.",
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_NAME, template: `%s · ${SITE_NAME}` },
+  description: DESCRIPTION,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: SITE_LOCALE,
+    url: SITE_URL,
+    title: SITE_NAME,
+    description: DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: DESCRIPTION,
+  },
 };
 
 export const viewport: Viewport = {
@@ -37,7 +52,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn(bricolageGrotesque.variable, ibmPlexMono.variable, "font-sans dark", geist.variable)}>
+    <html lang="en" className={cn(bricolageGrotesque.variable, ibmPlexMono.variable, "font-sans dark")}>
       <body style={{ fontFamily: "var(--font-display), sans-serif" }}>
         <a href="#main" className="skip-link">
           skip to content

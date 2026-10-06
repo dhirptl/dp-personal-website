@@ -51,16 +51,19 @@ const useMounted = () =>
     () => false,
   );
 
-/* Body scroll lock with ref-count so overlapping card modals don't leave
-   overflow:hidden (or "auto") stuck on body — that kills position:sticky
-   for the MacBook projects stage. */
+/* Page scroll lock with ref-count so overlapping card modals don't leave
+   overflow:hidden stuck. Locks the ROOT element only: <html> already has a
+   non-visible overflow (globals.css), so overflow:hidden on <body> would turn
+   body into its own scroll container and break every position:sticky on the
+   page (site header, MacBook projects stage). */
 let bodyScrollLockCount = 0;
 let bodyOverflowBeforeLock = "";
 
 function acquireBodyScrollLock() {
   if (bodyScrollLockCount === 0) {
-    bodyOverflowBeforeLock = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const root = document.documentElement;
+    bodyOverflowBeforeLock = root.style.overflow;
+    root.style.overflow = "hidden";
   }
   bodyScrollLockCount += 1;
 }
@@ -68,7 +71,7 @@ function acquireBodyScrollLock() {
 function releaseBodyScrollLock() {
   bodyScrollLockCount = Math.max(0, bodyScrollLockCount - 1);
   if (bodyScrollLockCount === 0) {
-    document.body.style.overflow = bodyOverflowBeforeLock;
+    document.documentElement.style.overflow = bodyOverflowBeforeLock;
     bodyOverflowBeforeLock = "";
   }
 }
@@ -425,6 +428,7 @@ export const BlurImage = ({
   // data: URIs (e.g. project card SVG placeholders) can't use the optimizer
   if (isDataUri) {
     return (
+      // eslint-disable-next-line @next/next/no-img-element -- data: URI SVG placeholder; next/image can't optimize inline data URIs and there's nothing to fetch
       <img
         className={classNames}
         onLoad={() => setLoading(false)}

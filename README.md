@@ -19,9 +19,9 @@ This repository is the source for my personal portfolio site — a production-st
 | Area | Highlights |
 |------|------------|
 | **Robotics & autonomy** | ROS 2 navigation, MAVSDK drone control, Unity + Nav2 wheelchair GUI, computer vision pipelines |
-| **Full-stack & APIs** | FastAPI, Flask, React, Node.js, MongoDB — end-to-end systems from backend to UI |
-| **ML / AI** | TensorFlow, MediaPipe, OpenCV, Whisper speech-to-text, Groq LLM integration |
-| **Hardware & CAD** | SolidWorks, Fusion 360, KiCad PCB design, FEA, composites, custom macropad (RP2040) |
+| **Full-stack & APIs** | FastAPI, Flask, React, Node.js — end-to-end systems from backend to UI |
+| **ML / AI** | YOLOv11 + ByteTrack, SAM auto-labelling, TensorFlow, MediaPipe, OpenCV, Whisper speech-to-text, Groq LLM integration |
+| **Hardware & CAD** | SolidWorks, Fusion 360, KiCad PCB design, FEA, composites, macropad (RP2040) |
 | **Frontend engineering** | Next.js App Router, TypeScript, scroll-driven motion, accessible component systems |
 
 ---
@@ -84,11 +84,11 @@ Beyond being a portfolio, this codebase is a deliberate exercise in **modern fro
 
 **Frameworks & runtimes:** React · Vite · FastAPI · Flask · Node.js · Unity 2022.3 · ROS 2 Humble  
 
-**ML / CV:** TensorFlow · MediaPipe · OpenCV · Whisper  
+**ML / CV:** YOLOv11 · ByteTrack · SAM · TensorFlow · MediaPipe · OpenCV · Whisper  
 
-**Robotics & embedded:** MAVSDK · ArduPilot · Nav2 · Arduino · Raspberry Pi · RP2040 (KMK firmware)  
+**Robotics & embedded:** MAVSDK · ArduPilot · Nav2 · Gazebo Fortress · Lab Streaming Layer · CAN bus · Arduino · Raspberry Pi · RP2040 (KMK firmware)  
 
-**CAD & fabrication:** SolidWorks · Fusion 360 · KiCad · FEA simulation · FDM 3D printing · PCB soldering  
+**CAD & fabrication:** SolidWorks · Fusion 360 · Blender · KiCad · FEA simulation · FDM 3D printing · PCB soldering · welding  
 
 **Dev tools:** Git / GitHub · VS Code  
 
@@ -98,13 +98,15 @@ Beyond being a portfolio, this codebase is a deliberate exercise in **modern fro
 
 | Project | Domain | Stack |
 |---------|--------|-------|
-| **integratedflight** | Drone control via natural language | Python, FastAPI, Groq, React, Vite, Whisper, MAVSDK, ArduPilot |
-| **optibox** | Full-stack application | Python, Flask, React, TypeScript, Vite, Tailwind |
-| **pediatric wheelchair GUI** | Robotic navigation & teleop | Unity 2022.3, ROS 2, C#, Nav2, URP |
-| **signbridge** | Sign-language / CV system | Python, TensorFlow, MediaPipe, OpenCV, Fusion 360 |
-| **cocare ai** | Healthcare / ML platform | React, Node.js, Python, MongoDB, TensorFlow |
-| **custom macropad** | Hardware + firmware | KiCad, Fusion 360, Python (KMK), RP2040 |
-| **jacking bar** | Mechanical design | SolidWorks, FEA |
+| **bci wheelchair gui** (slug still `pediatric-wheelchair`) | Switch- and BCI-accessible wheelchair navigation | Unity 2022.3, C#, ROS 2 Humble, Nav2, Gazebo Fortress, LSL, Python |
+| **jacking bar** | Mechanical design for manufacturing (FSAE) | SolidWorks, SolidWorks Simulation (FEA), welding |
+| **hexacopter motor mounts** | 3D-printed drone hardware (UARAD) | SolidWorks, PLA 3D printing, gyroid infill |
+| **flightreacts** | Drone control via natural language (Red Team Hacks) | Python, FastAPI, Groq, React, Vite, Whisper, MAVSDK, ArduPilot |
+| **fade ninja** | Teach-and-replay robot barber (Hack the North 2026) | Python, Swift/SwiftUI, ARKit, Arduino, C++, SQLite |
+| **macropad** | Hardware + firmware | KiCad, Fusion 360, Python (KMK), RP2040 |
+| **signbridge** | Wearable sign-language translation (HackED 2026) | Python, TensorFlow, MediaPipe, OpenCV, Raspberry Pi, Fusion 360 |
+| **optibox** | Warehouse routing sim (HackUPC 2026, Inditex challenge) | Python, Flask, React, TypeScript, Vite, Tailwind |
+| **cocare ai** | Privacy-safe caregiver copilot (NextStep Hacks 2025) | React, TypeScript, Tailwind, Python, OpenCV, MediaPipe, Gemini API |
 | **model rocket** | Aerospace build | OpenRocket, composites |
 
 Full write-ups with overview, sections, and links live on the site under `/portfolio` and in [`lib/site-data.ts`](lib/site-data.ts).
@@ -115,9 +117,9 @@ Full write-ups with overview, sections, and links live on the site under `/portf
 
 | Role | Organization | Period |
 |------|--------------|--------|
-| Unity & ML Intern *(incoming)* | [ClutchVR](https://clutch-vr.com) | May 2026 — Present |
-| Research Assistant | Glenrose Rehabilitation Hospital | Jan 2026 — Present |
-| Drivetrain Subsystem | Formula SAE | Nov 2025 — Present |
+| ML & Software Engineer | [ClutchVR](https://clutch-vr.com) | May 2026 — Aug 2026 |
+| Mechatronics Intern | Glenrose Rehabilitation Hospital · NCBL | Jan 2026 — Present |
+| Mechanical & Electrical Team Member | Formula SAE | Nov 2025 — Present |
 
 Detail pages at `/experience/[slug]` cover responsibilities, stack, and project connections.
 
@@ -147,9 +149,13 @@ components/
   ProjectsCarousel.tsx  # Horizontal project cards
   SiteHeader.tsx        # Global navigation
   ExperienceRow.tsx     # Experience list item
+  ProjectMediaBlocks.tsx # Project hero, gallery, and video blocks
   ui/                   # macbook-scroll, apple-cards-carousel, etc.
 lib/
   site-data.ts          # Typed content — projects, experience, skills, nav
+  project-media.ts      # Per-project images, gallery, and video (keyed by slug)
+public/
+  images/projects/      # Project imagery and video, one folder per slug
 hooks/
   use-focus-trap.ts     # Modal focus management
 ```
