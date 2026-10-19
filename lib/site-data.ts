@@ -19,6 +19,8 @@ export type GalleryPhoto = {
   id: string;
   location?: string;
   src?: string;
+  // optional per-photo alt text; falls back to the tile label (+ location)
+  alt?: string;
 };
 
 export type GalleryItem = {
@@ -229,6 +231,11 @@ export const SITE = {
       id: "hiking",
       label: "hiking",
       photos: [
+        {
+          id: "mount-smutwood",
+          src: "/images/gallery-hiking-mount-smutwood.jpeg",
+          alt: "mount smutwood's pointed grey limestone peak above snowy alpine lakes",
+        },
         { id: "1", src: "/images/gallery-hiking-1.jpeg" },
         { id: "2", src: "/images/gallery-hiking-2.jpeg" },
       ],

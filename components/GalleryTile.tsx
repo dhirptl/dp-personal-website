@@ -65,7 +65,7 @@ export function GalleryTile({ item, priority }: { item: GalleryItem; priority?: 
         <div key={p.id} className={styles.photo} style={{ opacity: i === idx ? 1 : 0, zIndex: i === idx ? 1 : 0 }}>
           <ImageSlot
             src={p.src}
-            alt={item.label + (p.location ? ` - ${p.location}` : "")}
+            alt={p.alt ?? item.label + (p.location ? ` - ${p.location}` : "")}
             placeholder={item.label + (p.location ? ` - ${p.location}` : "")}
             shape="rect"
             zoom={1.04}
