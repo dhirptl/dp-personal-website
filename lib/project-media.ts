@@ -31,6 +31,7 @@ const MM = "/images/projects/motor-mounts";
 const FN = "/images/projects/fade-ninja";
 const PW = "/images/projects/pediatric-wheelchair";
 const FR = "/images/projects/flightreacts";
+const MP = "/images/projects/macropad";
 
 export const PROJECT_MEDIA: Record<string, ProjectMedia> = {
   "jacking-bar": {
@@ -165,6 +166,44 @@ export const PROJECT_MEDIA: Record<string, ProjectMedia> = {
         caption:
           "the backend simulation - gazebo sim running the compound_ops world, with walls, gate posts, a command building and the iris drone in the entity tree.",
         alt: "gazebo sim window showing a 3d walled compound with buildings, and an entity tree listing iris, ground_plane, walls, gate posts and the command building",
+      },
+    ],
+  },
+  macropad: {
+    thumb: `${MP}/render-assembled.png`,
+    hero: `${MP}/render-assembled.png`,
+    heroAlt:
+      "3d render of the grey macropad case with the top plate on - two rotary encoders in the top corners, the xiao rp2040 in a notch between them, the oled in a window in the middle and four mx-style switches along the bottom",
+    heroCaption:
+      "fusion 360 render of the full assembly - encoders up top, the xiao in the notch, the oled window, and the four keys.",
+    gallery: [
+      {
+        src: `${MP}/schematic.png`,
+        caption:
+          "the schematic - keys sw1-sw4 on gpio0, 1, 2 and 4 straight to ground, encoder a/b channels on gpio26-29, the oled header on gpio6/7 (sda/scl), and the two sk6812 leds chained from gpio3.",
+        alt: "kicad schematic of the xiao rp2040 wired to two rotary encoders, a 4-pin oled header, two chained sk6812mini leds and four push switches",
+      },
+      {
+        src: `${MP}/pcb-layout.png`,
+        caption:
+          "the 2-layer layout in kicad - encoders in the top corners, the xiao and both leds between them, the oled header in the middle, and the four switches along the bottom. red traces are front copper, blue are back.",
+        alt: "kicad pcb layout with rotary encoders sw5 and sw6 in the top corners, the xiao rp2040 footprint and two sk6812mini leds between them, the oled panel header j1 in the middle and four switch footprints sw1-sw4 along the bottom",
+      },
+      {
+        src: `${MP}/case-cad.png`,
+        caption:
+          "the two case parts in fusion 360 - the bottom shell with a cutout in the top wall for the xiao, and the top plate with holes for the encoder shafts, the oled window and four key cutouts.",
+        alt: "top-down cad view of a rectangular bottom shell and a flat top plate with two round holes, a rectangular window, four square cutouts and a notch at the top edge",
+      },
+      {
+        src: `${MP}/render-pcb-in-case.png`,
+        caption: "the assembled pcb sitting in the bottom shell, with the top plate beside it.",
+        alt: "3d render of the green macropad pcb with encoders, xiao rp2040, oled and four switches inside the grey bottom shell, next to the separate top plate",
+      },
+      {
+        src: `${MP}/assembled-pcb-photo.png`,
+        caption: "the real board, assembled - xiao, oled, both encoders and all four switches.",
+        alt: "photo of the green macropad pcb with the xiao rp2040, oled, two rotary encoders and four switches mounted",
       },
     ],
   },
