@@ -597,12 +597,16 @@ export const SITE = {
           body: "kmk on circuitpython. the four keys send a-d as placeholders, the left encoder is volume up/down and the right is page up/down. the leds run through kmk's rgb extension, and the oled is driven directly with displayio and the ssd1306 driver at i2c address 0x3c, showing a static 'DHIR MACROPAD' label.",
         },
         {
-          title: "known issue",
-          body: "the pin map in the firmware doesn't match the board. main.py puts the keys on a0-a3 and the encoders on d6-d9, but on the schematic it's the other way round: the encoders are on a0-a3 (gpio26-29) and the keys are on d6-d9 (gpio0, 1, 2 and 4). the two pin lists need swapping before the keys and knobs behave on the real pcb.",
+          title: "what went wrong",
+          body: "the pin map in the firmware doesn't match the board. main.py puts the keys on a0-a3 and the encoders on d6-d9, but on the schematic it's the other way round: the encoders are on a0-a3 (gpio26-29) and the keys are on d6-d9 (gpio0, 1, 2 and 4). it was a pretty fatal mistake - with the pins swapped, the keys and knobs don't do what they should on the real board.",
         },
         {
-          title: "status",
-          body: "the pcb is assembled with the xiao, oled, encoders and switches. the firmware in the repo still has the swapped pin map above.",
+          title: "the fix",
+          body: "the pcb is assembled with the xiao, oled, encoders and switches, so the hardware side is done. i still have to fix the firmware by swapping the two pin lists in main.py so it matches the schematic.",
+        },
+        {
+          title: "what i learned",
+          body: "it's a mistake i won't make again. before i call a board done, i check the firmware's pin map against the schematic.",
         },
       ],
     },
