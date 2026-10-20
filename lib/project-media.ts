@@ -30,6 +30,7 @@ const SB = "/images/projects/signbridge";
 const MM = "/images/projects/motor-mounts";
 const FN = "/images/projects/fade-ninja";
 const PW = "/images/projects/pediatric-wheelchair";
+const FR = "/images/projects/flightreacts";
 
 export const PROJECT_MEDIA: Record<string, ProjectMedia> = {
   "jacking-bar": {
@@ -148,6 +149,22 @@ export const PROJECT_MEDIA: Record<string, ProjectMedia> = {
         caption:
           "system architecture - solid arrows are implemented; the dashed arrow (goal and velocity publishing from unity to nav2) is stubbed in the current build. all motion and pose traffic crosses the unity-ros boundary through one bridge.",
         alt: "block diagram of the unity client and the ros 2 humble stack, joined by the wheelchair state bridge, with an eeg classifier feeding switch input over tcp",
+      },
+    ],
+  },
+  flightreacts: {
+    thumb: `${FR}/mission-control.png`,
+    hero: `${FR}/mission-control.png`,
+    heroAlt:
+      "dark tactical radar interface with two drones, alpha and bravo, plotted on the radar, a suggested tasks list, hold-to-speak voice input, voice interpreter, command log, confidence meter and a drone status panel",
+    heroCaption:
+      "the front end - compound tactical radar with both drones, hold-to-speak voice input, the voice interpreter and command log, a confidence meter, and live telemetry for alpha and bravo (flight mode, arming state, position, altitude, battery, gps lock).",
+    gallery: [
+      {
+        src: `${FR}/gazebo-sim.png`,
+        caption:
+          "the backend simulation - gazebo sim running the compound_ops world, with walls, gate posts, a command building and the iris drone in the entity tree.",
+        alt: "gazebo sim window showing a 3d walled compound with buildings, and an entity tree listing iris, ground_plane, walls, gate posts and the command building",
       },
     ],
   },
