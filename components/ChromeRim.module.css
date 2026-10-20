@@ -5,7 +5,22 @@
   border-radius: inherit;
   pointer-events: none;
   overflow: hidden;
-  /* same light plate buttons flip to before the liquid-metal overlay */
+  /* still brushed-chrome sweep: all phones / low-end devices ever get, and
+     what shows until the shader mounts on capable ones */
+  background: linear-gradient(
+    120deg,
+    #e4e4e7 0%,
+    #f4f4f5 18%,
+    #a1a1aa 34%,
+    #f4f4f5 50%,
+    #d4d4d8 66%,
+    #8f8f96 82%,
+    #e4e4e7 100%
+  );
+}
+
+/* shader mounted: the same light plate buttons flip to under the liquid-metal overlay */
+.rim.live {
   background: #f4f4f5;
 }
 

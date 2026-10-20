@@ -5,6 +5,7 @@ import {
   LIQUID_METAL_CHROME,
   LIQUID_METAL_OPACITY,
 } from "@/components/ui/liquid-metal-chrome";
+import { canRunHeavyEffects, whenPageIdle } from "@/lib/device-capability";
 import styles from "./ChromeRim.module.css";
 
 type MetalProps = Record<string, unknown> & { style?: CSSProperties };
@@ -13,11 +14,16 @@ type MetalProps = Record<string, unknown> & { style?: CSSProperties };
  * Liquid-metal chrome that fills the host. Pair with a double-bezel shell
  * (padding + raised inner plate) so only the bezel gap shows as chrome.
  * Same plate params + opacity as button liquid-metal fills.
+ * The shader only loads after the page is loaded + idle, and never on phones /
+ * low-end devices, which keep a static chrome gradient instead.
  */
 export function ChromeRim() {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [visible, setVisible] = useState(false);
+  // capable device + page loaded and idle; checked in an effect (never during
+  // render) so the server HTML and hydration match
+  const [ready, setReady] = useState(false);
   const [Metal, setMetal] = useState<ComponentType<MetalProps> | null>(null);
   const [params, setParams] = useState<Record<string, unknown> | null>(null);
 
@@ -27,6 +33,11 @@ export function ChromeRim() {
     update();
     mq.addEventListener("change", update);
     return () => mq.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!canRunHeavyEffects()) return;
+    return whenPageIdle(() => setReady(true));
   }, []);
 
   useEffect(() => {
@@ -41,7 +52,7 @@ export function ChromeRim() {
   }, []);
 
   useEffect(() => {
-    if (!visible || reducedMotion) return;
+    if (!visible || !ready || reducedMotion) return;
     let active = true;
     import("@/components/ui/liquid-metal").then((m) => {
       if (!active) return;
@@ -52,13 +63,19 @@ export function ChromeRim() {
     return () => {
       active = false;
     };
-  }, [visible, reducedMotion]);
+  }, [visible, ready, reducedMotion]);
 
   if (reducedMotion) return null;
 
+  const live = visible && Metal && params;
+
   return (
-    <div ref={hostRef} className={styles.rim} aria-hidden="true">
-      {visible && Metal && params ? (
+    <div
+      ref={hostRef}
+      className={[styles.rim, live && styles.live].filter(Boolean).join(" ")}
+      aria-hidden="true"
+    >
+      {live ? (
         <Metal
           {...params}
           style={{
