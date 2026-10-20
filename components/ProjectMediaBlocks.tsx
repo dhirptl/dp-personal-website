@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { MouseEvent, PointerEvent, SyntheticEvent } from "react";
 import Image from "next/image";
-import type { ProjectMedia } from "@/lib/project-media";
+import type { ProjectMedia, ProjectVideo } from "@/lib/project-media";
 import { Reveal } from "@/components/Reveal";
 import { WithLiquidMetal } from "@/components/WithLiquidMetal";
 import styles from "./ProjectMediaBlocks.module.css";
@@ -27,12 +27,14 @@ function hitsContainedImage(img: HTMLImageElement, x: number, y: number): boolea
    project has no media entries. */
 export function ProjectMediaBlocks({ media, name }: { media: ProjectMedia; name: string }) {
   const gallery = media.gallery ?? [];
+  const videos = media.video ? ([] as ProjectVideo[]).concat(media.video) : [];
   const [open, setOpen] = useState<number | null>(null);
   // src of the last lightbox image that finished loading (drives the loading state)
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
   // gallery srcs whose natural size is portrait (get a blurred backdrop tile)
   const [portrait, setPortrait] = useState<Record<string, boolean>>({});
-  const [videoPortrait, setVideoPortrait] = useState(false);
+  // video srcs whose natural size is portrait
+  const [videoPortrait, setVideoPortrait] = useState<Record<string, boolean>>({});
   const dialogRef = useRef<HTMLDialogElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const swipeRef = useRef<{ id: number; x: number; y: number } | null>(null);
@@ -101,37 +103,36 @@ export function ProjectMediaBlocks({ media, name }: { media: ProjectMedia; name:
     if (img && !hitsContainedImage(img, e.clientX, e.clientY)) setOpen(null);
   };
 
-  if (!gallery.length && !media.video && !media.externalVideo) return null;
+  if (!gallery.length && !videos.length && !media.externalVideo) return null;
 
   const cur = open !== null ? gallery[open] : null;
   const curLoaded = !!cur && loadedSrc === cur.src;
 
   return (
     <>
-      {(media.video || media.externalVideo) && (
+      {(videos.length > 0 || media.externalVideo) && (
         <Reveal className={styles.sec}>
-          <h2 className={styles.seclabel}>video</h2>
-          {media.video && (
-            <figure className={styles.figure}>
+          <h2 className={styles.seclabel}>{videos.length > 1 ? "videos" : "video"}</h2>
+          {videos.map((vid) => (
+            <figure key={vid.src} className={styles.figure}>
               <video
-                className={`${styles.video} ${videoPortrait ? styles.videoPortrait : ""}`}
-                src={media.video.src}
-                poster={media.video.poster}
+                className={`${styles.video} ${videoPortrait[vid.src] ? styles.videoPortrait : ""}`}
+                src={vid.src}
+                poster={vid.poster}
                 controls
                 playsInline
                 preload="metadata"
                 onLoadedMetadata={(e) => {
                   const v = e.currentTarget;
-                  setVideoPortrait(v.videoHeight > v.videoWidth);
+                  const isPortrait = v.videoHeight > v.videoWidth;
+                  setVideoPortrait((m) => (m[vid.src] === isPortrait ? m : { ...m, [vid.src]: isPortrait }));
                 }}
               >
                 your browser can&apos;t play this video.
               </video>
-              {media.video.caption && (
-                <figcaption className={styles.cap}>{media.video.caption}</figcaption>
-              )}
+              {vid.caption && <figcaption className={styles.cap}>{vid.caption}</figcaption>}
             </figure>
-          )}
+          ))}
           {media.externalVideo && (
             <WithLiquidMetal
               as="a"

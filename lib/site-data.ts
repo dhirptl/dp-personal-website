@@ -742,8 +742,15 @@ export const SITE = {
       categories: ["mechanical"],
       date: "2025",
       tech: ["openrocket", "composites"],
-      overview: "a model rocket build.",
-      sections: [{ title: "note", body: "write-up coming soon." }],
+      overview: "really fun project - made me fall in love with engineering.",
+      sections: [
+        { title: "v1", body: "the first version failed on launch." },
+        {
+          title: "what we learned",
+          body: "after that we studied how rockets work: thrust, how much of a difference the fins make, and weight.",
+        },
+        { title: "v2", body: "we used that to build v2, which launched." },
+      ],
     },
   ] satisfies Project[],
 

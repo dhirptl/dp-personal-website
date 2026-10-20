@@ -95,6 +95,11 @@
   margin: 0 auto;
 }
 
+/* stacked videos */
+.figure + .figure {
+  margin-top: 28px;
+}
+
 .figure + .extBtn {
   margin-top: 18px;
 }

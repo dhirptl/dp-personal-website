@@ -11,6 +11,8 @@ export type ProjectGalleryImage = {
   alt?: string;
 };
 
+export type ProjectVideo = { src: string; poster?: string; caption?: string };
+
 export type ProjectMedia = {
   /** card image in the carousels; falls back to hero, then the gradient */
   thumb?: string;
@@ -19,8 +21,9 @@ export type ProjectMedia = {
   heroAlt?: string;
   heroCaption?: string;
   gallery?: ProjectGalleryImage[];
-  /** self-hosted video (put the .mp4 in public/, CSP only allows same-origin media) */
-  video?: { src: string; poster?: string; caption?: string };
+  /** self-hosted video(s) (put the .mp4 in public/, CSP only allows same-origin media);
+   * an array renders in order */
+  video?: ProjectVideo | ProjectVideo[];
   /** off-site video (youtube etc.) rendered as a link button - iframes are blocked by CSP */
   externalVideo?: { href: string; label: string };
 };
@@ -32,6 +35,7 @@ const FN = "/images/projects/fade-ninja";
 const PW = "/images/projects/pediatric-wheelchair";
 const FR = "/images/projects/flightreacts";
 const MP = "/images/projects/macropad";
+const MR = "/images/projects/model-rocket";
 
 export const PROJECT_MEDIA: Record<string, ProjectMedia> = {
   "jacking-bar": {
@@ -204,6 +208,27 @@ export const PROJECT_MEDIA: Record<string, ProjectMedia> = {
         src: `${MP}/assembled-pcb-photo.png`,
         caption: "the real board, assembled - xiao, oled, both encoders and all four switches.",
         alt: "photo of the green macropad pcb with the xiao rp2040, oled, two rotary encoders and four switches mounted",
+      },
+    ],
+  },
+  "model-rocket": {
+    thumb: `${MR}/v2-rocket.jpg`,
+    hero: `${MR}/v2-rocket.jpg`,
+    heroAlt:
+      "hand holding a white model rocket over grass, with cardboard fins, a red ring around the motor at the base and igniter clips attached",
+    heroCaption:
+      "v2 - white body, cardboard fins, a red ring around the motor at the base, igniter clips attached.",
+    video: [
+      {
+        src: `${MR}/v1-launch.mp4`,
+        poster: `${MR}/v1-launch-poster.jpg`,
+        caption:
+          "v1 - the first launch, which failed. it leaves the pad, its smoke trail loops over in the sky, and it heads back down toward the field.",
+      },
+      {
+        src: `${MR}/v2-launch.mp4`,
+        poster: `${MR}/v2-launch-poster.jpg`,
+        caption: "v2 - launch off the pad in a grassy field - it climbs out of frame, trailing smoke.",
       },
     ],
   },
