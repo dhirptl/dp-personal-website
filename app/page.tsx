@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { preload } from "react-dom";
 import { SITE } from "@/lib/site-data";
 import { ExperienceRow } from "@/components/ExperienceRow";
 import { MacbookProjects } from "@/components/MacbookProjects";
 import { ChromeRim } from "@/components/ChromeRim";
 import { CurrentlyTyping } from "@/components/CurrentlyTyping";
 import { SplineHero } from "@/components/SplineHero";
-import { SPLINE_MODELLING_WASM_URL, SPLINE_SCENE_URL } from "@/lib/spline";
 import styles from "./page.module.css";
 
 export const dynamic = "force-static";
@@ -18,11 +16,9 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  // Fetch the hero scene + its wasm in parallel with the JS bundle; the viewer
-  // requests both with a plain cors fetch(), which these preloads match.
-  preload(SPLINE_SCENE_URL, { as: "fetch", crossOrigin: "anonymous" });
-  preload(SPLINE_MODELLING_WASM_URL, { as: "fetch", crossOrigin: "anonymous" });
-
+  // No scene/wasm preloads here: they ended up in the home RSC payload, so every
+  // page that prefetched "/" downloaded ~1.4MB of Spline. SplineHero starts
+  // those fetches itself, and only on devices that will actually run the scene.
   return (
     <main id="main" className={`container ${styles.home}`}>
       <div className={`${styles.cardShell} chrome-rim rv`}>

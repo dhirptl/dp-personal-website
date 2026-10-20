@@ -1,6 +1,6 @@
 /**
  * Shared Spline hero constants. Kept out of the "use client" SplineHero module
- * so the server-rendered home page can read them as plain strings for preloads.
+ * so they stay plain strings (SplineHero preloads both when the scene boots).
  */
 
 export const SPLINE_SCENE_URL = "https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode";

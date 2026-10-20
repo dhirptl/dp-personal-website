@@ -1,25 +1,29 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { preload } from "react-dom";
 import styles from "@/app/page.module.css";
 
-import { SPLINE_SCENE_URL } from "@/lib/spline";
+import { canRunHeavyEffects, whenPageIdle } from "@/lib/device-capability";
+import { SPLINE_MODELLING_WASM_URL, SPLINE_SCENE_URL } from "@/lib/spline";
 
 /** Safety net only: reveal anyway if the viewer never reports completion. */
 const REVEAL_FALLBACK_MS = 15000;
 
 /**
- * Start fetching the viewer chunk as soon as this module evaluates in the
- * browser (before hydration) instead of waiting for an effect. Guarded so the
- * server / static render never touches the custom-element runtime.
+ * Still of the scene captured from the live viewer on desktop (942x1076 =
+ * 2x the 471x538 hero box at the 1120px container), transparent background so
+ * the card's spotlight shows through it exactly like it does through the canvas.
  */
-const viewerReady: Promise<unknown> | null =
-  typeof window !== "undefined" ? import("@splinetool/viewer") : null;
+const POSTER_SRC = "/images/hero-robot-poster.webp";
 
 /**
- * Hero robot. The scene sits behind a poster + spinner and is revealed when
- * the viewer dispatches "load-complete" (it never dispatches a plain "load").
- * The scene file and modelling wasm are preloaded from app/page.tsx.
+ * Hero robot. A static poster is the default render (and all phones / low-end
+ * devices ever get). On capable devices the viewer chunk, scene file and wasm
+ * are fetched only after the page has loaded and gone idle, and the canvas
+ * fades in over the poster once the viewer dispatches "load-complete" (it
+ * never dispatches a plain "load").
  */
 export function SplineHero() {
   const hostRef = useRef<HTMLDivElement | null>(null);
@@ -27,16 +31,25 @@ export function SplineHero() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    // decided here, not during render, so server and client markup match
+    if (!canRunHeavyEffects()) return;
     let active = true;
-    (viewerReady ?? import("@splinetool/viewer"))
-      .then(() => {
-        if (active) setBoot(true);
-      })
-      .catch((err) => {
-        console.error("[SplineHero] viewer import failed", err);
-      });
+    const cancel = whenPageIdle(() => {
+      // start the scene + wasm downloads alongside the viewer chunk; the viewer
+      // requests both with a plain cors fetch(), which these preloads match
+      preload(SPLINE_SCENE_URL, { as: "fetch", crossOrigin: "anonymous" });
+      preload(SPLINE_MODELLING_WASM_URL, { as: "fetch", crossOrigin: "anonymous" });
+      import("@splinetool/viewer")
+        .then(() => {
+          if (active) setBoot(true);
+        })
+        .catch((err) => {
+          console.error("[SplineHero] viewer import failed", err);
+        });
+    });
     return () => {
       active = false;
+      cancel();
     };
   }, []);
 
@@ -56,7 +69,7 @@ export function SplineHero() {
     const t = setTimeout(() => setLoaded(true), REVEAL_FALLBACK_MS);
 
     // Hide the free-tier "Built with Spline" badge — it sits on the robot
-    // and reads as UI chrome on mobile.
+    // and reads as UI chrome.
     const hideLogo = () => {
       const logo = el.shadowRoot?.querySelector("#logo") as HTMLElement | null;
       if (logo) logo.style.setProperty("display", "none", "important");
@@ -98,16 +111,19 @@ export function SplineHero() {
       className={styles.right}
       data-loaded={loaded ? "true" : "false"}
       ref={hostRef}
-      aria-busy={!loaded}
+      aria-busy={boot && !loaded}
     >
-      <div className={styles.poster} aria-hidden="true" />
-      <div className={styles.loader}>
-        <div className={styles.spinner}></div>
-        <span className={styles.loaderLabel}>{boot ? "loading scene…" : "preparing…"}</span>
-      </div>
-      {boot ? (
-        <spline-viewer url={SPLINE_SCENE_URL} loading="eager"></spline-viewer>
-      ) : null}
+      <Image
+        className={styles.poster}
+        src={POSTER_SRC}
+        alt=""
+        aria-hidden="true"
+        fill
+        priority
+        fetchPriority="high"
+        sizes="(max-width: 760px) 50vw, 480px"
+      />
+      {boot ? <spline-viewer url={SPLINE_SCENE_URL} loading="eager"></spline-viewer> : null}
     </div>
   );
 }
