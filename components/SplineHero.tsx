@@ -12,18 +12,31 @@ import { SPLINE_MODELLING_WASM_URL, SPLINE_SCENE_URL } from "@/lib/spline";
 const REVEAL_FALLBACK_MS = 15000;
 
 /**
- * Still of the scene captured from the live viewer on desktop (942x1076 =
- * 2x the 471x538 hero box at the 1120px container), transparent background so
- * the card's spotlight shows through it exactly like it does through the canvas.
+ * How long after "load-complete" the canvas is revealed. The scene's Start
+ * events play a fixed timeline from load: a ~3s camera pull-back from a close-up
+ * of the head, then the arm idle. That timeline is deterministic (same pose at
+ * the same offset on every load) and the robot is near-still from ~6.0s to
+ * ~7.0s, so the canvas fades in at 6.2s, the poster fades out by 7.0s, and the
+ * poster below is the frame at 6.4s. Change the scene or this value and the
+ * poster has to be re-captured at the new offset.
  */
-const POSTER_SRC = "/images/hero-robot-poster.webp";
+const POSE_SYNC_MS = 6200;
+
+/**
+ * Still of the scene captured from the live viewer on desktop (942x1076 =
+ * 2x the 471x538 hero box at the 1120px container) 6.4s after "load-complete"
+ * (see POSE_SYNC_MS), transparent background so the card's spotlight shows
+ * through it exactly like it does through the canvas.
+ */
+const POSTER_SRC = "/images/hero-robot-poster-v2.webp";
 
 /**
  * Hero robot. A static poster is the default render (and all phones / low-end
  * devices ever get). On capable devices the viewer chunk, scene file and wasm
  * are fetched only after the page has loaded and gone idle, and the canvas
- * fades in over the poster once the viewer dispatches "load-complete" (it
- * never dispatches a plain "load").
+ * fades in over the poster POSE_SYNC_MS after the viewer dispatches
+ * "load-complete" (it never dispatches a plain "load"), when the live pose
+ * matches the poster's.
  */
 export function SplineHero() {
   const hostRef = useRef<HTMLDivElement | null>(null);
@@ -61,12 +74,19 @@ export function SplineHero() {
       | undefined;
     if (!el) return;
 
-    const onLoad = () => setLoaded(true);
+    let revealTimer: ReturnType<typeof setTimeout> | undefined;
+    const fallback = setTimeout(() => setLoaded(true), REVEAL_FALLBACK_MS);
+    const onLoad = () => {
+      // keep the poster up through the scene's intro and swap at the pose it
+      // was captured at, so the arms and camera don't jump
+      clearTimeout(fallback);
+      revealTimer = setTimeout(() => setLoaded(true), POSE_SYNC_MS);
+    };
     el.addEventListener("load-complete", onLoad);
     // The viewer sets `_loaded` right before dispatching "load-complete", so
-    // this covers a scene that finished before the listener was attached.
+    // this covers a scene that finished before the listener was attached (its
+    // timeline offset is unknown then, so just reveal).
     if (el._loaded) setLoaded(true);
-    const t = setTimeout(() => setLoaded(true), REVEAL_FALLBACK_MS);
 
     // Hide the free-tier "Built with Spline" badge — it sits on the robot
     // and reads as UI chrome.
@@ -82,7 +102,8 @@ export function SplineHero() {
     return () => {
       el.removeEventListener("load-complete", onLoad);
       el.removeEventListener("load-complete", hideLogo);
-      clearTimeout(t);
+      clearTimeout(fallback);
+      clearTimeout(revealTimer);
       clearInterval(logoPoll);
       clearTimeout(logoStop);
 
