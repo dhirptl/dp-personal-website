@@ -194,7 +194,6 @@ export const SITE = {
   currently: [
     "wiring a bci into a pediatric wheelchair",
     "an fsae mechanical & electrical team member",
-    "working on a drone @ uarad",
   ],
 
   experience: [
@@ -213,7 +212,7 @@ export const SITE = {
   ] satisfies NavItem[],
 
   bio: [
-    "i'm an engineering student interested in robotic systems, consumer electronics, product design, and machine learning. here's some stuff that i like ⬇️",
+    "i'm a mechatronics engineering student interested in physical ai, cars, and machine learning. here's some stuff that i like ⬇️",
   ],
 
   gallery: [
@@ -225,6 +224,12 @@ export const SITE = {
         { id: "1", location: "barcelona, spain", src: "/images/gallery-travelling-barcelona.jpeg" },
         { id: "2", location: "japan", src: "/images/gallery-travelling-japan.jpeg" },
         { id: "3", location: "yellowstone national park", src: "/images/gallery-travelling-yellowstone.jpeg" },
+        {
+          id: "4",
+          location: "niagara falls",
+          src: "/images/gallery-travelling-niagara-falls.jpeg",
+          alt: "niagara's american falls from above on an overcast day, mist rising off the river, with a tour boat docked below and a crowd in red ponchos on the walkway",
+        },
       ],
     },
     {
