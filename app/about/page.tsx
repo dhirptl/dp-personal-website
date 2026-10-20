@@ -27,8 +27,9 @@ export default function AboutPage() {
       <div className={`${styles.sec} rv`} style={{ "--d": ".2s" } as React.CSSProperties}>
         <div className={styles.gallery}>
           {SITE.gallery.map((g: GalleryItem, i) => (
-            // the first tile is the page's lcp image, so it loads eagerly with priority
-            <GalleryTile item={g} key={g.id} priority={i === 0} />
+            // the first row (3 tiles on desktop) is above the fold and the hiking
+            // tile is usually the lcp image, so they all load eagerly with priority
+            <GalleryTile item={g} key={g.id} priority={i < 3} />
           ))}
         </div>
       </div>

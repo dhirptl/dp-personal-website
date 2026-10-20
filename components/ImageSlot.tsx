@@ -18,11 +18,15 @@ type ImageSlotProps = {
   grayscale?: boolean;
   /**
    * "cover" (default) always fills the slot.
-   * "auto" fills the slot for landscape sources, but when the source is much
-   * narrower than the slot (portrait photos) it shows the whole image, centred
-   * over a blurred, darkened copy of itself instead of cropping it.
+   * "contain" shows the whole image, centred over a blurred, darkened copy of
+   * itself instead of cropping it (portrait photos in a wide slot). Prefer
+   * deciding cover vs contain on the server (see lib/image-size.ts) so the
+   * image can paint before hydration.
+   * "auto" decides in the browser: cover for landscape sources, contain when
+   * the source is much narrower than the slot. It fades in after measuring,
+   * except for priority images, which never wait on JS.
    */
-  fit?: "cover" | "auto";
+  fit?: "cover" | "contain" | "auto";
 };
 
 export function ImageSlot({
@@ -43,7 +47,10 @@ export function ImageSlot({
   const [measured, setMeasured] = useState<{ src: string; contain: boolean } | null>(null);
   const auto = fit === "auto";
   const m = measured && measured.src === src ? measured : null;
-  const contain = auto && !!m?.contain;
+  const contain = fit === "contain" || (auto && !!m?.contain);
+  // a priority (lcp) image is shown straight away; it may switch to contain
+  // after measuring, which beats holding the page's largest paint on hydration
+  const hideUntilMeasured = auto && !priority;
 
   const onLoad = auto
     ? (e: SyntheticEvent<HTMLImageElement>) => {
@@ -60,8 +67,8 @@ export function ImageSlot({
   const imgClass = [
     styles.img,
     !grayscale && styles.color,
-    auto && styles.auto,
-    auto && m && styles.ready,
+    hideUntilMeasured && styles.auto,
+    hideUntilMeasured && m && styles.ready,
     contain && styles.contain,
   ]
     .filter(Boolean)
@@ -93,6 +100,8 @@ export function ImageSlot({
             sizes={sizes}
             className={imgClass}
             priority={priority}
+            // next 16's priority only preloads + disables lazy; ask for high too
+            fetchPriority={priority ? "high" : undefined}
             onLoad={onLoad}
           />
         </>

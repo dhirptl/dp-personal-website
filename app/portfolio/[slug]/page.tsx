@@ -6,6 +6,7 @@ import { ImageSlot } from "@/components/ImageSlot";
 import { Reveal } from "@/components/Reveal";
 import { ProjectMediaBlocks } from "@/components/ProjectMediaBlocks";
 import { getProjectMedia } from "@/lib/project-media";
+import { getPublicImageSize } from "@/lib/image-size";
 import { pageMetadata } from "@/lib/metadata";
 import { getProjectCardSrc } from "@/lib/project-card-gradient";
 import styles from "./project.module.css";
@@ -39,6 +40,18 @@ function slugIndex(slug: string): number {
   let h = 0;
   for (let i = 0; i < slug.length; i++) h = (h * 33 + slug.charCodeAt(i)) >>> 0;
   return h;
+}
+
+/* Nominal width/height of the hero slot (~2:1 from tablet up, ~1.5:1 on phones).
+   Cropping away more than ~35% of the image's width reads as a bad crop, so
+   anything narrower than 0.65x this is shown whole over a blurred copy. */
+const HERO_SLOT_RATIO = 2;
+
+function heroFit(src: string): "cover" | "contain" | "auto" {
+  const size = getPublicImageSize(src);
+  // unreadable file: fall back to measuring in the browser
+  if (!size) return "auto";
+  return size.width / size.height < HERO_SLOT_RATIO * 0.65 ? "contain" : "cover";
 }
 
 /* site-data link labels may already end in "↗"; the page adds its own arrow */
@@ -94,7 +107,7 @@ export default async function ProjectPage({ params }: Params) {
             sizes="(max-width: 1200px) 100vw, 1200px"
             priority
             grayscale={false}
-            fit="auto"
+            fit={heroFit(media.hero)}
           />
           {media.heroCaption && <figcaption className={styles.heroCap}>{media.heroCaption}</figcaption>}
         </figure>
