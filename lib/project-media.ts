@@ -36,6 +36,7 @@ const PW = "/images/projects/pediatric-wheelchair";
 const FR = "/images/projects/flightreacts";
 const MP = "/images/projects/macropad";
 const MR = "/images/projects/model-rocket";
+const OB = "/images/projects/optibox";
 
 export const PROJECT_MEDIA: Record<string, ProjectMedia> = {
   "jacking-bar": {
@@ -177,6 +178,14 @@ export const PROJECT_MEDIA: Record<string, ProjectMedia> = {
         alt: "gazebo sim window showing a 3d walled compound with buildings, and an entity tree listing iris, ground_plane, walls, gate posts and the command building",
       },
     ],
+  },
+  optibox: {
+    thumb: `${OB}/simulator-ui.png`,
+    hero: `${OB}/simulator-ui.png`,
+    heroAlt:
+      "optibox warehouse flow simulator before a run - header stats for full pallets, pallets completed and avg time per pallet, 1x to 30x speed buttons with play and reset, a viewing level selector from y=1 to y=8, four aisles of slot grids numbered 1 to 60, a pallet slots sidebar for robot 1 and robot 2, and a start dialog asking how many boxes to populate the silo with, set to 2500, with randomize silo and start simulation buttons",
+    heroCaption:
+      "the simulator before a run - pick how many boxes to fill the silo with, then randomize it and start.",
   },
   macropad: {
     thumb: `${MP}/render-assembled.png`,
