@@ -39,13 +39,18 @@ const MR = "/images/projects/model-rocket";
 
 export const PROJECT_MEDIA: Record<string, ProjectMedia> = {
   "jacking-bar": {
-    thumb: `${JB}/cad-assembly.jpg`,
-    hero: `${JB}/cad-assembly.jpg`,
+    thumb: `${JB}/jacking-bar-on-car.jpg`,
+    hero: `${JB}/jacking-bar-on-car.jpg`,
     heroAlt:
-      "solidworks render of the orange jacking bar mounted under the grey differential hangers",
-    heroCaption:
-      "the new jacking bar in the drivetrain assembly - the two welded tabs pin to the differential hangers.",
+      "rear of the maroon formula sae car on stands in the shop, with the jacking bar's two black arms running down to an orange crossbar with scooped cutouts, and a person lying underneath the car",
+    heroCaption: "the jacking bar bolted under the rear of the car.",
     gallery: [
+      {
+        src: `${JB}/cad-assembly.jpg`,
+        caption:
+          "the new jacking bar in the drivetrain assembly - the two welded tabs pin to the differential hangers.",
+        alt: "solidworks render of the orange jacking bar mounted under the grey differential hangers",
+      },
       {
         src: `${JB}/installed.jpg`,
         caption:
