@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SITE_LOCALE, SITE_NAME, SITE_URL } from "@/lib/metadata";
+import { Analytics } from "@vercel/analytics/next";
 
 const bricolageGrotesque = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -59,6 +60,7 @@ export default function RootLayout({
         </a>
         <SiteHeader />
         {children}
+        <Analytics />
       </body>
     </html>
   );
